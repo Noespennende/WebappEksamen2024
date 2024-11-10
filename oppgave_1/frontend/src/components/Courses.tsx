@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function Courses() {
     const [value, setValue] = useState("");
     const [data, setData] = useState(courses);
