@@ -1,15 +1,20 @@
+import { useCourse } from "@/hooks/useCourse";
+import { useLesson } from "@/hooks/useLesson";
 import { useState } from "react";
 
-function Lesson() {
+export default function Lesson() {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
     const [lessonComments, setComments] = useState([]);
-    const [comment, setComment] = useState("");
+    //const [comment, setComment] = useState("");
     const [name, setName] = useState("");
-    const [lesson, setLesson] = useState(null);
-    const [course, setCourse] = useState(null);
+    //const [lesson, setLesson] = useState(null);
+    //const [course, setCourse] = useState(null);
     const courseSlug = "javascript-101";
     const lessonSlug = "variabler";
+
+    const lesson = useLesson(courseSlug, lessonSlug)
+    const course = useCourse(courseSlug)
   
     const handleComment = (event) => {
       setComment(event.target.value);
@@ -40,7 +45,7 @@ function Lesson() {
         setSuccess(true);
       }
     };
-  
+  /*
     useEffect(() => {
       const getContent = async () => {
         const lessonDate = await getLesson(courseSlug, lessonSlug);
@@ -51,7 +56,7 @@ function Lesson() {
         setComments(commentsData);
       };
       getContent();
-    }, [courseSlug, lessonSlug]);
+    }, [courseSlug, lessonSlug]);*/
   
     return (
       <div>

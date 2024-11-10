@@ -9,16 +9,22 @@ import {
 } from "../data/data";
 
 import { useParams, useRouter } from "next/navigation";
+import Lesson from "./Lesson";
+import { getCourse } from "@/lib/services/api";
 
+//flyttet til api
+/*
 const getCourse = async (slug) => {
   const data = await courses.filter((course) => course.slug === slug);
   return data?.[0];
-};
+};*/
 
 const createCourse = async (data) => {
   await courses.push(data);
 };
 
+//flyttet til api
+/*
 const getLesson = async (courseSlug, lessonSlug) => {
   const data = await courses
     .flatMap(
@@ -28,20 +34,22 @@ const getLesson = async (courseSlug, lessonSlug) => {
     )
     .filter(Boolean);
   return data?.[0];
-};
+};*/
 
+//flyttet til api
+/*
 const getComments = async (lessonSlug) => {
   const data = await comments.filter(
     (comment) => comment.lesson.slug === lessonSlug
   );
   return data;
-};
+};*/
 
 const createComment = async (data) => {
   await comments.push(data);
 };
 
-function Course() {
+export default function Course() {
     const [content, setContent] = useState(null);
   
     const courseSlug = "javascript-101";
