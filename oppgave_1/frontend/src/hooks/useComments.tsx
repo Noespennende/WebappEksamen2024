@@ -2,8 +2,8 @@ import { getComments } from "@/lib/services/api"
 import { useEffect, useState } from "react"
 
 
-export const useComment = (lessonSlug: any) => {
-    const [comments, setComments] = useState([])
+export const useComment = (lessonSlug: string) => {
+    const [comments, setComments] = useState<Comment[]>([])
 
     useEffect (() => {
         const fetchComments = async () => {

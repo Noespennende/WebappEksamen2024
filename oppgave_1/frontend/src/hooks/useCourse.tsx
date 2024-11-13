@@ -1,10 +1,11 @@
 import { getCourse } from '@/lib/services/api'
+import { Course } from '@/lib/types'
 import { useState, useEffect } from 'react'
 
 
 
-export const useCourse = (slug: any) => {
-    const [course, setCourse] = useState(null)
+export const useCourse = (slug: string) => {
+    const [course, setCourse] = useState<Course | undefined>(undefined);
 
 
     useEffect(() => {

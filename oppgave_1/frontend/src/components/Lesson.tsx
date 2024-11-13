@@ -1,11 +1,14 @@
+import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
 import { useLesson } from "@/hooks/useLesson";
+import { getComments, createComment } from "@/lib/services/api";
+import { Course, ALesson, Comment } from "@/lib/types";
 import { useState } from "react";
 
 export default function Lesson() {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
-    const [lessonComments, setComments] = useState([]);
+    const [lessonComments, setComments] = useState<Comment[]>([]);
     //const [comment, setComment] = useState("");
     const [name, setName] = useState("");
     //const [lesson, setLesson] = useState(null);
@@ -13,18 +16,20 @@ export default function Lesson() {
     const courseSlug = "javascript-101";
     const lessonSlug = "variabler";
 
-    const lesson = useLesson(courseSlug, lessonSlug)
-    const course = useCourse(courseSlug)
+    const [comment, setComment] = useState("");
+    const lesson: ALesson | undefined = useLesson(courseSlug, lessonSlug);
+    const course: Course | undefined = useCourse(courseSlug);
+    const lessonComment = useComment(lessonSlug);
   
-    const handleComment = (event) => {
+    const handleComment = (event: any) => {
       setComment(event.target.value);
     };
   
-    const handleName = (event) => {
+    const handleName = (event: any) => {
       setName(event.target.value);
     };
   
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event:any) => {
       event.preventDefault();
       setFormError(false);
       setSuccess(false);

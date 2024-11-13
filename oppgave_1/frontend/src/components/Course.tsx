@@ -11,6 +11,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import Lesson from "./Lesson";
 import { getCourse } from "@/lib/services/api";
+import type { Course } from "@/lib/types";
 
 //flyttet til api
 /*
@@ -19,7 +20,7 @@ const getCourse = async (slug) => {
   return data?.[0];
 };*/
 
-const createCourse = async (data) => {
+const createCourse = async (data: any) => {
   await courses.push(data);
 };
 
@@ -45,12 +46,14 @@ const getComments = async (lessonSlug) => {
   return data;
 };*/
 
+
+/*
 const createComment = async (data) => {
   await comments.push(data);
-};
+};*/
 
 export default function Course() {
-    const [content, setContent] = useState(null);
+    const [content, setContent] = useState<Course | null>(null);
   
     const courseSlug = "javascript-101";
     const lessonSlug = "variabler";

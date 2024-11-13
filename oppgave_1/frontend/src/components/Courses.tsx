@@ -1,8 +1,9 @@
+import { Course } from "@/lib/types";
 import { useState } from "react";
 
 function Courses() {
     const [value, setValue] = useState("");
-    const [data, setData] = useState(courses);
+    const [data, setData] = useState<Course[]>(courses);
   
     const handleFilter = (event) => {
       const category = event.target.value;
