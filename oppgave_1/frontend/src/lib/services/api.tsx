@@ -69,7 +69,7 @@ export const createComment = async (commentData: Comment): Promise<Comment> => {
 
 export const createCourse = async (courseData: Course): Promise<Course> => {
     try {
-        const response = await fetch(`https://localhost:4000/lessons?course=${courseData}`,{
+        const response = await fetch(`https://localhost:4000/`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'Application/json'
