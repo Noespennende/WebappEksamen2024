@@ -20,9 +20,10 @@ const getCourse = async (slug) => {
   return data?.[0];
 };*/
 
+/*
 const createCourse = async (data: any) => {
   await courses.push(data);
-};
+};*/
 
 //flyttet til api
 /*

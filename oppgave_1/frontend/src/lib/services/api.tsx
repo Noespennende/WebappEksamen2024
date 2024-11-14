@@ -1,4 +1,4 @@
-import { Comment } from "../types"
+import { Comment, Course } from "../types"
 
 
 export const getLesson = async (courseSlug: string, lessonSlug:string) => {
@@ -63,6 +63,25 @@ export const createComment = async (commentData: Comment): Promise<Comment> => {
         return await response.json()
     } catch (error) {
         console.error("cannot create comment", error)
+        throw error
+    }
+}
+
+export const createCourse = async (courseData: Course): Promise<Course> => {
+    try {
+        const response = await fetch(`https://localhost:4000/lessons?course=${courseData}`,{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'Application/json'
+            },
+            body: JSON.stringify(courseData)
+        })
+        if(!response.ok){
+            throw new Error("Cannot add the Course")
+        }
+        return await response.json()
+    } catch (error) {
+        console.error("Cannot create Course", error)
         throw error
     }
 }

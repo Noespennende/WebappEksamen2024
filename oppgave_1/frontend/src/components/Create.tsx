@@ -1,4 +1,7 @@
+import { courseCreateSteps } from "@/data/data";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createCourse } from "@/lib/services/api";
 
 const isValid = (items) => {
     const invalidFields = [];
