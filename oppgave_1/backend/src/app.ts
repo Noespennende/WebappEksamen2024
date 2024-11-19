@@ -253,5 +253,48 @@ app.get('/v1/courses/:slug', async (c) => {
 });
 
 
+app.delete('/v1/courses/:slug', async (c) => {
+  const { slug } = c.req.param(); // Hent slug fra URL-en
+
+  try {
+    // Finner kurset basert på slug
+    const course = await prisma.course.findUnique({
+      where: { slug },
+    });
+
+    if (!course) {
+      return c.json({
+        success: false,
+        error: {
+          code: "404",
+          message: "Course not found",
+        },
+      }, 404);
+    }
+
+    // Sletter kurset (og tilhørende elementer via ref)
+    // (Har onDelete: cascade i Prisma, så tilhørende Lesson[], Lesson sine LessonText[] og Comment[] slettes automatisk)
+    await prisma.course.delete({
+      where: { slug },
+    });
+
+    return c.json({
+      success: true,
+      message: `Course with slug ${slug} and its related data were deleted successfully.`,
+    }, 200);
+
+  } catch (error) {
+
+    return c.json({
+      success: false,
+      error: {
+        code: "500",
+        message: "Failed to delete course",
+      },
+    }, 500);
+  }
+});
+
+
 
 export default app;
