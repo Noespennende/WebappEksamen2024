@@ -187,5 +187,71 @@ app.post("/v1/courses", async (c) => {
 });
 
 
+app.get('/v1/courses/:slug', async (c) => {
+  const { slug } = c.req.param(); // Hent kurs-slug fra URL-en
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: { slug: slug },
+      include: {
+        category: true,  // Tar med hele kategori (id og name)
+        lessons: {       // Tar med leksjoner, men ikke innholdet i leksjonene (text[])
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            preAmble: true,
+          },
+        },
+      },
+    });
+
+    if (!course) {
+      const response: Failure = {
+        success: false,
+        error: {
+          code: "404",
+          message: "Course not found",
+        },
+      };
+      return c.json(response, 404);
+    }
+
+    // Validerer kursdata - sjekker at det vi hentet passer med det vi ønsker å returnere
+    const result = validateCourse(course)
+
+    if (!result.success) {
+      console.error("Validation failed", result.error);
+      const response: Failure = {
+        success: false,
+        error: {
+          code: "400",
+          message: "Invalid course data",
+        },
+      };
+      return c.json(response, 400);
+    }
+
+    const response: Success<typeof result.data> = {
+      success: true,
+      data: result.data,
+    };
+
+    return c.json(response, 200);
+
+  } catch (error) {
+    const response: Failure = {
+      success: false,
+      error: {
+        code: "400",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+    };
+
+    return c.json(response, 400);
+  }
+});
+
+
 
 export default app;

@@ -39,7 +39,7 @@ Successfull: {
 }
 
 
-## /courses/:id
+## /courses/:slug
 ### Verb
 
 > get
@@ -226,7 +226,7 @@ hva man kan gjøre på siden:
 - slette kurset
 - kunne navigere til edit siden
 
-/courses/:id
+/courses/:slug
 * get
 * delete
 
@@ -247,7 +247,7 @@ hva man kan gjøre på siden
 
 API Kall siden gjør:
 
-/courses/:id
+/courses/:slug
 * get
 * edit
 * delete

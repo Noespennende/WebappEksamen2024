@@ -27,7 +27,6 @@ const lessonBaseSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   preAmble: z.string(),
-  courseId: z.string().uuid(),
 });
 
 // LessonText 
@@ -84,7 +83,6 @@ export const userSchema = userBaseSchema.extend({
 
 export const createLessonSchema = lessonBaseSchema.omit({
   id: true, // Bruker Omit for å fjerne ID-felt - mindre linjer kode med Omit enn Pick/Partial
-  courseId: true,
 }).extend({
   text: z.array(
     lessonTextBaseSchema.omit({
