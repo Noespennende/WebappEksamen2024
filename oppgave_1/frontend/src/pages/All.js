@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import { useState, useEffect } from "react";
 import {
@@ -40,8 +40,11 @@ const getComments = async (lessonSlug) => {
 
 const createComment = async (data) => {
   await comments.push(data);
-};
+};*/
 
+
+
+/*
 function Course() {
   const [content, setContent] = useState(null);
 
@@ -114,8 +117,8 @@ function Course() {
       </aside>
     </div>
   );
-}
-
+}*/
+/*
 function Courses() {
   const [value, setValue] = useState("");
   const [data, setData] = useState(courses);
@@ -196,8 +199,8 @@ function Courses() {
       </section>
     </>
   );
-}
-
+}*/
+/*
 function Lesson() {
   const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState(false);
@@ -353,8 +356,10 @@ function Lesson() {
       </section>
     </div>
   );
-}
+}*/
 
+
+/*
 function SignUp() {
   const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState(false);
@@ -451,7 +456,7 @@ function SignUp() {
       </form>
     </section>
   );
-}
+}*/
 
 const isValid = (items) => {
   const invalidFields = [];
