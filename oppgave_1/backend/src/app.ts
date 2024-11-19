@@ -458,6 +458,40 @@ app.put('/v1/courses/:slug', async (c) => {
 });
 
 
+app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
+  const { courseslug, lessonslug } = c.req.param(); // Hent slug-parametrene fra URL-en
+
+  // Finn leksjonen basert på både courseSlug og lessonSlug
+  const lesson = await prisma.lesson.findFirst({
+    where: {
+      course: {
+        slug: courseslug, // Kursets slug
+      },
+      slug: lessonslug, // Leksjonens slug
+    },
+    include: {
+      //course: true, // -> Trenger vi all course data eller kanskje bare categoryid?
+      course: {
+        select: {
+          title: true,
+          category: true // Henter hele category som er knyttet til kurset
+        },
+      },
+      text: true,  // Inkluder text-relasjonen for leksjonen
+      comments: true, // Inkluder comments-relasjonen for leksjonen
+    },
+  });
+
+  if (!lesson) {
+    return c.json({ success: false, error: 'Lesson or course not found' }, 404);
+  }
+
+  // Returner leksjonsdata sammen med kursinformasjon
+  return c.json({
+    success: true,
+    data: lesson,
+  });
+});
 
 
 
