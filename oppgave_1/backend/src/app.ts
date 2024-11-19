@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prisma } from "./prisma";
 import { Failure, Result, Success } from "./types";
-import { Course, validateCourse, validateCreateCourse } from "./helpers/schema";
+import { Course, Lesson, validateCourse, validateCreateCourse, validateCreateLesson } from "./helpers/schema";
 
 const app = new Hono();
 
@@ -253,6 +253,7 @@ app.get('/v1/courses/:slug', async (c) => {
 });
 
 
+// TODO: Refaktorere - ut i funksjoner
 app.delete('/v1/courses/:slug', async (c) => {
   const { slug } = c.req.param(); // Hent slug fra URL-en
 
@@ -294,6 +295,172 @@ app.delete('/v1/courses/:slug', async (c) => {
     }, 500);
   }
 });
+
+
+app.put('/v1/courses/:slug', async (c) => {
+  const { slug } = c.req.param(); // Hent slug fra URL-en
+  const { data, newLessons }: { data: Partial<Course>, newLessons: Lesson[] } = await c.req.json();
+
+  try {
+    // Finner kurset
+    const existingCourse = await prisma.course.findUnique({
+      where: { slug },
+      include: { lessons: true }, // Inkluder eksisterende leksjoner i kurset
+    });
+
+    if (!existingCourse) {
+      return c.json({
+        success: false,
+        error: {
+          code: "404",
+          message: "Course not found",
+        },
+      }, 404);
+    }
+
+
+    if (data.slug) {
+      const courseSlugExists = await prisma.course.findUnique({
+        where: {
+          slug: data.slug,
+        },
+      });
+
+      if (courseSlugExists) {
+        return c.json(
+          {
+            success: false,
+            error: `Slug already exists: ${courseSlugExists.slug} for course ${courseSlugExists.title}`,
+          },
+          400
+        );
+      }
+   }
+
+    /* Refaktorere - Kan bli egen metode utenfor, for bedre oversikt! */
+
+    // Samle slugs for eksisterende leksjoner
+    const existingLessonSlugs = existingCourse.lessons.map(lesson => lesson.slug);
+
+    // Samle slugs for oppdaterte leksjoner (de som har fått en ny slug)
+    const updatedLessonSlugs = data?.lessons
+      ? data.lessons.filter(lesson => lesson.slug).map(lesson => lesson.slug)
+      : [];
+
+    // Sjekk om newLessons er definert og et array, hvis ikke sett det til en tom liste
+    const newLessonSlugs = Array.isArray(newLessons) ? newLessons.map(lesson => lesson.slug) : [];
+
+    // Lag en liste med alle slugs som skal sjekkes
+    const allLessonSlugs = [
+      ...existingLessonSlugs, // Eksisterende leksjoners slugs
+      ...newLessonSlugs, // Nye leksjoners slugs
+      ...updatedLessonSlugs, // Oppdaterte leksjoners slugs
+    ];
+
+    // Sjekk om noen newLesson.slugs er de samme som updatedLessonSlugs
+    const duplicateNewAndUpdatedSlugs = newLessonSlugs.filter(slug => updatedLessonSlugs.includes(slug));
+
+    if (duplicateNewAndUpdatedSlugs.length > 0) {
+      return c.json({
+        success: false,
+        error: `The following new lesson slugs are the same as updated lesson slugs: ${duplicateNewAndUpdatedSlugs.join(', ')}`,
+      }, 400);
+    }
+
+    // Finn dupliserte slugs
+    const duplicateSlugs = allLessonSlugs.filter((slug, index, self) => self.indexOf(slug) !== index);
+
+    if (duplicateSlugs.length > 0) {
+      return c.json({
+        success: false,
+        error: `Already existing slugs in course found: ${duplicateSlugs.join(', ')}`,
+      }, 400);
+    }
+
+    /* *** */
+
+    // Legg til nye leksjoner
+    if (newLessons && newLessons.length > 0) {
+      for (const lesson of newLessons) {
+        
+        // Validerer leksjonen
+        const validationResult = validateCreateLesson(lesson);
+
+        if (!validationResult.success) {
+          return c.json(
+            {
+              success: false,
+              error: `Validation failed for lesson: ${validationResult.error.errors}`,
+            },
+            400
+          );
+        }
+
+        const lessonsData = {
+          ...lesson,
+          course: {
+            connect: { slug: existingCourse.slug }, // Kobler leksjonen til eksisterende kurs
+          },
+          text: lesson.text
+            ? {
+                create: lesson.text.map((lessonText) => ({
+                  ...lessonText
+                })),
+              }
+            : undefined,
+          comments: { create: [] },
+        };
+
+        // Opprett leksjonen dersom slug er unik
+        await prisma.lesson.create({
+          data: lessonsData,
+        });
+      }
+    }
+
+    // Oppdater kurs og relasjoner til kategori og eksisterende leksjoner
+    const updatedCourse = await prisma.course.update({
+      where: { slug },
+      data: {
+        ...data, // Spre innholdet fra data (som kan inneholde oppdaterte felter)
+        category: data?.category ? { connect: { id: data.category.id } } : undefined,
+        lessons: data?.lessons ? {
+          updateMany: data.lessons.map((lesson) => ({
+            where: { id: lesson.id },
+            data: {
+              ...lesson,
+            },
+          }))
+        } : undefined,
+      },
+      include: {
+        lessons: true, // Inkluder alle leksjoner i oppdaterte kursdata
+      }
+    });
+
+    // Hvis alt går bra, returner suksess
+    return c.json({
+      success: true,
+      message: `Course with slug ${slug} was updated successfully.`,
+      data: updatedCourse,
+    }, 200);
+
+  } catch (error) {
+    console.error("Error updating course:", error);
+    return c.json({
+      success: false,
+      error: {
+        code: "500",
+        message: "Failed to update course",
+      },
+    }, 500);
+  }
+});
+
+
+
+
+
 
 
 
