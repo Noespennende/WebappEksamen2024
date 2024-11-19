@@ -478,7 +478,17 @@ app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
         },
       },
       text: true,  // Inkluder text-relasjonen for leksjonen
-      comments: true, // Inkluder comments-relasjonen for leksjonen
+      comments: {
+        select: {
+          comment: true,
+          createdBy:{
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      }, // Inkluder comments-relasjonen for leksjonen
     },
   });
 
@@ -541,7 +551,17 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
         },
       },
       text: true,  // Inkluder text-relasjonen for leksjonen
-      comments: true, // Inkluder comments-relasjonen for leksjonen
+      comments: {
+        select: {
+          comment: true,
+          createdBy:{
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      }, // Inkluder comments-relasjonen for leksjonen
     },
   });
 
