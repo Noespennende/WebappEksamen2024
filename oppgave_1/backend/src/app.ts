@@ -54,15 +54,16 @@ app.get("/v1/courses", async (c) => {
   }
 });
 
+
+// TODO: Refaktorering?
 app.post("/v1/courses", async (c) => {
   try {
-    
     const newCourse = await c.req.json();
 
+    // Sjekker at det er riktig struktur
     const validationResult = validateCreateCourse(newCourse);
 
     if (!validationResult.success) {
-      // Validering mislyktes - 400 feil
       return c.json(
         {
           success: false,
@@ -72,25 +73,7 @@ app.post("/v1/courses", async (c) => {
       );
     }
 
-    // Sjekk om slug allerede eksisterer i databasen
-    const existingCourse = await prisma.course.findUnique({
-      where: {
-        slug: validationResult.data.slug,
-      },
-    });
-
-    if (existingCourse) {
-      return c.json(
-        {
-          success: false,
-          error: "Slug already exists",  // Feil om slug er duplikat
-        },
-        400
-      );
-    }
-
-    
-    // Kanskje unødvendig? sjekker at kategorien eksisterer
+    // Sjekker om kategorien finnes - refaktorere ut i metodekall?
     const categoryExists = await prisma.category.findUnique({
       where: {
         id: validationResult.data.categoryId,
@@ -107,36 +90,102 @@ app.post("/v1/courses", async (c) => {
       );
     }
 
-    // Opprett kurset i databasen når validering og sjekk er vellykket
-    const createCourse = await prisma.course.create({
-      data: {
-        title: validationResult.data.title,
+    // Sjekker om kurs-slug finnes fra før
+    const existingCourse = await prisma.course.findUnique({
+      where: {
         slug: validationResult.data.slug,
-        description: validationResult.data.description,
-        category: {
-          connect: { id: validationResult.data.categoryId },
-        },
       },
     });
 
+    if (existingCourse) {
+      return c.json(
+        {
+          success: false,
+          error: `Slug already exists: ${existingCourse.slug} for course ${existingCourse.title}`,
+        },
+        400
+      );
+    }
+
+    // Setter opp Lesson-data for å kunne validere
+    const lessonsData = validationResult.data.lessons?.map((lesson) => ({
+      title: lesson.title,
+      slug: lesson.slug,
+      preAmble: lesson.preAmble,
+      text: lesson.text
+        ? {
+            create: lesson.text.map((lessonText) => ({
+              text: lessonText.text,
+              orderPosition: lessonText.orderPosition,
+            })),
+          }
+        : undefined,
+      comments: { create: [] }, 
+    })) ?? [];
+
+    // Sjekker om Lesson-slug er unik innad kurset () (siden /kurs/:kursid:/lesson/:lessonid:)
+    const courseSlug = validationResult.data.slug;
+    for (const lesson of lessonsData) {
+      const existingLesson = await prisma.lesson.findFirst({
+        where: {
+          course: { 
+            slug: courseSlug, 
+          }, 
+          slug: lesson.slug, 
+            // Sjekker om Lesson-slug finnes i samme Course-slug
+        },
+      });
+
+      if (existingLesson) {
+        return c.json(
+          {
+            success: false,
+            error: `Lesson slug "${lesson.slug}" already exists for course "${courseSlug}".`,
+          },
+          400
+        );
+      }
+    }
+
+    // Opprettelse data er valider -> opprett Course og Lesson 
+    const createCourseData = {
+      title: validationResult.data.title,
+      slug: validationResult.data.slug,
+      description: validationResult.data.description,
+      category: {
+        connect: { id: validationResult.data.categoryId },
+      },
+      lessons: lessonsData.length > 0 ? {
+        create: lessonsData,
+      } : undefined,
+    };
+
+    const createdCourse = await prisma.course.create({
+      data: createCourseData,
+      include: {
+        lessons: true, // Include the related lessons data
+      },
+    });
+
+    // Returnerer hele kurs-objektet, da med også lessons-data
     return c.json(
       {
         success: true,
-        data: createCourse,
+        data: createdCourse,
       },
       201
     );
-
   } catch (error) {
-
     return c.json(
       {
         success: false,
-        error: error,
+        error: (error as Error).message || 'An unknown error occurred',
       },
       500
     );
   }
 });
+
+
 
 export default app;

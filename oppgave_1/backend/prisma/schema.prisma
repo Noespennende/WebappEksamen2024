@@ -24,13 +24,13 @@ model Course {
   description String
   categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id])
-  lessons     Lesson[]  // Relasjoner til Comments
+  lessons     Lesson[]  // Relasjoner til Lesson
 }
 
 model Lesson {
   id        String       @id @default(uuid())
   title     String
-  slug      String       @unique
+  slug      String       //@unique
   preAmble  String
   courseId  String
   course    Course       @relation(fields: [courseId], references: [id])
@@ -50,9 +50,9 @@ model LessonText {
 model Comment {
   id          String  @id @default(uuid())
   comment     String
-  lessonSlug  String
-  createdById      String
-  lesson      Lesson  @relation(fields: [lessonSlug], references: [slug])
+  createdById String
+  lessonId   String
+  lesson      Lesson  @relation(fields: [lessonId], references: [id])
   createdBy   User    @relation(fields: [createdById], references: [id])
   
 }

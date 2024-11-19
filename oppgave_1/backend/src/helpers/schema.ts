@@ -19,7 +19,6 @@ const courseBaseSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   description: z.string(),
-  categoryId: z.string().uuid(),
 });
 
 // Lesson Base
@@ -69,8 +68,8 @@ export const lessonTextSchema = lessonTextBaseSchema.extend({
 
 // Som over: se på om comment skal inneholde hele lesson-objektet den tilhører, eller bare slug-en? 
 export const commentSchema = commentBaseSchema.extend({
-  lesson: lessonBaseSchema.optional(),
-  createdBy: userBaseSchema.optional(),
+  lesson: lessonBaseSchema,
+  createdBy: userBaseSchema,
 });
 
 // Hele course-objekter eller bare slug-er?
@@ -83,12 +82,37 @@ export const userSchema = userBaseSchema.extend({
   comments: z.array(commentBaseSchema).optional(),
 });
 
+export const createLessonSchema = lessonBaseSchema.omit({
+  id: true, // Bruker Omit for å fjerne ID-felt - mindre linjer kode med Omit enn Pick/Partial
+  courseId: true,
+}).extend({
+  text: z.array(
+    lessonTextBaseSchema.omit({
+      id: true,
+      lessonId: true,
+    })
+  ).optional(),
+  comments: z.array(
+    commentBaseSchema.omit({
+      id: true,
+    })
+  ).default([]),
+});
+
 
 export const createCourseSchema = courseBaseSchema.omit({
-    id: true // Bruker Omit for å fjerne ID-felt - mindre linjer kode med Omit enn Pick/Partial
+  id: true, // Bruker Omit for å fjerne ID-felt - mindre linjer kode med Omit enn Pick/Partial
 }).extend({
-    categoryId: z.string().uuid(),
+  categoryId: z.string().uuid(),
+  lessons: z.array(createLessonSchema).optional(),
 });
+
+export const createCommentSchema = commentBaseSchema.omit({
+    id: true
+}).extend({
+    createdById: z.string().uuid(),
+    lessonSlug: z.string().min(1),
+})
 
 
 export type User = z.infer<typeof userSchema>;
