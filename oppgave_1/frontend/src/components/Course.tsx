@@ -55,14 +55,18 @@ const createComment = async (data) => {
 
 export default function Course() {
     const [content, setContent] = useState<Course | null>(null);
-  
-    const courseSlug = "javascript-101";
-    const lessonSlug = "variabler";
+    //const lessonSlug = "variabler";
+    //const courseSlug = "javascript-101";
+    const params = useParams() as { courseSlug: string; lessonSlug?: string };
+    const courseSlug = params.courseSlug
+    const lessonSlug = params.lessonSlug
+    
   
     useEffect(() => {
       const getContent = async () => {
         const data = await getCourse(courseSlug);
         setContent(data);
+        console.log(data)
       };
       getContent();
     }, [courseSlug]);

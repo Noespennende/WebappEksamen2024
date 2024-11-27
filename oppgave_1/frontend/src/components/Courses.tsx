@@ -1,7 +1,8 @@
 'use client';
 import { categories, courses } from "@/data/data";
 import { Course } from "@/lib/types";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import router from "next/router";
 
 export default function Courses() {
     const [value, setValue] = useState("");
@@ -18,6 +19,35 @@ export default function Courses() {
       } else {
         setData(courses);
       }
+    };
+
+  
+
+
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/v1/courses'); 
+        if (!response.ok) {
+          throw new Error('Failed to fetch courses');
+        }
+        const coursesData = await response.json();
+        console.log(coursesData)
+        setData(coursesData);
+      } catch (err) {
+        
+      } finally {
+        
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+    const handleCourseClick = (slug: string) => {
+    
+      router.push(`/kurs/${slug}`);
     };
   
     return (
@@ -72,6 +102,7 @@ export default function Courses() {
                   className="font-semibold underline"
                   data-testid="courses_url"
                   href={`/kurs/${course.slug}`}
+                  onClick={() => handleCourseClick(course.slug)}
                 >
                   Til kurs
                 </a>

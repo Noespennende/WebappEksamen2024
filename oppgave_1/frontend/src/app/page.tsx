@@ -8,19 +8,19 @@ import SignUp from "@/components/SignUp";
 export default function Home() {
   return (
     <main className="h-full">
-      <All />
+      
       <Courses />
 
-{/* Vist for individual course */}
-<Course />
 
-{/* Vist for create */}
+ <Course />
 
 
-{/* Vist for lesson */}
+
+
+
 <Lesson />
 
-{/* Vist for sign up */}
+
 <SignUp />
     </main>
   );
