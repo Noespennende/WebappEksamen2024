@@ -1,3 +1,4 @@
+'use client';
 import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
 import { useLesson } from "@/hooks/useLesson";

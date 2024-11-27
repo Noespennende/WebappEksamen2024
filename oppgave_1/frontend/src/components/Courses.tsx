@@ -1,8 +1,9 @@
+'use client';
 import { categories, courses } from "@/data/data";
 import { Course } from "@/lib/types";
 import { useState } from "react";
 
-function Courses() {
+export default function Courses() {
     const [value, setValue] = useState("");
     const [data, setData] = useState<Course[]>(courses);
   

@@ -1,3 +1,4 @@
+'use client';
 import { courseCreateSteps } from "@/data/data";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,7 +33,7 @@ const isValid = (items) => {
     return invalidFields.length === 0;
   };
   
-  function Create() {
+  export default function Create() {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
     const [current, setCurrent] = useState(0);
