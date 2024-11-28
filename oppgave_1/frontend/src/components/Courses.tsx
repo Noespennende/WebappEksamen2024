@@ -15,6 +15,7 @@ export default function Courses() {
         const content = courses.filter((course) =>
           course.category.toLocaleLowerCase().includes(category.toLowerCase())
         );
+        
         setData(content);
       } else {
         setData(courses);
@@ -25,30 +26,41 @@ export default function Courses() {
 
 
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/v1/courses'); 
-        if (!response.ok) {
-          throw new Error('Failed to fetch courses');
-        }
-        const coursesData = await response.json();
-        console.log(coursesData)
-        setData(coursesData);
-      } catch (err) {
-        
-      } finally {
-        
-      }
-    };
-
-    fetchCourses();
-  }, []);
-
-    const handleCourseClick = (slug: string) => {
+    useEffect(() => {
+      const fetchCourses = async () => {
+        try {
+          const response = await fetch('http://localhost:3999/v1/courses'); 
+          console.log("Response object:", response);
     
-      router.push(`/kurs/${slug}`);
-    };
+          if (!response.ok) {
+            throw new Error(`Failed to fetch courses. Status: ${response.status}`);
+          }
+          
+          const coursesData = await response.json();
+          console.log("Raw data:", coursesData);
+    
+          if (!coursesData.data || !Array.isArray(coursesData.data)) {
+            throw new Error("API did not return a valid courses array.");
+          }
+        
+          const formatData = coursesData.data.map((course: Course) => ({
+            ...course,
+            category: Array.isArray(course.category)
+              ? course.category
+              : course.category ? [course.category] : [], 
+          }));
+          
+          console.log("Formatted data:", formatData);
+          setData(formatData);
+        } catch (err) {
+          console.error("Error fetching or formatting data:", err);
+        }
+      };
+    
+      fetchCourses();
+    }, []);
+
+    
   
     return (
       <>
@@ -84,7 +96,7 @@ export default function Courses() {
                 data-testid="course_wrapper"
               >
                 <span className="block text-right capitalize">
-                  [{course.category}]
+                  [{course.category.map((cat) => cat.name).join(", ")}]
                 </span>
                 <h3
                   className="mb-2 text-base font-bold"

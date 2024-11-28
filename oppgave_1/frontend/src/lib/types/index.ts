@@ -17,7 +17,7 @@ export type Comments = {
     slug: string;
     description: string;
     lessons: ALesson[]; 
-    category: string;
+    category: Category[];
   };
 
   export type Comment = {
@@ -31,3 +31,8 @@ export type Comments = {
       slug: string;
     };
   };
+export type Category ={
+  id: String;
+  name: String;
+}
+  

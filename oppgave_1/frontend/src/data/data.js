@@ -1,5 +1,5 @@
 export const courses = [
-  {
+  /*{
     id: '1',
     title: 'JavaScript 101',
     slug: 'javascript-101',
@@ -104,7 +104,7 @@ export const courses = [
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore',
     lessons: [],
     category: 'analytics',
-  },
+  },*/
 ]
 
 export const users = [

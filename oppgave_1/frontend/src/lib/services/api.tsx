@@ -18,7 +18,7 @@ export const getLesson = async (courseSlug: string, lessonSlug:string) => {
 
 export const getCourse = async (courseSlug: string) => {
     try {
-      const response = await fetch(`https://localhost:4000/v1/courses?course=${courseSlug}`);
+      const response = await fetch(`https://localhost:3999/v1/courses?course=${courseSlug}`);
   
       if (!response.ok) {
         throw new Error("Feil ved fetch av Courses: " + response.statusText);
@@ -29,7 +29,7 @@ export const getCourse = async (courseSlug: string) => {
       if (!responseJson.success) {
         throw new Error("API-feil: " + responseJson.error.message);
       }
-  
+      console.log(responseJson)
       return responseJson.data; 
     } catch (error) {
       console.error(error);
@@ -48,6 +48,7 @@ export const getComments = async (lessonSlug: string): Promise<Comment[]>  => {
         }
         const responseJson = await response.json()
         return responseJson
+        
     } catch (error) {
         throw error        
     }
