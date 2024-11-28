@@ -1,5 +1,396 @@
 
 
+# Sider
+
+### arrangementer.no
+app/page.tsx
+
+Hva man kan gjøre på siden:
+- Oversikt alle arrangementer
+    - Viser arrangementers dato, navn, kategori, pris
+    - Viser arrangementers deltakerstatus: Ledig, fullt, eller venteliste om mulig
+- Kan sortere/filtrere på måned, år og kategori(type)
+- Hvis admin: Viser Opprett arrangement knapp
+
+API Kall siden gjør:
+
+/events
+* get
+
+
+### arrangementer.no/events?type=sport&month=april
+Bruker query params for å hente filtrert data
+
+- Filter blir satt i frontend, og sender da denne forespørselen til backend.
+- Backend svarer da på en slik query param med riktig data.
+
+- Bruker gjør dropdown på "Sport" -> frontend sender API-kallet /events?type=sport.
+- Bruker velger så måned "april" -> frontend sender API-kallet /events?type=sport&month=april
+
+
+API Kall siden gjør:
+/events?type=sport&month=april (query params)
+
+### arrangementer.no/arrangement/:slug
+app/events/page.tsx
+
+
+Hva man kan gjøre på siden:
+- Se informasjon for ett arrangement
+- Melde seg på arrangementet
+    - "Meld deg på" knapp viser "melde seg på"-funksjonalitet
+        - Legger til én deltager
+        - Kunne legge til flere deltakere
+        - Kan ikke legge til flere deltakere utover det som er av ledig plasser 
+            - Hvis arrangement har venteliste, kan sette hele påmeldingen på venteliste (hele gruppen)
+        - Kan slette/fjerne lagt til deltakere
+        - Ser samlet pris for alle deltakere
+        - Kunne sende påmelding
+        - 
+
+KUN admin:
+- Se admin panel for arrangementet
+    - Redigere innhold -> Tar deg til /opprett/arrangement/id (utfylt)
+        - Sjekk i hook: Denne har id med, så da blir det update-kall
+    - Se alle påmeldte deltakere
+        - Kunne forandre deltakerliste (Godkjenne/Avslå/Slett)
+    - Kunne slette arrangement
+    - Kunne laste ned statistikk
+    - Kunne legge til deltaker manuelt
+
+API Kall siden gjør:
+
+/events/:event-slug (slette arrangementet)
+* get
+* delete
+
+/events/:id/delete/:user-id (slette en bruker)
+* delete
+
+### arrangementer.no/opprett/arrangement/:id/
+### arrangementer.no/opprett/arrangement/mal/:mal-id
+( mal/:mal-id tilsvarer opprettelse av et arrangement med privat mal-oppsett)
+
+Hook avgjør om det blir post eller update -> er id her eller ikke
+
+Hva man kan gjøre på siden:
+
+FELLES 
+- Velge mal
+    - Viser kun maler hvor private = False
+- Velge kategori (type)
+- Sette arrangement navn
+- Sette arrangement slug
+- Sette beskrivelse av arrangement
+    - Legge til paragraf i beskrivelse
+- Publisere arrangement
+
+MED mal
+- Velge dato
+    - Hvis mal har faste ukedager, så må dato som velges være en av ukedagene
+    - Vise hvilke ukedager som er valgbare
+        - Hvis mal ikke tillater flere arrangementer på samme dag...
+            - Sjekk om det finnes arrangementer som bruker samme mal, og samme dato - Får da ikke lov å opprette arrangement
+- Hvis mal har fast pris...
+    - Grå ut pris-valg
+- Sette pris OM mal ikke har fastsatt pris
+- Hvis mal har fast antall plasser...
+    - Grå ut antall ledige plasser
+- Sette antall ledige plasser OM mal ikke har fastsatt plasser
+
+
+UTEN mal
+- Velge dato
+- Sette pris på arrangement
+- Sette antall ledige plasser om ønskelig (ellers unlimited)
+- Tillate venteliste 
+
+
+API Kall siden gjør:
+
+/templates
+* get -> for å hente tilgjengelige maler (ikke-private)
+
+/events/template/:id
+* get -> når siden er /mal/:id
+
+/events/create
+* post
+
+/events/:event-slug
+* get
+* update
+
+### arrangementer.no/opprett/mal
+
+Hva man kan gjøre på siden:
+- Sette navn på mal
+- Velge om mal er privat
+- Velge om mal tillater andre arrangementer på samme dag
+- Velge om mal tillater venteliste
+- Velge om mal har fast-pris, og hva denne i så fall er
+    - Hvis fast-pris, og ingen settes, så er fastpris lik 0 (default i Type)
+- Velge om mal har begrenset antall plasser
+- Låse mal til bestemte ukedager
+    - Hvis ingen velges, så er alle dager tillatt 
+    - .... og hvis alle velges er alle dager tillatt ;)
+    - Backend sjekker mot Weekday[] liste
+- Publisere mal
+
+
+- Hvis mal privat
+    - Videresend til opprett/arrangement/mal/:mal-id når publisert
+
+
+API Kall siden gjør:
+
+/templates/create
+* post
+
+
+# Typer
+
+### Event
+    - id
+    - slug
+    - body
+    - pris
+    - kategori
+    - dato
+    - adresse
+    - deltakere
+    - venteliste true/false
+    - venteliste Participant[]
+
+### Participant
+    - id
+    - navn
+    - epost
+
+### Template
+    - (id) 
+    - navn (er id)
+    - private true/false
+    - allowSameDay true/false
+    - waitlist true/false
+    - setPrice true/false
+    - price int
+    - limitedParticipants true/false
+    - maxParticipants 
+    - fixedWeekdays Weekdays[]
+
+### Weekdays ENUM 
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
+    - Sunday
+
+### Categories ENUM
+    - Sport
+    - Social
+    - Meeting
+    - Other
+
+# API endepunkter
+
+## /events
+### Verb
+> get
+
+#### Responses
+Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 200
+}
+  
+ Failour: {
+    success: false,
+    error: {
+    code: 400 eller 404,
+    message: String
+    }
+}
+
+
+
+## /events/sort/
+### Verb
+> get
+/events?type=sport&month=april
+
+( Kommer tilbake til det )
+
+
+## /events/create
+### Verb
+> post
+
+#### Responses
+Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 201
+}
+
+Failour: {
+    success: false,
+    error: {
+    code: 400, 401, 403 eller 404,
+    message: String
+    }
+}
+
+
+
+## /events/:event-slug
+### Verb
+>get
+#### Responses
+Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 200}
+
+Failour: {
+    success: false,
+    error: {
+        code: 400 eller 404,
+        message: String
+    }
+}
+
+> update
+#### Responses
+ Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 201
+}
+
+ Failour: {
+    success: false,
+    error: {
+    code: 400, 401, 403 eller 404,
+    message: String
+    }
+}
+> delete
+#### Responses
+ Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 201
+}
+
+Failour: {
+    success: false,
+    error: {
+    code: 400, 401, 403 eller 404,
+    message: String
+    }
+}
+
+
+## /events/:id/delete/:user-id
+### Verb
+> delete
+#### Responses
+ Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 201
+}
+
+Failour: {
+    success: false,
+    error: {
+    code: 400, 401, 403 eller 404,
+    message: String
+    }
+}
+
+## /templates
+### Verb
+> get
+#### Responses
+Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 200}
+
+Failour: {
+    success: false,
+    error: {
+        code: 400 eller 404,
+        message: String
+    }
+}
+
+## /templates/create
+### Verb
+> post
+#### Responses
+Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 201
+}
+
+Failour: {
+    success: false,
+    error: {
+    code: 400, 401, 403 eller 404,
+    message: String
+    }
+}
+
+## /events/template/:template-id
+### Verb
+> get
+#### Responses
+Successfull: {
+    {
+    success: true,
+    Data: T
+    }
+    , 200}
+
+Failour: {
+    success: false,
+    error: {
+        code: 400 eller 404,
+        message: String
+    }
+}
+
+
+
+
+
+
+--------------------------
+
+
 # Mappestruktur
 
 # Frontend
