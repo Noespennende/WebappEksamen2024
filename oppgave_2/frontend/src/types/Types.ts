@@ -30,8 +30,8 @@ export type template = {
     price: number,
     limitedParticipants: boolean,
     maxParticipants: number,
-    fixedWeekdays: Weekday[]
-
+    fixedWeekdays: Weekday[],
+    template?: UUID
 }
 
 export enum categories {
