@@ -53,23 +53,64 @@ const createComment = async (data) => {
   await comments.push(data);
 };*/
 
-export default function Course() {
+export interface CourseProps {
+  courseSlug: string;
+  lessonSlug: string;
+}
+
+export default function Course({ courseSlug, lessonSlug }: CourseProps) {
     const [content, setContent] = useState<Course | null>(null);
     //const lessonSlug = "variabler";
     //const courseSlug = "javascript-101";
-    const params = useParams() as { courseSlug: string; lessonSlug?: string };
-    const courseSlug = params.courseSlug
-    const lessonSlug = params.lessonSlug
+
+    console.log("course coomponent slug: " + courseSlug)
+
+    //const params = useParams() as { courseSlug: string; lessonSlug?: string };
+    //const courseSlug = params.courseSlug
+    //const lessonSlug = params.lessonSlug
     
   
+
+    useEffect(() => {
+      const fetchCourse = async () => {
+          try {
+              const courseData = await getCourse(courseSlug);
+              //console.log("Fetched course data in component:", courseData);
+              setContent(courseData.data); 
+          } catch (err: any) {
+              
+          }
+      };
+
+      fetchCourse();
+  }, [courseSlug]);
+/*
     useEffect(() => {
       const getContent = async () => {
-        const data = await getCourse(courseSlug);
-        setContent(data);
-        console.log(data)
+        try {
+          const response = await fetch(`http://localhost:3999/v1/courses/${courseSlug}`);
+    
+          if (!response.ok) {
+            throw new Error(`Failed to fetch course: ${response.status}`);
+          }
+    
+          const data = await response.json();
+          
+          
+          console.log("test:", data);
+
+          console.log("test2" + data.data.id)
+          
+        
+          setContent(data.data);
+        } catch (error) {
+          console.error("Error fetching course:", error);
+        }
       };
+    
       getContent();
-    }, [courseSlug]);
+    }, [courseSlug]);*/
+
   
     return (
       <div className="grid grid-cols-[250px_minmax(20%,1fr)_1fr] gap-16">
@@ -87,7 +128,7 @@ export default function Course() {
                   data-testid="lesson_url"
                   data-slug={lessonSlug}
                   className="block h-full w-full"
-                  href={`/kurs/${content?.slug}/${lesson.slug}`}
+                  href={`/courses/${content?.slug}/${lesson.slug}`}
                 >
                   {lesson.title}
                 </a>
@@ -97,7 +138,7 @@ export default function Course() {
         </aside>
         {lessonSlug ? (
           <article>
-            <Lesson />
+            <Lesson courseSlug={courseSlug} lessonSlug={lessonSlug} />
           </article>
         ) : (
           <section>

@@ -22,7 +22,9 @@ export default function Courses() {
       }
     };
 
-  
+    const handleCourseClick = (slug: string,) => {
+  router.push(`/kurs/${slug}`);
+};
 
 
 
@@ -51,6 +53,7 @@ export default function Courses() {
           }));
           
           console.log("Formatted data:", formatData);
+         
           setData(formatData);
         } catch (err) {
           console.error("Error fetching or formatting data:", err);
@@ -94,6 +97,7 @@ export default function Courses() {
                 className="rounded-lg border border-slate-400 px-6 py-8"
                 key={course.id}
                 data-testid="course_wrapper"
+                onClick={() => handleCourseClick(course.slug)}
               >
                 <span className="block text-right capitalize">
                   [{course.category.map((cat) => cat.name).join(", ")}]
@@ -102,7 +106,7 @@ export default function Courses() {
                   className="mb-2 text-base font-bold"
                   data-testid="courses_title"
                 >
-                  <a href={`/kurs/${course.slug}`}>{course.title}</a>
+                  <a href={`/courses/${course.slug}`}>{course.title}</a>
                 </h3>
                 <p
                   className="mb-6 text-base font-light"
@@ -113,8 +117,9 @@ export default function Courses() {
                 <a
                   className="font-semibold underline"
                   data-testid="courses_url"
-                  href={`/kurs/${course.slug}`}
-                  onClick={() => handleCourseClick(course.slug)}
+                  
+                  href={`/courses/${course.slug}`}
+                
                 >
                   Til kurs
                 </a>

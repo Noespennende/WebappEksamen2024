@@ -6,7 +6,7 @@ import { getComments, createComment } from "@/lib/services/api";
 import { Course, ALesson, Comment } from "@/lib/types";
 import { useState } from "react";
 
-export default function Lesson() {
+export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string , lessonSlug: string}) {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
     const [lessonComments, setComments] = useState<Comment[]>([]);
@@ -14,12 +14,18 @@ export default function Lesson() {
     const [name, setName] = useState("");
     //const [lesson, setLesson] = useState(null);
     //const [course, setCourse] = useState(null);
-    const courseSlug = "javascript-101";
-    const lessonSlug = "variabler";
+    
+   
 
     const [comment, setComment] = useState("");
     const lesson: ALesson | undefined = useLesson(courseSlug, lessonSlug);
-    const course: Course | undefined = useCourse(courseSlug);
+    const { course } = useCourse(courseSlug);
+    console.log("testet " + course?.category)
+    //console.log("lesson1  " + lesson?.preAmble)
+    //console.log("lesson2  " + course?.data)
+
+    //console.log("slug course lesson" + courseSlug + " lessonslug " + lessonSlug)
+    
     const lessonComment = useComment(lessonSlug);
   
     const handleComment = (event: any) => {
@@ -68,12 +74,12 @@ export default function Lesson() {
       <div>
         <div className="flex justify-between">
           <h3 data-testid="course_title" className="mb-6 text-base font-bold">
-            <a className="underline" href={`/kurs/${course?.slug}`}>
+            <a className="underline" href={`/courses/${course?.slug}`}>
               {course?.title}
             </a>
           </h3>
           <span data-testid="course_category">
-            Kategori: <span className="font-bold">{course?.category}</span>
+            Kategori: <span className="font-bold">{course?.category?.name}</span>
           </span>
         </div>
         <h2 className="text-2xl font-bold" data-testid="lesson_title">
@@ -85,8 +91,8 @@ export default function Lesson() {
         >
           {lesson?.preAmble}
         </p>
-        {lesson?.text?.length > 0 &&
-          lesson.text.map((text) => (
+        {(lesson?.text ?? []).length > 0 &&
+          (lesson?.text ?? []).map((text) => (
             <p
               data-testid="lesson_text"
               className="mt-4 font-normal"

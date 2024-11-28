@@ -8,21 +8,11 @@ import SignUp from "@/components/SignUp";
 export default function Home() {
   return (
     <main className="h-full">
-      
+      <h1>Welcome to the Home Page</h1>
       <Courses />
-
-
- <Course />
-
-
-
-
-
-<Lesson />
-
-
-<SignUp />
+      <SignUp />
     </main>
   );
 }
-import React from "react";
+import React from "react";import Link from "next/link";
+

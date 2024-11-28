@@ -1,58 +1,60 @@
 import { Comment, Course } from "../types"
 
 
-export const getLesson = async (courseSlug: string, lessonSlug:string) => {
+export const getLesson = async (courseSlug: string, lessonSlug: string) => {
     try {
-        const response = await fetch(`https://localhost:4000/lessons?course=${courseSlug}&lesson=${lessonSlug}`)
+        const response = await fetch(`http://localhost:3999/v1/courses/${courseSlug}/lessons/${lessonSlug}`);
 
-        if(!response.ok){
-            throw new Error("Feil ved fetch av Lesson" + response.statusText)
+        if (!response.ok) {
+            throw new Error("Feil ved fetch av Lesson: " + response.statusText);
         }
-        const responseJson = await response.json()
-        
-        return responseJson
+        const responseJson = await response.json();
+        //console.log("fetchLesson data:", JSON.stringify(responseJson.data, null, 2))
+        return responseJson.data;
     } catch (error) {
-        throw error
+        throw error;
     }
 }
+
 
 export const getCourse = async (courseSlug: string) => {
     try {
-      const response = await fetch(`https://localhost:3999/v1/courses?course=${courseSlug}`);
+        const response = await fetch(`http://localhost:3999/v1/courses/${courseSlug}`);
   
-      if (!response.ok) {
-        throw new Error("Feil ved fetch av Courses: " + response.statusText);
-      }
-  
-      const responseJson = await response.json();
-  
-      if (!responseJson.success) {
-        throw new Error("API-feil: " + responseJson.error.message);
-      }
-      console.log(responseJson)
-      return responseJson.data; 
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-
-export const getComments = async (lessonSlug: string): Promise<Comment[]>  => {
-    try {
-        //endre denne til å fetche comments på course
-        const response = await fetch(`https://localhost:4000/lessons?course=${lessonSlug}`)
-
-        if(!response.ok){
-            throw new Error("Feil ved fetch av Courses" + response.statusText)
+        if (!response.ok) {
+            throw new Error("Feil ved fetch av Courses: " + response.statusText);
         }
-        const responseJson = await response.json()
-        return responseJson
+  
+        const responseJson = await response.json();
+        //console.log("Response for course:", JSON.stringify(responseJson, null, 2)); 
         
+        if (!responseJson || !responseJson.data) {
+            throw new Error("Feil ved henting av kursdata.");
+        }
+  
+        return responseJson; 
     } catch (error) {
-        throw error        
+        console.error("Error fetching course:", error);
+        throw error;
     }
-}
+};
+
+
+export const getComments = async (lessonSlug: string): Promise<Comment[]> => {
+    try {
+        // Assuming you want to fetch comments for a lesson based on the lessonSlug
+        const response = await fetch(`https://localhost:3999/comments?lesson=${lessonSlug}`);
+
+        if (!response.ok) {
+            throw new Error("Feil ved fetch av Comments: " + response.statusText);
+        }
+        const responseJson = await response.json();
+        return responseJson;
+    } catch (error) {
+        console.error("Error fetching comments:", error);
+        throw error;
+    }
+};
 
 export const createComment = async (commentData: Comment): Promise<Comment> => {
     try {

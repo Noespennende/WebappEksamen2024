@@ -8,8 +8,9 @@ export const useLesson = (courseSlug: string, lessonSlug: string) => {
 
     useEffect(() => {
         const fetchLesson = async () =>{
+            //console.log("Fetching lesson for:", courseSlug, lessonSlug);
             const data = await getLesson(courseSlug, lessonSlug)
-
+            //console.log("Lesson data received:", data);
             setLesson(data)
         }
         fetchLesson()
