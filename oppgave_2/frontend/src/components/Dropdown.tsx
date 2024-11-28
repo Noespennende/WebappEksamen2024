@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react"
 
 type dropdownProps = {
@@ -10,6 +11,8 @@ export default function Dropdown({defaultText, options, onCategorySelect} : drop
 
     const [buttonText, setButtonText] = useState(defaultText)
 
+
+
     const handleCategoryClick = (selectedCategory: String) => {
         setButtonText(selectedCategory)
         onCategorySelect(selectedCategory)
@@ -21,7 +24,7 @@ export default function Dropdown({defaultText, options, onCategorySelect} : drop
             <ul className="dropdownOptions">
                 <li onClick={() => handleCategoryClick(defaultText)}>{defaultText}</li>
                 {options.map((option, index) => (
-                    <li key={`${defaultText}`+`${index}`} onClick={() => handleCategoryClick(option)}></li>
+                    <li key={`${defaultText}`+`${index}`} onClick={() => handleCategoryClick(option)}>{option}</li>
                 )
             )}
             </ul>

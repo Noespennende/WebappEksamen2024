@@ -30,7 +30,7 @@ export type template = {
     price: number,
     limitedParticipants: boolean,
     maxParticipants: number,
-    fixedWeekdays: weekdays[]
+    fixedWeekdays: Weekday[]
 
 }
 
@@ -41,7 +41,7 @@ export enum categories {
     Other = "Andre"
 }
 
-export enum weekdays {
+export enum Weekday {
     Monday = "Mandag",
     Tuesday = "Tirsdag",
     Wednesday = "Onsdag",
@@ -50,3 +50,20 @@ export enum weekdays {
     Saturday = "Lørdag",
     Sunday = "Søndag"
 }
+
+export enum Month {
+    January = "Januar",
+    February = "Februar",
+    March = "Mars",
+    April = "April",
+    May = "Mai",
+    June = "Juni",
+    July = "Juli",
+    August = "August",
+    September = "September",
+    October = "Oktober",
+    November = "November",
+    December = "Desember",
+  }
+
+ 

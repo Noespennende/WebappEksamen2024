@@ -171,7 +171,7 @@ API Kall siden gjør:
     - (id) 
     - navn (er id)
     - private true/false
-    - allowSameDay true/false
+    - allowSameDayEvent true/false
     - waitlist true/false
     - setPrice true/false
     - price int
