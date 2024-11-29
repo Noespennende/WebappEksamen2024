@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  categories,
-  comments,
-  courseCreateSteps,
-  courses,
+  //categories,
+  //comments,
+  //courseCreateSteps,
+  //courses,
   users,
 } from "../data/data";
 
@@ -63,8 +63,6 @@ export default function Course({ courseSlug, lessonSlug }: CourseProps) {
     //const lessonSlug = "variabler";
     //const courseSlug = "javascript-101";
 
-    console.log("course coomponent slug: " + courseSlug)
-
     //const params = useParams() as { courseSlug: string; lessonSlug?: string };
     //const courseSlug = params.courseSlug
     //const lessonSlug = params.lessonSlug
@@ -75,7 +73,7 @@ export default function Course({ courseSlug, lessonSlug }: CourseProps) {
       const fetchCourse = async () => {
           try {
               const courseData = await getCourse(courseSlug);
-              //console.log("Fetched course data in component:", courseData);
+              //console.log("Fetched course data in component:", courseData.data);
               setContent(courseData.data); 
           } catch (err: any) {
               
@@ -84,6 +82,9 @@ export default function Course({ courseSlug, lessonSlug }: CourseProps) {
 
       fetchCourse();
   }, [courseSlug]);
+
+
+  
 /*
     useEffect(() => {
       const getContent = async () => {

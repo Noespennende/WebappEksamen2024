@@ -3,30 +3,41 @@ import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
 import { useLesson } from "@/hooks/useLesson";
 import { getComments, createComment } from "@/lib/services/api";
-import { Course, ALesson, Comment } from "@/lib/types";
-import { useState } from "react";
+import { ALesson, CommentNoLesson } from "@/lib/types";
+import { useEffect, useState } from "react";
 
 export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string , lessonSlug: string}) {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
-    const [lessonComments, setComments] = useState<Comment[]>([]);
+    const [lessonComments, setComments] = useState<CommentNoLesson[]>([]);
     //const [comment, setComment] = useState("");
     const [name, setName] = useState("");
     //const [lesson, setLesson] = useState(null);
     //const [course, setCourse] = useState(null);
     
    
-
     const [comment, setComment] = useState("");
     const lesson: ALesson | undefined = useLesson(courseSlug, lessonSlug);
     const { course } = useCourse(courseSlug);
-    console.log("testet " + course?.category)
-    //console.log("lesson1  " + lesson?.preAmble)
-    //console.log("lesson2  " + course?.data)
-
-    //console.log("slug course lesson" + courseSlug + " lessonslug " + lessonSlug)
     
-    const lessonComment = useComment(lessonSlug);
+    const lessonComment = useComment(courseSlug, lessonSlug);
+    useEffect(() => {
+      if (Array.isArray(lessonComment)) {
+        const formattedComments = lessonComment.map((comment) => ({
+          id: comment.id,
+          comment: comment.comment,
+          createdBy: comment.createdBy,
+        }));
+        setComments(formattedComments);
+      } else {
+        console.log("No comments found or invalid format.");
+        setComments([]); 
+      }
+    }, [lessonComment]);
+  
+    useEffect(() => {
+  
+    }, [lessonComment]);
   
     const handleComment = (event: any) => {
       setComment(event.target.value);
@@ -52,8 +63,9 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
           comment,
           lesson: { slug: lessonSlug },
         });
-        const commentsData = await getComments(lessonSlug);
+        const commentsData = await getComments(courseSlug, lessonSlug);
         setComments(commentsData);
+        console.log('Fetched comments:', commentsData);
         setSuccess(true);
       }
     };
@@ -91,8 +103,8 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
         >
           {lesson?.preAmble}
         </p>
-        {(lesson?.text ?? []).length > 0 &&
-          (lesson?.text ?? []).map((text) => (
+        {lesson?.text.length > 0 &&
+          lesson?.text.map((text) => (
             <p
               data-testid="lesson_text"
               className="mt-4 font-normal"
