@@ -7,6 +7,7 @@ export default function Event(){
 
     return (
         <section>
+            <div className="loader"></div>
             
         </section>
     )
