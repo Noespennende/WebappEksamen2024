@@ -5,7 +5,7 @@ const TemplateBaseSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
     price: z.number(),
-    maxParticipants: z.number().default(0),
+    maxParticipants: z.number().optional(),
     private: z.boolean(),
     setPrice: z.boolean(),
     allowSameDayEvent: z.boolean(),

@@ -1,11 +1,10 @@
+import CreateTemplate from '@/features/template/pages/create';
 import React from 'react';
 
-const CreateTemplate = () => {
+const CreateTemplatePage = () => {
     return (
-        <div>
-            <h1>Opprett Mal</h1>
-        </div>
+        <CreateTemplate/>
     );
 };
 
-export default CreateTemplate;
+export default CreateTemplatePage;
