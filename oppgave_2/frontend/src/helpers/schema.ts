@@ -25,11 +25,15 @@ export const LoadingStatusEnum = z.enum([
 
 export const FetchEnum = z.enum(["get", "getOne", "post", "delete", "update"])
 
+export const participantAprovalStatusEnum = z.enum(
+    ["Godkjent", "Avslått", "Ingen",],
+)
 
 export const ParticipantBaseSchema = z.object({
     id: z.string().uuid(),
-    date: z.date(),
-    email: z.string().email()
+    name: z.string(),
+    email: z.string().email(),
+    aprovalStatus: participantAprovalStatusEnum,
 });
 
 

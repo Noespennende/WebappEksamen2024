@@ -21,7 +21,16 @@ export const OccasionSchema = OccasionBaseSchema.extend({
     waitinglistParticipants: z.array(ParticipantSchema)
 })
 
-export const EventCreateSchema = OccasionSchema.omit({ id: true });
+export const adminParticipantActionEnum = z.enum(
+    ["Velg handling", "Godkjenn", "Avslå", "Slett"],
+)
+
+export const participantStatusEnum = z.enum(
+    ["Deltager", "Venteliste",],
+)
+
+
+export const OcasionCreateSchema = OccasionSchema.omit({ id: true });
 
 
 /* Validation */
@@ -31,5 +40,5 @@ export const validateEvent = (data: unknown) => {
 }
 
 export const validateCreateEvent = (data: unknown) => {
-    return EventCreateSchema.safeParse(data)
+    return OcasionCreateSchema.safeParse(data)
 }
