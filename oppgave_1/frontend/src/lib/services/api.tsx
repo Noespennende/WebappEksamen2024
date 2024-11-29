@@ -9,7 +9,7 @@ export const getLesson = async (courseSlug: string, lessonSlug: string) => {
             throw new Error("Feil ved fetch av Lesson: " + response.statusText);
         }
         const responseJson = await response.json();
-        //console.log("fetchLesson data:", JSON.stringify(responseJson.data, null, 2))
+
         return responseJson.data;
     } catch (error) {
         throw error;
@@ -31,7 +31,7 @@ export const getCourses = async () => {
             throw new Error("Feil ved henting av kursdata.");
         }
   
-        return responseJson.data;  // Assuming responseJson.data contains the courses array
+        return responseJson.data; 
     } catch (error) {
         console.error("Error fetching courses:", error);
         throw error;
@@ -47,7 +47,7 @@ export const getCourse = async (courseSlug: string) => {
         }
   
         const responseJson = await response.json();
-        //console.log("Response for course:", JSON.stringify(responseJson, null, 2)); 
+     
         
         if (!responseJson || !responseJson.data) {
             throw new Error("Feil ved henting av kursdata.");
@@ -71,15 +71,14 @@ export const getComments = async (courseSlug: string, lessonSlug: string): Promi
 
         const responseJson = await response.json();
 
-        // Check the full API response for structure
-        //console.log("Full API response:", responseJson);
+     
 
         const comments = responseJson.data.comments || [];
 
         return comments;
     } catch (error) {
         console.error("Error fetching comments:", error);
-        return []; // Return empty array in case of error
+        return [];
     }
 };
 
@@ -139,7 +138,7 @@ export const createCourse = async (courseData: Course, courseSlug: string): Prom
                 throw new Error("Feil ved henting av kursdata.");
             }
       
-            return responseJson.data;  // Assuming responseJson.data contains the courses array
+            return responseJson.data;
         } catch (error) {
             console.error("Error fetching courses:", error);
             throw error;

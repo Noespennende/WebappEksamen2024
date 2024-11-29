@@ -1,19 +1,18 @@
 import { getComments } from "@/lib/services/api"
 import { useEffect, useState } from "react"
+import {Comment} from "../lib/types/index"
 
+  export const useComment = (courseSlug: string, lessonSlug: string) => {
+    const [comments, setComments] = useState<Comment[]>([]);
 
-export const useComment = (lessonSlug: string) => {
-    const [comments, setComments] = useState<Comment[]>([])
-
-    useEffect (() => {
+    useEffect(() => {
         const fetchComments = async () => {
-            const data = await getComments(lessonSlug)
-            setComments(data)
-        }
+            const data: Comment[] = await getComments(courseSlug, lessonSlug);
+            setComments(data || []);
+        };
+
         fetchComments();
-    }, [lessonSlug])
+    }, [courseSlug, lessonSlug]);
 
-        return comments
-
-    
-}
+    return comments;
+};

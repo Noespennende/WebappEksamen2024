@@ -12,16 +12,13 @@ export const useCourse = (courseSlug: string) => {
             setLoading(true);
             setError(null);
 
-            try {
-                console.log("usecourse  for:", courseSlug);
+            try {        
                 const data = await getCourse(courseSlug);
-                console.log("usecourse Course data received:", data.data);
+            
                 setCourse(data.data);
                
             } catch (err) {
-                console.error("Error fetching course:", err);
-                setError("Kunne ikke hente kursdata.");
-                console.log("usecourse Course etter " + course)
+                setError("Kunne ikke hente kursdata.");             
             } finally {
                 setLoading(false);
             }
