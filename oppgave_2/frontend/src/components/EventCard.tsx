@@ -1,12 +1,12 @@
 "use client";
-import { EventStatus, OccationCategory } from "@/types/Types";
+import { OccasionStatus, OccasionCategory } from "@/types/Types";
 import Link from "next/link";
 
 type eventCardProps = {
-    event: OccationCategory
+    occation: OccasionCategory
 }
 
-export default function EventCard({event}: eventCardProps) {
+export default function EventCard({occation: event}: eventCardProps) {
 
     const dayAndMonth = Intl.DateTimeFormat("nb-NO", {
         day: "numeric",
@@ -18,7 +18,7 @@ export default function EventCard({event}: eventCardProps) {
         year: "numeric"
     }).format(event.date)
 
-    let status: EventStatus = "Ledig"
+    let status: OccasionStatus = "Ledig"
 
     if (event.maxParticipants && event.participants.length >= event.maxParticipants){
         if( event.waitinglist){

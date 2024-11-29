@@ -20,7 +20,7 @@ export default function EventCards(){
                 <ul>
                 {data?.map((meet, index) => (
                     <li className="eventCardListElement" key={`eventCard${index}`}>
-                        <EventCard event={meet}/>
+                        <EventCard occation={meet}/>
                     </li>
                 ))}
             </ul>
