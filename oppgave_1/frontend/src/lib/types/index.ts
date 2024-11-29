@@ -22,7 +22,7 @@ export type Category = {
     slug: string;
     description: string;
     lessons?: ALesson[]; 
-    category: Category[];
+    category: Category;
   };
 
   export type Comment = {
@@ -53,8 +53,8 @@ export interface CourseFieldsProps {
     title: string;
     slug: string;
     description: string;
-    category: Category[]; 
-    lessons?: ALesson[];
+    category: Category; 
+    //lessons?: ALesson[];
   };
   handleFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   handleCategoryChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;

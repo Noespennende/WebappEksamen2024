@@ -1,11 +1,19 @@
+import { ALesson, Category } from '@/lib/types';
 import React from 'react';
 
 interface CourseReviewProps {
-  courseFields: { title: string; slug: string; description: string; category: string };
-  lessons: Array<{ title: string; slug: string; preAmble: string; text: Array<{ text: string }> }>;
+  courseFields: { 
+    title: string; 
+    slug: string; 
+    description: string; 
+    category: Category;  
+  };
+  lessons: ALesson[];
 }
 
 export default function CourseReview({ courseFields, lessons }: CourseReviewProps){
+
+  console.log("corsereview " + JSON.stringify(courseFields.category))
     return (
       <section data-testid="review">
         <h3 data-testid="review_course" className="mt-4 text-lg font-bold">
@@ -14,7 +22,7 @@ export default function CourseReview({ courseFields, lessons }: CourseReviewProp
         <p data-testid="review_course_title">Tittel: {courseFields?.title}</p>
         <p data-testid="review_course_slug">Slug: {courseFields?.slug}</p>
         <p data-testid="review_course_description">Beskrivelse: {courseFields?.description}</p>
-        <p data-testid="review_course_category">Kategori: {courseFields?.category}</p>
+        <p data-testid="review_course_category">Kategori: {courseFields.category.name}</p>
         <h3 data-testid="review_course_lessons" className="mt-4 text-lg font-bold">
           Leksjoner ({lessons?.length})
         </h3>

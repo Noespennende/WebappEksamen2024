@@ -1,12 +1,14 @@
 import { CourseFieldsProps } from "@/lib/types";
 
-export default function CreateCourseFields({ courseFields, handleFieldChange, categories = [] }: CourseFieldsProps){
+export default function CreateCourseFields({
+  courseFields,
+  handleFieldChange,
+  categories = [],
+  handleCategoryChange,
+}: CourseFieldsProps) {
 
-  console.log("CreateCourse ", courseFields)
-  console.log("categories ", categories)
+  console.log("Current category in courseFields:", courseFields.category);
 
-  
-    
   return (
     <div data-testid="course_step" className="max-w-lg">
       <label className="mb-4 flex flex-col" htmlFor="title">
@@ -52,12 +54,12 @@ export default function CreateCourseFields({ courseFields, handleFieldChange, ca
           data-testid="form_category"
           name="category"
           id="category"
-          value={courseFields.category[0]?.id || ""}
-          onChange={handleFieldChange}
+          value={courseFields.category.id || ""}
+          onChange={handleCategoryChange}
         >
           <option disabled value="">
             Velg kategori
-            </option>
+          </option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -67,5 +69,4 @@ export default function CreateCourseFields({ courseFields, handleFieldChange, ca
       </label>
     </div>
   );
-};
-
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface LessonListProps {
+export interface LessonListProps {
   lessons: Array<{ id: string; title: string; slug: string }>;
   currentLessonIndex: number;
   changeCurrentLesson: (index: number) => void;
