@@ -1,69 +1,12 @@
-import { UUID } from "crypto";
+import { EventCategoryEnum, MonthEnum, ParticipantCreateSchema, ParticipantSchema, WeekdayEnum } from "@/helpers/schema";
+import { z } from "zod";
 
-export type event = {
-    id: UUID,
-    slug: String,
-    body: String[],
-    price: number,
-    category: categories,
-    date: Date,
-    adress: String,
-    participants: participant[],
-    waitingList: boolean,
-    waitingListParticipants: participant[]
+export type Participant = z.infer<typeof ParticipantSchema>;
 
-}
+export type CreateParticipant = z.infer<typeof ParticipantCreateSchema>;
 
-export type participant = {
-    id: UUID,
-    name: String,
-    email: String
-}
+export type EventCategory = z.infer<typeof EventCategoryEnum>;
 
-export type template = {
-    id: UUID,
-    name: String,
-    private: boolean,
-    allowSameDayEvent: boolean,
-    waitList: boolean,
-    setPrice: boolean,
-    price: number,
-    limitedParticipants: boolean,
-    maxParticipants: number,
-    fixedWeekdays: Weekday[]
+export type Weekday = z.infer<typeof WeekdayEnum>
 
-}
-
-export enum categories {
-    Sport = "Sport",
-    Social = "Sosialt",
-    Meeting = "Møte",
-    Other = "Andre"
-}
-
-export enum Weekday {
-    Monday = "Mandag",
-    Tuesday = "Tirsdag",
-    Wednesday = "Onsdag",
-    Thursday = "Torsdag",
-    Friday = "Fredag",
-    Saturday = "Lørdag",
-    Sunday = "Søndag"
-}
-
-export enum Month {
-    January = "Januar",
-    February = "Februar",
-    March = "Mars",
-    April = "April",
-    May = "Mai",
-    June = "Juni",
-    July = "Juli",
-    August = "August",
-    September = "September",
-    October = "Oktober",
-    November = "November",
-    December = "Desember",
-  }
-
- 
+export type Month = z.infer<typeof MonthEnum>
