@@ -5,7 +5,7 @@ export type Participant = z.infer<typeof ParticipantSchema>;
 
 export type CreateParticipant = z.infer<typeof ParticipantCreateSchema>;
 
-export type EventCategory = z.infer<typeof OccasionCategoryEnum>;
+export type OccationCategory = z.infer<typeof OccasionCategoryEnum>;
 
 export type Weekday = z.infer<typeof WeekdayEnum>
 
