@@ -7,7 +7,6 @@ import React from "react";
 export default function LessonPage() {
     const params = useParams<{ slug: string; lessonSlug: string }>();
 
-    console.log("params:", useParams());
     if (!params || !params.slug || !params.lessonSlug) {
         return <div> missing parameters...</div>;
       }
