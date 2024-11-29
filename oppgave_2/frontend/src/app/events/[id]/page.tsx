@@ -1,3 +1,18 @@
+"use client";
+
+import { useParams } from "next/navigation";
+
+export default function Event(){
+    const { id } = useParams()
+
+    return (
+        <section>
+            
+        </section>
+    )
+}
+
+
 
 
 // *Ett* event (Skisse Arrangement-side)

@@ -1,4 +1,4 @@
-import { EventCategoryEnum, MonthEnum, ParticipantCreateSchema, ParticipantSchema, WeekdayEnum } from "@/helpers/schema";
+import { EventCategoryEnum, EventStatusEnum, MonthEnum, ParticipantCreateSchema, ParticipantSchema, WeekdayEnum } from "@/helpers/schema";
 import { z } from "zod";
 
 export type Participant = z.infer<typeof ParticipantSchema>;
@@ -10,3 +10,5 @@ export type EventCategory = z.infer<typeof EventCategoryEnum>;
 export type Weekday = z.infer<typeof WeekdayEnum>
 
 export type Month = z.infer<typeof MonthEnum>
+
+export type EventStatus = z.infer<typeof EventStatusEnum>
