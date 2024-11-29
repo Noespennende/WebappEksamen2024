@@ -1,3 +1,5 @@
+"use client";
+
 import HomePageSort from "@/components/HomePageSort";
 import React from "react";
 

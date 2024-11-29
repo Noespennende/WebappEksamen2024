@@ -11,7 +11,8 @@ const EventBaseSchema = z.object({
     address: z.string(),
     body: z.array(z.string()),
     waitinglist: z.boolean(),
-    template: z.string().uuid().optional()
+    template: z.string().uuid().optional(),
+    maxParticipants: z.number().optional()
 });
 
 export const EventSchema = EventBaseSchema.extend({

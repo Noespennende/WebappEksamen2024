@@ -15,6 +15,10 @@ export const MonthEnum = z.enum([
     "July", "August", "September", "October", "November", "December"
 ])
 
+export const EventStatusEnum = z.enum([
+    "Ledig", "Fullt", "Vente liste"
+])
+
 
 export const ParticipantBaseSchema = z.object({
     id: z.string().uuid(),

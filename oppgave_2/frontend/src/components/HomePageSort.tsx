@@ -1,13 +1,12 @@
 "use client";
 import Dropdown from "./Dropdown";
-import {Month ,categories } from "@/types/Types"
 import YearSortInput from "./YearSortInput";
+import { MonthEnum, EventCategoryEnum } from "@/helpers/schema";
 
 export default function HomePageSort(){
 
     const handleMonthDropdownClick = (month: String) => {
-        const monthEnum = Object.keys(Month).find((key) => Month[key as keyof typeof Month] === month)
-        console.log(monthEnum)
+        const monthEnum: typeof MonthEnum = Object.keys(MonthEnum).find((key) => MonthEnum[key as keyof typeof MonthEnum] === month)
     }
 
     const handleYearInput = (yearInput: number) => {
@@ -16,16 +15,16 @@ export default function HomePageSort(){
         }
     }
 
-    const handleCategorySelect = (category: String) => {
-
+    const handleCategorySelect = (eventCategory: String) => {
+        const eventCategoryEnum: typeof EventCategoryEnum = Object.keys(EventCategoryEnum).find((key) => EventCategoryEnum[key as keyof typeof EventCategoryEnum] === eventCategory)
     }
 
     return(
         <section id="frontPageSort">
             <h3>Sorter</h3>
-            <Dropdown defaultText="Måned" options={Object.values(Month)} onCategorySelect={handleMonthDropdownClick}/>
+            <Dropdown defaultText="Måned" options={Object.values(MonthEnum)} onCategorySelect={handleMonthDropdownClick}/>
             <YearSortInput onInput={handleYearInput}/>
-            <Dropdown defaultText="Kategori" options={Object.values(categories)} onCategorySelect={handleCategorySelect}/>
+            <Dropdown defaultText="Kategori" options={Object.values(EventCategoryEnum)} onCategorySelect={handleCategorySelect}/>
         </section>
     )
 }
