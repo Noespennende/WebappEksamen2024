@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prisma } from "./prisma";
 import { Failure, Result, Success } from "./types";
-import { Course, Lesson, validateCourse, validateCreateCourse, validateCreateLesson } from "./helpers/schema";
+import { Category, Course, Lesson, validateCourse, validateCreateCourse, validateCreateLesson } from "./helpers/schema";
 
 const app = new Hono();
 
@@ -571,6 +571,28 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
   });
 });
 
+app.get("/v1/categories", async (c) => {
+  try {
+    const categories = await prisma.category.findMany();
+
+    const response: Success<Category[]> = {
+      success: true,
+      data: categories,
+    };
+
+    return c.json(response, 200);
+  } catch (error) {
+    const response: Failure = {
+      success: false,
+      error: {
+        code: "400",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+    };
+
+    return c.json(response, 400);
+  }
+});
 
 
 
