@@ -1,15 +1,17 @@
 'use client';
-import { categories, courses } from "@/data/data";
+import { courses } from "@/data/data";
 import { Course } from "@/lib/types";
 import React, { useEffect, useState } from "react";
 import router from "next/router";
 
 export default function Courses() {
     const [value, setValue] = useState("");
+    const [categories, setCategories] = useState<string[]>([]);
     const [data, setData] = useState<Course[]>(courses);
   
     const handleFilter = (event:any) => {
       const category = event.target.value;
+      console.log(category)
       setValue(category);
       if (category && category.length > 0) {
         const content = courses.filter((course) =>
@@ -17,15 +19,15 @@ export default function Courses() {
         );
         
         setData(content);
+        
       } else {
         setData(courses);
       }
     };
 
     const handleCourseClick = (slug: string,) => {
-  router.push(`/kurs/${slug}`);
+  router.push(`/courses/${slug}`);
 };
-
 
 
     useEffect(() => {
@@ -45,7 +47,7 @@ export default function Courses() {
             throw new Error("API did not return a valid courses array.");
           }
         
-          const formatData = coursesData.data.map((course: Course) => ({
+          const formatData: Course [] = coursesData.data.map((course: Course) => ({
             ...course,
             category: Array.isArray(course.category)
               ? course.category
@@ -55,6 +57,15 @@ export default function Courses() {
           console.log("Formatted data:", formatData);
          
           setData(formatData);
+
+          const uniqueCategories = Array.from(
+            new Set(
+              formatData.flatMap((course) =>
+                course.category.map((cat) => cat.name)
+              )
+            )
+          ).map(String);
+          setCategories(uniqueCategories);
         } catch (err) {
           console.error("Error fetching or formatting data:", err);
         }
@@ -64,7 +75,7 @@ export default function Courses() {
     }, []);
 
     
-  
+  console.log("CATEGORIES " + JSON.stringify(categories))
     return (
       <>
         <header className="mt-8 flex items-center justify-between">
