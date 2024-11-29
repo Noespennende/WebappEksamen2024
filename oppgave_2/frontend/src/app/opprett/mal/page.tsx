@@ -1,10 +1,11 @@
-import CreateTemplate from '@/features/template/pages/create';
+
+import CreateTemplatePage from '@/features/template/pages/create';
 import React from 'react';
 
-const CreateTemplatePage = () => {
+const CreateTemplateSection = () => {
     return (
-        <CreateTemplate/>
+        <CreateTemplatePage/>
     );
 };
 
-export default CreateTemplatePage;
+export default CreateTemplateSection;

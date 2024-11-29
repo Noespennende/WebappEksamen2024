@@ -4,7 +4,7 @@ import { TemplateCreateSchema, TemplateSchema } from "../helpers/schema";
 
 export type Template = z.infer<typeof TemplateSchema>;
 
-export type CreateTemplate = z.infer<typeof TemplateSchema>;
+export type CreateTemplate = z.infer<typeof TemplateCreateSchema>;
 
 
 /* Validation */

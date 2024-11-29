@@ -4,10 +4,10 @@ import { z } from "zod";
 const TemplateBaseSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
-    price: z.number(),
-    maxParticipants: z.number().optional(),
-    private: z.boolean(),
-    setPrice: z.boolean(),
+    price: z.number().min(0).optional(),
+    maxParticipants: z.number().min(1).optional(),
+    isPrivate: z.boolean(),
+    fixedPrice: z.boolean(),
     allowSameDayEvent: z.boolean(),
     waitList: z.boolean(),
     limitedParticipants: z.boolean(),
@@ -15,7 +15,7 @@ const TemplateBaseSchema = z.object({
 
 
 export const TemplateSchema = TemplateBaseSchema.extend({
-    fixedWeekdays: z.array(WeekdayEnum) 
+    fixedWeekdays: z.array(WeekdayEnum).default([])
 })
 
 export const TemplateCreateSchema = TemplateSchema.omit({ id: true });
