@@ -1,8 +1,8 @@
 
-import { EventCategoryEnum, ParticipantSchema } from "@/helpers/schema";
+import { OccasionCategoryEnum, ParticipantSchema } from "@/helpers/schema";
 import { z } from "zod";
 
-const EventBaseSchema = z.object({
+const OccasionBaseSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
     slug: z.string(),
@@ -15,19 +15,19 @@ const EventBaseSchema = z.object({
     maxParticipants: z.number().optional()
 });
 
-export const EventSchema = EventBaseSchema.extend({
-    category: EventCategoryEnum,
+export const OccasionSchema = OccasionBaseSchema.extend({
+    category: OccasionCategoryEnum,
     participants: z.array(ParticipantSchema),
     waitinglistParticipants: z.array(ParticipantSchema)
 })
 
-export const EventCreateSchema = EventSchema.omit({ id: true });
+export const EventCreateSchema = OccasionSchema.omit({ id: true });
 
 
 /* Validation */
 
 export const validateEvent = (data: unknown) => {
-    return EventSchema.safeParse(data)
+    return OccasionSchema.safeParse(data)
 }
 
 export const validateCreateEvent = (data: unknown) => {

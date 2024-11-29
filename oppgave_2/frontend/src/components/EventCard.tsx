@@ -1,10 +1,10 @@
 "use client";
-import { Event} from "@/features/events/types";
+import { Occasion} from "@/features/events/types";
 import { EventStatus } from "@/types/Types";
 import Link from "next/link";
 
 type eventCardProps = {
-    event: Event
+    event: Occasion
 }
 
 export default function EventCard({event}: eventCardProps) {

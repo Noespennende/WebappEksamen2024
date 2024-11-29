@@ -1,4 +1,13 @@
-@import 'reset.scss';
+@import '/frontend/src/styles/css/reset.css';
+@import './components/loading.css';
+
+
+:root{
+  /*colors*/
+  --lightGreen: #d8fa00;
+  --green: #b4cc1e;
+}
+
 
 
 html {

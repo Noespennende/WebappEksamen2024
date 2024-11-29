@@ -1,24 +1,33 @@
 "use client";
 
-import { Event } from "@/features/events/types";
+import { Occasion } from "@/features/events/types";
 import EventCard from "./EventCard";
 
 export default function EventCards(){
 
     /*const {data, status} = useEvents()*/
 
+    let status = {loading: true}
+
     /*temp kode. <SLETT></SLETT>*/
-    const data: Event[] = []
+    const data: Occasion[] = []
 
     return(
         <section id="eventCards">
-            <ul>
+
+            { status.loading ? (<div className="loader"></div>) : 
+            (
+                <ul>
                 {data?.map((meet, index) => (
                     <li className="eventCardListElement" key={`eventCard${index}`}>
                         <EventCard event={meet}/>
                     </li>
                 ))}
             </ul>
+
+            )
+        }
+            
         </section>
     )
 }

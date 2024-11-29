@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { EventCreateSchema, EventSchema } from "../helpers/schema";
+import { EventCreateSchema, OccasionSchema } from "../helpers/schema";
 
 
-export type Event = z.infer<typeof EventSchema>;
+export type Occasion = z.infer<typeof OccasionSchema>;
 
 export type CreateEvent = z.infer<typeof EventCreateSchema>;

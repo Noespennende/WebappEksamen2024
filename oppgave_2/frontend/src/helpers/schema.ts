@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 
-export const EventCategoryEnum = z.enum([
+export const OccasionCategoryEnum = z.enum([
     "Sport", "Social", "Meeting", "Other"
 ])
 
@@ -18,6 +18,12 @@ export const MonthEnum = z.enum([
 export const EventStatusEnum = z.enum([
     "Ledig", "Fullt", "Vente liste"
 ])
+
+export const LoadingStatusEnum = z.enum([
+    "idle", "loading", "error", "success", "fetching", "posting", "deleting"
+])
+
+export const FetchEnum = z.enum(["get", "getOne", "post", "delete", "update"])
 
 
 export const ParticipantBaseSchema = z.object({
@@ -39,7 +45,7 @@ export const validateParticipant = (data: unknown) => {
 }
 
 export const validateEventCategory = (data: unknown) => {
-    return EventCategoryEnum.safeParse(data)
+    return OccasionCategoryEnum.safeParse(data)
 }
 
 export const validateWeekday = (data: unknown) => {
