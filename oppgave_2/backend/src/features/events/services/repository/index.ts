@@ -110,7 +110,7 @@ export const createOccationRepository = () => {
       });
     },
 
-    // Add a participant to the waiting list
+  
     async addParticipantToWaitingList(occasionSlug: string, participantData: { name: string; email: string; status: string }) {
       const occasion = await prisma.occasionBaseSchema.findUnique({ where: { slug: occasionSlug } });
       if (!occasion) throw new Error('Occasion not found');
@@ -125,7 +125,7 @@ export const createOccationRepository = () => {
       });
     },
 
-    // Reject a participant from an occasion
+    
     async rejectParticipantFromOccasion(occasionSlug: string, participantEmail: string) {
       const occasion = await prisma.occasionBaseSchema.findUnique({ where: { slug: occasionSlug } });
       if (!occasion) throw new Error('Occasion not found');
