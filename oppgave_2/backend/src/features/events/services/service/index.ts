@@ -1,5 +1,6 @@
 import { occasionRepository, OccasionRepository } from "../repository";
-import { OccasionBaseSchema } from "@prisma/client";
+
+import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
 import { CreateOccation } from "../../types";
 
 
@@ -51,9 +52,11 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
         throw new Error("error updating")
       }
     }
+
     
     };
   };
+
 
   export const occasionService = createOccasionService(occasionRepository)
   export type OccasionService = ReturnType<typeof createOccasionService>;
