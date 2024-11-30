@@ -1,4 +1,4 @@
-import { OccasionRepository } from "../repository";
+import { occasionRepository, OccasionRepository } from "../repository";
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
 import { CreateOccation } from "../../types";
 
