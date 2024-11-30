@@ -44,7 +44,7 @@ function codeToStatus(code: ErrorCode): StatusCode {
     }
   }
 
-
+  //funksjon tatt fra https://github.com/mariuswallin/hiof-webapp-2024/blob/main/v5-next/backend/src/lib/error.ts
   export function errorResponse(c: Context, code: ErrorCode, message: string) {
     return c.json(
       {
