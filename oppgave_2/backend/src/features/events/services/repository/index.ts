@@ -1,5 +1,13 @@
 
 
+export const createEventRepository = () => {
+
+}
+
+export const eventRepository = createEventRepository();
+
+export type EventService = ReturnType<typeof createEventRepository>;
+
 /*
 #### @/features/admin/services/repository/index.ts
 - Innerste laget. 

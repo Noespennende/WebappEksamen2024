@@ -1,4 +1,8 @@
-///EVENTS
+import { Hono } from "hono";
+import HonoEnv from "@/app";
+import { errorResponse } from "@/lib/error";
+
+
 
 
 

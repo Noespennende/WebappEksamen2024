@@ -1,4 +1,11 @@
+import {eventRepository, EventRepository} from "../repository"
 
+export  const createEventService = (
+    eventRepository: EventRepository
+) => {}
+
+export const eventService = createEventService( eventRepository)
+export type EventService = ReturnType<typeof createEventService>;
 /*
 #### @/features/admin/services/service/index.ts
 - Laget mellom controller og repository
