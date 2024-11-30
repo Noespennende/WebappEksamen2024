@@ -27,12 +27,12 @@ model Participant {
 model OccasionBaseSchema {
   id String @id @default(uuid()) 
   name String
-  slug String
+  slug String @unique
   price Int
   adress String 
   waitingList Boolean
-  template String
-  maxParticipants Int
+  template String?
+  maxParticipants Int?
   category String
   date DateTime 
   participants Participant[] @relation("Participant")
