@@ -23,7 +23,8 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
     const [error, setErrror] = useState(false)
 
 
-    const handleDelete = () => {
+    const handleDeleteOccasion = () => {
+        
         //remove(occasion.id)
     }
 
@@ -111,7 +112,6 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     occasion.recejectedParticipants.push(participant)
                 }
             } else if (option == "Slett") {
-
                 occasion.recejectedParticipants = occasion.recejectedParticipants.filter(p => p !== participant)
             }
 
@@ -145,7 +145,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
             <div id="editDeleteDownloadEventButtons">
                 <Link href={`/opprett/arrangement/${occasion.id}`} className="button">Rediger innhold</Link>
                 <Link href={`/arrangement/${occasion.id}/lastned`} className="button">Last ned statistikk</Link>
-                <button className="button delete" onClick={handleDelete}>Slett arrangement</button>
+                <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
             </div>
             <p is="eventPageAdminPanelProfit">Samlet forventet intekt {`${occasion.price * (occasion.participants.length)}`} kr</p>
             <section id="eventPageAdminPanelParticipants">
