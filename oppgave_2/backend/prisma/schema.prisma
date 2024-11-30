@@ -14,46 +14,52 @@ datasource db {
 }
 
 model Participant {
-  id String @id @default(uuid()) 
-  name String
-  email String @unique
-  approvalStatus String
-  createdAt DateTime @default(now())
-  OccasionBaseSchema OccasionBaseSchema[] @relation("Participant")
-  WaitingOccasionBaseSchema OccasionBaseSchema[] @relation("WaitingParticipant")
+  id                         String               @id @default(uuid())
+  name                       String
+  email                      String               @unique
+  approvalStatus             String
+  createdAt                  DateTime             @default(now())
+  OccasionBaseSchema         OccasionBaseSchema[] @relation("Participant")
+  WaitingOccasionBaseSchema  OccasionBaseSchema[] @relation("WaitingParticipant")
   RejectedOccasionBaseSchema OccasionBaseSchema[] @relation("RejectedParticipant")
 }
 
 model OccasionBaseSchema {
-  id String @id @default(uuid()) 
-  name String
-  slug String @unique
-  price Int
-  adress String 
-  waitingList Boolean
-  template String?
-  maxParticipants Int?
-  category String
-  date DateTime 
-  participants Participant[] @relation("Participant")
-  waitingListParticipants Participant[] @relation("WaitingParticipant")
-  rejectedParticipants Participant[] @relation("RejectedParticipant")
-  
-  templates TemplateBaseSchema[] @relation("OccasionToTemplate")
+  id                      String               @id @default(uuid())
+  name                    String
+  slug                    String               @unique
+  price                   Int
+  adress                  String
+  waitingList             Boolean
+  template                String?
+  maxParticipants         Int?
+  category                String
+  date                    DateTime
+  participants            Participant[]        @relation("Participant")
+  waitingListParticipants Participant[]        @relation("WaitingParticipant")
+  rejectedParticipants    Participant[]        @relation("RejectedParticipant")
+  body                    String[]         
+  templates               TemplateBaseSchema[] @relation("OccasionToTemplate")
+}
+
+model BodyEntry {
+  id         String             @id @default(uuid())
+  content    String
+  occasion   OccasionBaseSchema @relation("OccasionToBodyEntries", fields: [occasionId], references: [id])
+  occasionId String
 }
 
 model TemplateBaseSchema {
-  id String @id @default(uuid()) 
-  name String
-  price Int
-  maxParticipants Int
-  isPrivate Boolean
-  fixedPrice Boolean
-  allowSameDayEvent Boolean
-  waitList Boolean
+  id                  String               @id @default(uuid())
+  name                String
+  price               Int
+  maxParticipants     Int
+  isPrivate           Boolean
+  fixedPrice          Boolean
+  allowSameDayEvent   Boolean
+  waitList            Boolean
   limitedParticipants Boolean
-  fixedWeekDays OccasionBaseSchema[] @relation("OccasionToTemplate")
-  relatedTemplates TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
-  relatedTo TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+  fixedWeekDays       OccasionBaseSchema[] @relation("OccasionToTemplate")
+  relatedTemplates    TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+  relatedTo           TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
 }
-

@@ -11,7 +11,7 @@ const OccassionBaseSchema = z.object({
     date: z.date(),
     address: z.string(),
     body: z.array(z.string()),
-    waitinglist: z.boolean(),
+    waitingList: z.boolean(),
     template: z.string().uuid().optional(),
     maxParticipants: z.number().min(1).optional()
 });
@@ -30,8 +30,6 @@ export const OccationCreateSchema = OccassionSchema.omit({ id: true });
 export const ParticipantStatusEnum = z.enum(
     ["Deltager", "Venteliste", "Avslått"],
 )
-
-
 
 
 /* Validation */

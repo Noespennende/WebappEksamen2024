@@ -6,14 +6,29 @@ const prisma = new PrismaClient()
 export const createOccationRepository = () => {
   return {
     async getAllOccations() {
-      return await prisma.occasionBaseSchema.findMany({
+      const variable =  await prisma.occasionBaseSchema.findMany({
         include: {
             participants: true,
+            body:{
+              select: {
+                content: true
+              }
+            },
             waitingListParticipants: true,
             rejectedParticipants: true,
             templates: true
         }
       });
+
+      const bodyList = []
+
+      for(object in prisma.body) {
+      bodylist.push(object.content)
+      }
+
+const data = {id = prisma.id, .... body = bodyList}
+      console.log("getall sjekk " + JSON.stringify(variable))
+      return{success: true, data: variable}
     },
 
     async getOccasionById(occationSlug: string) {
@@ -36,7 +51,7 @@ export const createOccationRepository = () => {
         body: string[];
         waitingList: boolean;
         template?: string | null;
-        maxParticipants: number;
+        maxParticipants?: number;
        
         
       }) {
