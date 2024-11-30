@@ -54,7 +54,7 @@ export default function CreateCourseFields({
           data-testid="form_category"
           name="category"
           id="category"
-          value={courseFields.category.id || ""}
+          value={courseFields.categoryId || ""}
           onChange={handleCategoryChange}
         >
           <option disabled value="">

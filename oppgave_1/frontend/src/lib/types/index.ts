@@ -1,3 +1,4 @@
+/*
 export type Comments = {
     id: string;
     text: string;
@@ -44,18 +45,26 @@ export type Category = {
         name: string;
     };
     comment: string;
-  };
+  }; 
+  */
+
+import { z } from "zod";
+import { userSchema, courseSchema, lessonSchema, lessonTextSchema, commentSchema, categorySchema, createCourseSchema, createLessonSchema } from "./schema";
+
+
+export type User = z.infer<typeof userSchema>;
+export type Course = z.infer<typeof courseSchema>;
+export type CreateCourse = z.infer<typeof createCourseSchema>;
+export type Lesson = z.infer<typeof lessonSchema>;
+export type CreateLesson = z.infer<typeof createLessonSchema>;
+export type LessonText = z.infer<typeof lessonTextSchema>;
+export type Comment = z.infer<typeof commentSchema>;
+export type Category = z.infer<typeof categorySchema>;
 
 
 
 export interface CourseFieldsProps {
-  courseFields: {
-    title: string;
-    slug: string;
-    description: string;
-    category: Category; 
-    //lessons?: ALesson[];
-  };
+  courseFields: CreateCourse
   handleFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   handleCategoryChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   categories: Category[]; // Assuming categories is also an array of Category objects

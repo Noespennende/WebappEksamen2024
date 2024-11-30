@@ -1,4 +1,4 @@
-import { Category, Comment, Course } from "../types"
+import { Category, Comment, Course, CreateCourse } from "../types"
 
 
 export const getLesson = async (courseSlug: string, lessonSlug: string) => {
@@ -103,7 +103,7 @@ export const createComment = async (commentData: Comment, courseSlug: string, le
     }
 };
 
-export const createCourse = async (courseData: Course): Promise<Course> => {
+export const createCourse = async (courseData: CreateCourse): Promise<Course> => {
     try {
         const response = await fetch(`https://localhost:3999/courses/`,{
             method: 'POST',

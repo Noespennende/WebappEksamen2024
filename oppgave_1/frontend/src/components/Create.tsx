@@ -11,7 +11,7 @@ import LessonCreateList, { LessonListProps } from "./LessonCreateList";
 import CourseReview from "./CourseReview";
 import FormCheck from "./FormCheck";
 import NavigationByStep from "./NavigationByStep";
-import { ALesson, Course, CourseFieldsProps } from "@/lib/types";
+import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson } from "@/lib/types";
 import { useCategories } from "@/hooks/useCategoriest";
 
   const isValidCourse = (courseFields: CourseFieldsProps['courseFields']) => {
@@ -20,8 +20,8 @@ import { useCategories } from "@/hooks/useCategoriest";
     if (!courseFields.title) invalidFields.push('title');
     if (!courseFields.slug) invalidFields.push('slug');
     if (!courseFields.description) invalidFields.push('description');
-    console.log("Category value: ", courseFields.category);
-    if (!courseFields.category) invalidFields.push('category');
+    console.log("Category value: ", courseFields.categoryId);
+    if (!courseFields.categoryId) invalidFields.push('categoryId');
   
    
     if (invalidFields.length > 0) {
@@ -31,9 +31,10 @@ import { useCategories } from "@/hooks/useCategoriest";
     return true;
   };
 
-  const isValid = (lessons: ALesson[]): boolean => {
+  const isValid = (lessons: CreateLesson[]): boolean => {
     return lessons.every(lesson => {
-      return lesson.title && lesson.slug && lesson.preAmble && lesson.text && lesson.text.length > 0;
+      return lesson.title 
+      && lesson.slug && lesson.preAmble && lesson.text && lesson.text.length > 0;
     });
   };
   export const courseCreateSteps = [
@@ -48,19 +49,14 @@ export default function Create() {
     const [formError, setFormError] = useState(false);
     const [current, setCurrent] = useState(0);
     const [currentLesson, setCurrentLesson] = useState(0);
-    const [courseFields, setCourseFields] = useState<Course>({
-      id: `${Math.floor(Math.random() * 1000 + 1)}`,
+    const [courseFields, setCourseFields] = useState<CreateCourse>({
       title: "",
       slug: "",
       description: "",
-      category: {id:"", name:""},
+      categoryId: "",
       lessons: [],
-
     });
-    const [lessons, setLessons] = useState<ALesson[]>([]);
-    
-  
-    const router = useRouter();
+    const [lessons, setLessons] = useState<CreateLesson[]>([]);
     
     const { course } = useCourse(courseSlug);
     const lesson = useLesson(courseSlug, lessonSlug);
@@ -77,27 +73,19 @@ export default function Create() {
     
         setCourseFields((prevCourseFields) => ({
           ...prevCourseFields,
-          id: course.id,
           title: course.title,
           slug: course.slug,
           description: course.description,
-          category: course.category,
-          lessons: lessonArray.length > 0 
+          categoryId: course.category.id,
+          lessons: lessonArray.length > 0
             ? lessonArray.map((l) => ({
-                id: l.id,
                 title: l.title,
                 slug: l.slug,
                 preAmble: l.preAmble,
-                text: l.text.map((t: { id: any; text: any; }) => ({
-                  id: t.id,
-                  createdBy: {
-                    id: "defaultUserId",
-                    name: "Default User",
-                  },
-                  comment: t.text,
-                  lesson: {
-                    slug: l.slug,
-                  },
+                comments: [],
+                text: l.text.map((t: { id: string; text: string }) => ({
+                  text: t.text,
+                  orderPosition: 0,
                 })),
               }))
             : [], 
@@ -122,12 +110,12 @@ export default function Create() {
         setSuccess(true);
         setCurrent(2);
 
-    
+        
         await createCourse({
           ...courseFields,
-          category: courseFields.category, 
+          categoryId: courseFields.categoryId, 
           lessons,
-        }, courseSlug);
+        });
 
         setTimeout(() => {
           //router.push("/courses"); hvis denne ligger her blir den automatisk pusha til leksjoner i create fjern denne for å teste det
@@ -140,18 +128,16 @@ export default function Create() {
     const addTextBox = () => {
       const updatedLessonText = lessons.map((lesson, i) => {
         if (currentLesson === i) {
-          const text = [
-            { id: `${Math.floor(Math.random() * 1000 + 1)}`, text: "" },
-          ];
-          if (lesson.text.length === 0) {
-            text.push({
-              id: `${Math.floor(Math.random() * 1000 + 1)}`,
+          const text = lesson.text ?? [];
+          const newText = [
+            {
               text: "",
-            });
-          }
+              orderPosition: text.length,
+            },
+          ];
           return {
             ...lesson,
-            text: [...lesson.text, ...text],
+            text: [...text, ...newText],
           };
         }
         return lesson;
@@ -160,7 +146,13 @@ export default function Create() {
     };
   
     const removeTextBox = (index: number) => {
+      if (!lessons[currentLesson]?.text) {
+        // Hvis `text` ikke finnes, returner tidlig eller håndter feilen.
+        return;
+      }
+    
       const removed = lessons[currentLesson].text.filter((_, i) => i !== index);
+    
       const updatedLessonText = lessons.map((lesson, i) => {
         if (currentLesson === i) {
           return {
@@ -170,6 +162,7 @@ export default function Create() {
         }
         return lesson;
       });
+    
       setLessons(updatedLessonText);
     };
   
@@ -295,7 +288,7 @@ export default function Create() {
       
       setCourseFields((prev) => ({
         ...prev,
-        category: selectedCategory || prev.category,
+        categoryId: selectedCategory?.id || prev.categoryId,
       }));
     };
   
