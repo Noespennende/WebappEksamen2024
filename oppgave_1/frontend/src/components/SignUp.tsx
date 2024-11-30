@@ -1,6 +1,8 @@
+'use client';
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-function SignUp() {
+export default function SignUp() {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
     const [fields, setFields] = useState({
@@ -12,7 +14,7 @@ function SignUp() {
   
     const formIsValid = Object.values(fields).filter((val) => val?.length === 0);
   
-    const handleSubmit = (event) => {
+    const handleSubmit = (event:any) => {
       event.preventDefault();
       setFormError(false);
       setSuccess(false);
@@ -26,7 +28,7 @@ function SignUp() {
       }
     };
   
-    const handleChange = (event) => {
+    const handleChange = (event: any) => {
       const { name, value } = event.target;
       setFields((prev) => ({ ...prev, [name]: value }));
     };

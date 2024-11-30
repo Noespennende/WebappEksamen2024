@@ -1,30 +1,53 @@
+'use client';
+import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
 import { useLesson } from "@/hooks/useLesson";
-import { useState } from "react";
+import { getComments, createComment } from "@/lib/services/api";
+import { ALesson, CommentNoLesson } from "@/lib/types";
+import { useEffect, useState } from "react";
 
-export default function Lesson() {
+export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string , lessonSlug: string}) {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
-    const [lessonComments, setComments] = useState([]);
+    const [lessonComments, setComments] = useState<CommentNoLesson[]>([]);
     //const [comment, setComment] = useState("");
     const [name, setName] = useState("");
     //const [lesson, setLesson] = useState(null);
     //const [course, setCourse] = useState(null);
-    const courseSlug = "javascript-101";
-    const lessonSlug = "variabler";
-
-    const lesson = useLesson(courseSlug, lessonSlug)
-    const course = useCourse(courseSlug)
+    
+   
+    const [comment, setComment] = useState("");
+    const lesson: ALesson | undefined = useLesson(courseSlug, lessonSlug);
+    const { course } = useCourse(courseSlug);
+    
+    const lessonComment = useComment(courseSlug, lessonSlug);
+    useEffect(() => {
+      if (Array.isArray(lessonComment)) {
+        const formattedComments = lessonComment.map((comment) => ({
+          id: comment.id,
+          comment: comment.comment,
+          createdBy: comment.createdBy,
+        }));
+        setComments(formattedComments);
+      } else {
+        console.log("No comments found or invalid format.");
+        setComments([]); 
+      }
+    }, [lessonComment]);
   
-    const handleComment = (event) => {
+    useEffect(() => {
+  
+    }, [lessonComment]);
+  
+    const handleComment = (event: any) => {
       setComment(event.target.value);
     };
   
-    const handleName = (event) => {
+    const handleName = (event: any) => {
       setName(event.target.value);
     };
   
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event:any) => {
       event.preventDefault();
       setFormError(false);
       setSuccess(false);
@@ -40,8 +63,9 @@ export default function Lesson() {
           comment,
           lesson: { slug: lessonSlug },
         });
-        const commentsData = await getComments(lessonSlug);
+        const commentsData = await getComments(courseSlug, lessonSlug);
         setComments(commentsData);
+        console.log('Fetched comments:', commentsData);
         setSuccess(true);
       }
     };
@@ -62,12 +86,12 @@ export default function Lesson() {
       <div>
         <div className="flex justify-between">
           <h3 data-testid="course_title" className="mb-6 text-base font-bold">
-            <a className="underline" href={`/kurs/${course?.slug}`}>
+            <a className="underline" href={`/courses/${course?.slug}`}>
               {course?.title}
             </a>
           </h3>
           <span data-testid="course_category">
-            Kategori: <span className="font-bold">{course?.category}</span>
+            Kategori: <span className="font-bold">{course?.category?.name}</span>
           </span>
         </div>
         <h2 className="text-2xl font-bold" data-testid="lesson_title">
@@ -79,8 +103,8 @@ export default function Lesson() {
         >
           {lesson?.preAmble}
         </p>
-        {lesson?.text?.length > 0 &&
-          lesson.text.map((text) => (
+        {lesson?.text.length > 0 &&
+          lesson?.text.map((text) => (
             <p
               data-testid="lesson_text"
               className="mt-4 font-normal"

@@ -12,3 +12,6 @@ export type Failure = {
 };
 
 export type Result<T> = Success<T> | Failure;
+
+
+

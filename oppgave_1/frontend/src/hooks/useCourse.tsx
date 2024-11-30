@@ -1,20 +1,34 @@
-import { getCourse } from '@/lib/services/api'
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
+import { Course} from "../lib/types";
+import { getCourse } from "../lib/services/api"; 
 
-
-
-export const useCourse = (slug: any) => {
-    const [course, setCourse] = useState(null)
-
+export const useCourse = (courseSlug: string) => {
+    const [course, setCourse] = useState<Course | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchCourse = async () => {
-            const data = await getCourse(slug)
-            setCourse(data)
-        }
-        fetchCourse()
-    },[slug])
+            setLoading(true);
+            setError(null);
 
-    return course
-}
+            try {        
+                const data = await getCourse(courseSlug);
+            
+                setCourse(data.data);
+               
+            } catch (err) {
+                setError("Kunne ikke hente kursdata.");             
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (courseSlug) {
+            fetchCourse();
+        }
+    }, [courseSlug]);
+
+    return { course, loading, error };
+};
 

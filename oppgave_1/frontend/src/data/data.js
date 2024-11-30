@@ -1,5 +1,5 @@
 export const courses = [
-  {
+  /*{
     id: '1',
     title: 'JavaScript 101',
     slug: 'javascript-101',
@@ -104,7 +104,7 @@ export const courses = [
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore',
     lessons: [],
     category: 'analytics',
-  },
+  },*/
 ]
 
 export const users = [
@@ -114,7 +114,7 @@ export const users = [
   { id: '4', name: 'Kari Guttormsen', email: 'kari@email.no' },
   { id: '5', name: 'Sturla Simensen', email: 'sturla@email.no' },
 ]
-
+/*
 export const comments = [
   {
     id: '1',
@@ -137,7 +137,7 @@ export const courseCreateSteps = [
   { id: '2', name: 'Leksjoner' },
 ]
 
-export const categories = [
+export const categoriesArray = [
   'Marketing',
   'Photoshop',
   'Code',
@@ -146,4 +146,4 @@ export const categories = [
   'Web',
   'Design',
   'Empty',
-]
+]*/
