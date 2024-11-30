@@ -1,11 +1,24 @@
-import {eventRepository, EventRepository} from "../repository"
+import { OccasionInput } from "@/types";
+import { OccasionRepository } from "../repository"; // Correct import now
+import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
+import { UUID } from "crypto";
 
-export  const createEventService = (
-    eventRepository: EventRepository
-) => {}
 
-export const eventService = createEventService( eventRepository)
-export type EventService = ReturnType<typeof createEventService>;
+
+export const createOccasionService = (occasionRepository: OccasionRepository) => {
+    return {
+      async getAllOccasions() {
+        try {
+          const occasions = await occasionRepository.getAllOccations();
+          return occasions;
+        } catch (error) {
+          throw new Error("Error: Can't find any Occasions");
+        }
+      },
+
+     
+  };
+    
 /*
 #### @/features/admin/services/service/index.ts
 - Laget mellom controller og repository
