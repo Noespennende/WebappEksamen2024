@@ -1,7 +1,5 @@
-import { OccasionInput } from "@/types";
 import { OccasionRepository } from "../repository";
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
-import { UUID } from "crypto";
 import { CreateOccation } from "../../types";
 
 
