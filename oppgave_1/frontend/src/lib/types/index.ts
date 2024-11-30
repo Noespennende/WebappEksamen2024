@@ -49,7 +49,7 @@ export type Category = {
   */
 
 import { z } from "zod";
-import { userSchema, courseSchema, lessonSchema, lessonTextSchema, commentSchema, categorySchema, createCourseSchema, createLessonSchema } from "./schema";
+import { userSchema, courseSchema, lessonSchema, lessonTextSchema, commentSchema, categorySchema, createCourseSchema, createLessonSchema, CreateLessonTextSchema } from "./schema";
 
 
 export type User = z.infer<typeof userSchema>;
@@ -58,6 +58,7 @@ export type CreateCourse = z.infer<typeof createCourseSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 export type CreateLesson = z.infer<typeof createLessonSchema>;
 export type LessonText = z.infer<typeof lessonTextSchema>;
+export type CreateLessonText = z.infer<typeof CreateLessonTextSchema>;
 export type Comment = z.infer<typeof commentSchema>;
 export type Category = z.infer<typeof categorySchema>;
 

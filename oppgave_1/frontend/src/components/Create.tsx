@@ -11,7 +11,7 @@ import LessonCreateList, { LessonListProps } from "./LessonCreateList";
 import CourseReview from "./CourseReview";
 import FormCheck from "./FormCheck";
 import NavigationByStep from "./NavigationByStep";
-import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson } from "@/lib/types";
+import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson, LessonText, CreateLessonText } from "@/lib/types";
 import { useCategories } from "@/hooks/useCategoriest";
 
   const isValidCourse = (courseFields: CourseFieldsProps['courseFields']) => {
@@ -201,63 +201,91 @@ export default function Create() {
         index?: number
       ) => {
         const { name, value } = event.target;
-        console.log(`Field changed: ${name} = ${value}`)
+        console.log(`Field changed: ${name} = ${value}`);
+      
         if (current === 0) {
-          
           setCourseFields((prev) => ({
             ...prev,
-            [name]: value, 
+            [name]: value,
           }));
           console.log("handlelessonfield " + JSON.stringify(courseFields));
           if (isValidCourse(courseFields)) {
             //setCurrent(1); 
           }
         } else if (current === 1 && typeof index === 'number') {
-          const updatedText = lessons[currentLesson]?.text.map((comment, i) => {
+          // Sjekk om lessons[currentLesson]?.text eksisterer
+          const updatedText = lessons[currentLesson]?.text?.map((comment, i) => {
             if (i === index && name === 'text') {
-              return { ...comment, text: value }; 
+              return { ...comment, text: value };
             }
-            return comment; 
-          });
+            return comment;
+          }) || []; // Hvis undefined, fallback til tom array
       
           const updatedLessons = lessons.map((lesson, i) => {
             if (i === currentLesson) {
-              return { 
-                ...lesson, 
-                [name]: value, 
-                text: updatedText || [] 
+              return {
+                ...lesson,
+                [name]: value,
+                text: updatedText,
               };
             }
-            return lesson; 
+            return lesson;
           });
       
           setLessons(updatedLessons);
         }
       };
 
-      const handleLessonFieldChange = (event: { target: { name: any; value: any; }; }, index: number) => {
+      const handleLessonFieldChange = (
+        event: { target: { name: string; value: string; }; },
+        index: number
+      ) => {
         const { name, value } = event.target;
-        let text;
-        if (lessons[currentLesson]?.text?.length === 0) {
-          text = [{ id: `${Math.floor(Math.random() * 1000 + 1)}`, text: "" }];
-        }
-        if (lessons[currentLesson]?.text?.length > 0) {
-          text = lessons[currentLesson]?.text?.map((_text, i) => {
+      
+        // Hent den nåværende leksjonen
+        const currentLesson = lessons[index]; 
+      
+        // Hvis vi oppdaterer tittel eller slug
+        if (name === 'title' || name === 'slug' || name === 'preAmble') {
+          const updatedLessons = lessons.map((lesson, i) => {
             if (i === index) {
-              return { id: _text.id, [name]: value };
+              return {
+                ...lesson,   // Behold resten av lesson
+                [name]: value,  // Oppdaterer felt
+              };
             }
-            return _text;
+            return lesson;
           });
+      
+          setLessons(updatedLessons); 
         }
-    
-        const updatedLessons = lessons.map((lesson, i) => {
-          if (i === currentLesson) {
-            return { ...lesson, [name]: value, text: text?.length > 0 ? text : [] };
-          }
-          return lesson;
-        });
-        setLessons(updatedLessons);
+        // Hvis vi oppdaterer tekstfelt (f.eks. 'text' i leksjonen)
+        else if (name === 'text') {
+          const updatedText = currentLesson.text.map((text, i) => {
+            if (i === index) {
+              return {
+                ...text,
+                text: value,  // Oppdater spesifikk tekst
+              };
+            }
+            return text;
+          });
+      
+          const updatedLessons = lessons.map((lesson, i) => {
+            if (i === index) {
+              return { 
+                ...lesson, 
+                text: updatedText,  // Oppdater tekstarrayet
+              };
+            }
+            return lesson;
+          });
+      
+          setLessons(updatedLessons);  // Oppdaterer state med den nye listen
+        }
       };
+      
+      
 
   
     const changeCurrentLesson = (index: number) => {
@@ -269,10 +297,10 @@ export default function Create() {
       setLessons((prev) => [
         ...prev,
         {
-          id: `${Math.floor(Math.random() * 1000 + 1)}`,
           title: "",
           slug: "",
           preAmble: "",
+          comments: [],
           text: [],
         },
       ]);
@@ -329,6 +357,7 @@ export default function Create() {
               {lessons?.length > 0 ? (
                 <CreateLessonFields 
                   lesson={lessons[currentLesson]}
+                  lessonIndex={currentLesson}
                   handleLessonFieldChange={handleLessonFieldChange}
                   addTextBox={addTextBox}
                   removeTextBox={removeTextBox}

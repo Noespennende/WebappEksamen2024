@@ -7,7 +7,7 @@ export default function CreateCourseFields({
   handleCategoryChange,
 }: CourseFieldsProps) {
 
-  console.log("Current category in courseFields:", courseFields.category);
+  console.log("Current category in courseFields:", courseFields.categoryId);
 
   return (
     <div data-testid="course_step" className="max-w-lg">

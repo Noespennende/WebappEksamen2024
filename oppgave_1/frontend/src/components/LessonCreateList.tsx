@@ -1,7 +1,8 @@
+import { CreateLesson } from '@/lib/types';
 import React from 'react';
 
 export interface LessonListProps {
-  lessons: Array<{ id: string; title: string; slug: string }>;
+  lessons: Array<CreateLesson>;
   currentLessonIndex: number;
   changeCurrentLesson: (index: number) => void;
   addLesson: () => void;
@@ -27,7 +28,7 @@ export default function LessonCreateList({
                       ? "border border-transparent bg-emerald-200"
                       : "border border-slate-300 bg-transparent"
                   }`}
-                  key={lesson.id}
+                  key={currentLessonIndex}
                 >
                   <button
                     type="button"

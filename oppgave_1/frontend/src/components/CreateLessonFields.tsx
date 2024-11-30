@@ -1,14 +1,16 @@
-import { ALesson } from "@/lib/types";
+import { CreateLesson } from "@/lib/types";
 
 interface CreateLessonFieldsProps {
-  lesson: ALesson;
-  handleLessonFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number) => void;
+  lesson: CreateLesson;
+  lessonIndex: number;
+  handleLessonFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => void;
   addTextBox: () => void;
   removeTextBox: (index: number) => void;
 }
 
 export default function CreateLessonFields({
   lesson,
+  lessonIndex,
   handleLessonFieldChange,
   addTextBox,
   removeTextBox
@@ -25,7 +27,7 @@ export default function CreateLessonFields({
           name="title"
           id="title"
           value={lesson.title}
-          onChange={(e) => handleLessonFieldChange(e)}
+          onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
         />
       </label>
       
@@ -38,7 +40,7 @@ export default function CreateLessonFields({
           name="slug"
           id="slug"
           value={lesson.slug}
-          onChange={(e) => handleLessonFieldChange(e)}
+          onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
         />
       </label>
 
@@ -51,7 +53,7 @@ export default function CreateLessonFields({
           name="preAmble"
           id="preAmble"
           value={lesson.preAmble}
-          onChange={(e) => handleLessonFieldChange(e)}
+          onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
         />
       </label>
 

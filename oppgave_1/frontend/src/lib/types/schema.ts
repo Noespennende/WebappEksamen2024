@@ -106,6 +106,10 @@ export const createCourseSchema = courseBaseSchema.omit({
     lessons: z.array(createLessonSchema).optional(),
   });
 
+export const CreateLessonTextSchema = lessonTextBaseSchema.omit({
+    id: true,
+    lessonId: true,
+})
 
 export const createCommentSchema = commentBaseSchema.omit({
     id: true
