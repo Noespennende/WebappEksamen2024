@@ -103,9 +103,9 @@ export const createComment = async (commentData: Comment, courseSlug: string, le
     }
 };
 
-export const createCourse = async (courseData: Course, courseSlug: string): Promise<Course> => {
+export const createCourse = async (courseData: Course): Promise<Course> => {
     try {
-        const response = await fetch(`https://localhost:3999/${courseSlug}`,{
+        const response = await fetch(`https://localhost:3999/courses/`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'Application/json'
