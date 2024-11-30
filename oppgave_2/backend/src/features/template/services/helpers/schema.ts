@@ -1,16 +1,13 @@
-
 import { z } from "zod";
 import { WeekdayEnum } from "@/helpers/schema";
 
-
-
 const TemplateBaseSchema = z.object({
     id: z.string().uuid(),
-    name: z.string(),
-    price: z.number(),
-    maxParticipants: z.number().default(0),
-    private: z.boolean(),
-    setPrice: z.boolean(),
+    name: z.string().min(3),
+    price: z.number().min(0).optional(),
+    maxParticipants: z.number().min(1).optional(),
+    isPrivate: z.boolean(),
+    fixedPrice: z.boolean(),
     allowSameDayEvent: z.boolean(),
     waitList: z.boolean(),
     limitedParticipants: z.boolean(),
@@ -18,17 +15,10 @@ const TemplateBaseSchema = z.object({
 
 
 export const TemplateSchema = TemplateBaseSchema.extend({
-    fixedWeekdays: z.array(WeekdayEnum) 
+    fixedWeekdays: z.array(WeekdayEnum).default(WeekdayEnum.options)
 })
 
 export const TemplateCreateSchema = TemplateSchema.omit({ id: true });
-
-
-/* Types */
-
-export type Template = z.infer<typeof TemplateSchema>;
-
-export type CreateTemplate = z.infer<typeof TemplateSchema>;
 
 
 /* Validation */

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 
-export const EventCategoryEnum = z.enum([
+export const OccasionCategoryEnum = z.enum([
     "Sport", "Social", "Meeting", "Other"
 ])
 
@@ -14,45 +14,43 @@ export const MonthEnum = z.enum([
     "July", "August", "September", "October", "November", "December"
 ])
 
+export const OccasionStatusEnum = z.enum([
+    "Ledig", "Fullt", "Vente liste"
+])
+
+export const ParticipantApprovalStatusEnum = z.enum(
+    ["Godkjent", "Avslått", "Ingen",],
+)
+
 
 export const ParticipantBaseSchema = z.object({
     id: z.string().uuid(),
-    date: z.date(),
+    name: z.string().min(2),
     email: z.string().email()
 });
 
 
-/* Types */
-
-export const ParticipantSchema = ParticipantBaseSchema.extend({})
+export const ParticipantSchema = ParticipantBaseSchema.extend({
+    approvalStatus: ParticipantApprovalStatusEnum,
+})
 
 export const ParticipantCreateSchema = ParticipantSchema.omit({ id: true });
-
-export type Participant = z.infer<typeof ParticipantSchema>;
-
-export type CreateParticipant = z.infer<typeof ParticipantCreateSchema>;
-
-export type EventCategory = z.infer<typeof EventCategoryEnum>;
-
-export type Weekday = z.infer<typeof WeekdayEnum>
-
-export type Month = z.infer<typeof MonthEnum>
 
 
 /* Validation */
 
 export const validateParticipant = (data: unknown) => {
     return ParticipantSchema.safeParse(data)
-}
-
-export const validateEventCategory = (data: unknown) => {
-    return EventCategoryEnum.safeParse(data)
-}
-
-export const validateWeekday = (data: unknown) => {
+  }
+  
+  export const validateOccasionCategory = (data: unknown) => {
+    return OccasionCategoryEnum.safeParse(data)
+  }
+  
+  export const validateWeekday = (data: unknown) => {
     return WeekdayEnum.safeParse(data)
-}
-
-export const validateMonth = (data: unknown) => {
+  }
+  
+  export const validateMonth = (data: unknown) => {
     return MonthEnum.safeParse(data)
-}
+  }

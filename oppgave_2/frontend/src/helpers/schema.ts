@@ -16,7 +16,7 @@ export const MonthEnum = z.enum([
 ])
 
 export const OccasionStatusEnum = z.enum([
-    "Ledig", "Fullt", "Vente liste"
+    "Ledig", "Fullt", "Venteliste"
 ])
 
 export const participantAprovalStatusEnum = z.enum(
@@ -25,13 +25,14 @@ export const participantAprovalStatusEnum = z.enum(
 
 export const ParticipantBaseSchema = z.object({
     id: z.string().uuid(),
-    name: z.string(),
+    name: z.string().min(2),
     email: z.string().email(),
-    aprovalStatus: participantAprovalStatusEnum,
 });
 
 
-export const ParticipantSchema = ParticipantBaseSchema.extend({})
+export const ParticipantSchema = ParticipantBaseSchema.extend({
+    aprovalStatus: participantAprovalStatusEnum,
+})
 
 export const ParticipantCreateSchema = ParticipantSchema.omit({ id: true });
 
@@ -42,7 +43,7 @@ export const validateParticipant = (data: unknown) => {
     return ParticipantSchema.safeParse(data)
 }
 
-export const validateEventCategory = (data: unknown) => {
+export const validateOccationCategory = (data: unknown) => {
     return OccasionCategoryEnum.safeParse(data)
 }
 

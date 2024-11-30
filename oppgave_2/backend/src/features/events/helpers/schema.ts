@@ -1,42 +1,43 @@
 
 import { z } from "zod";
-import { EventCategoryEnum, ParticipantSchema } from "@/helpers/schema";
+import { OccasionCategoryEnum, ParticipantSchema } from "@/helpers/schema";
 
 
-const EventBaseSchema = z.object({
+const OccassionBaseSchema = z.object({
     id: z.string().uuid(),
-    name: z.string(),
+    name: z.string().min(3),
     slug: z.string(),
     price: z.number(),
     date: z.date(),
     address: z.string(),
     body: z.array(z.string()),
     waitinglist: z.boolean(),
-    template: z.string().uuid().optional()
+    template: z.string().uuid().optional(),
+    maxParticipants: z.number().min(1).optional()
 });
 
-export const EventSchema = EventBaseSchema.extend({
-    category: EventCategoryEnum,
-    participants: z.array(ParticipantSchema),
-    waitinglistParticipants: z.array(ParticipantSchema)
+export const OccassionSchema = OccassionBaseSchema.extend({
+    category: OccasionCategoryEnum,
+    participants: z.array(ParticipantSchema).default([]),
+    waitinglistParticipants: z.array(ParticipantSchema).default([]),
+    recejectedParticipants:  z.array(ParticipantSchema).default([])
 })
 
-export const EventCreateSchema = EventSchema.omit({ id: true });
+export const OccationCreateSchema = OccassionSchema.omit({ id: true });
 
+/* Enums */
 
-/* Types */
-
-export type Event = z.infer<typeof EventSchema>;
-
-export type CreateEvent = z.infer<typeof EventCreateSchema>;
+export const ParticipantStatusEnum = z.enum(
+    ["Deltager", "Venteliste", "Avslått"],
+)
 
 
 /* Validation */
 
-export const validateEvent = (data: unknown) => {
-    return EventSchema.safeParse(data)
+export const validateOccation = (data: unknown) => {
+    return OccassionSchema.safeParse(data)
 }
 
-export const validateCreateEvent = (data: unknown) => {
-    return EventCreateSchema.safeParse(data)
+export const validateCreateOccation = (data: unknown) => {
+    return OccationCreateSchema.safeParse(data)
 }
