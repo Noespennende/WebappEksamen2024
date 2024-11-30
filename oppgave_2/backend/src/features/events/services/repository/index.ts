@@ -16,9 +16,9 @@ export const createOccationRepository = () => {
       });
     },
 
-    async getOccasionById(id: string) {
+    async getOccasionById(occationSlug: string) {
         return await prisma.occasionBaseSchema.findUnique({
-          where: { id },
+          where: { slug: occationSlug },
           include: {
             participants: true,
             waitingListParticipants: true,
@@ -33,15 +33,12 @@ export const createOccationRepository = () => {
         slug: string;
         price: number;
         address: string;
+        body: string[];
         waitingList: boolean;
-        template: string;
+        template?: string | null;
         maxParticipants: number;
-        category: string;
-        date: Date;
-        participants?: { name: string; email: string; status: string }[];
-        waitingListParticipants?: { name: string; email: string; status: string }[];
-        rejectedParticipants?: { name: string; email: string; status: string }[];
-        templates?: string[]; 
+       
+        
       }) {
         return await prisma.occasionBaseSchema.create({
           data: {
@@ -49,63 +46,39 @@ export const createOccationRepository = () => {
             slug: data.slug,
             price: data.price,
             adress: data.address,
+            body: data.body,
             waitingList: data.waitingList,
-            template: data.template,
+            template: data.template ?? null,
             maxParticipants: data.maxParticipants,
-            category: data.category,
-            date: data.date,
-            participants: {
-              create: data.participants?.map(p => ({
-                name: p.name,
-                email: p.email,
-                approvalStatus: p.status
-              })),
-            },
-            waitingListParticipants: {
-              create: data.waitingListParticipants?.map(p => ({
-                name: p.name,
-                email: p.email,
-                approvalStatus: p.status,
-              })),
-            },
-            rejectedParticipants: {
-              create: data.rejectedParticipants?.map(p => ({
-                name: p.name,
-                email: p.email,
-                approvalStatus: p.status,
-              })),
-            },
-            templates: {
-              connect: data.templates?.map(templateId => ({
-                id: templateId,
-              })),
-            },
           },
         });
       },
+      
 
-      async updateOccasion(id: UUID, data: Partial<Omit<OccasionBaseSchema, 'id' | 'slug'>>) {
+      async updateOccasion(occasionSlug: string, data: Partial<Omit<OccasionBaseSchema, 'id' | 'slug'>>) {
         return await prisma.occasionBaseSchema.update({
-          where: { id },
+          where: { slug: occasionSlug},
           data,
         });
       },
 
-      async deleteOccasion(id: UUID) {
+      async deleteOccasion(occasionSlug: string) {
         return await prisma.occasionBaseSchema.delete({
-          where: { id },
+          where: { slug: occasionSlug },
         });
       },
       
-    async addParticipantToOccasion(occasionId: UUID, participantData: { name: string; email: string; status: string }) {
-      const occasion = await prisma.occasionBaseSchema.findUnique({ where: occasionId  }, participantData);
+    async addParticipantToOccasion(occasionSlug: string, participantData: { name: string; email: string; approvalStatus: string }) {
+      const occasion = await prisma.occasionBaseSchema.findUnique({ where:{ slug: occasionSlug  }});
       if (!occasion) throw new Error('Occasion not found');
       return await prisma.participant.create({
         data: {
           name: participantData.name,
           email: participantData.email,
-          status: participantData.status,
-          occasionId: occasion.id,
+          approvalStatus: participantData.approvalStatus,
+          OccasionBaseSchema: {
+            connect: { slug: occasionSlug },
+          },
         },
       });
     },
@@ -118,86 +91,22 @@ export const createOccationRepository = () => {
         data: {
           name: participantData.name,
           email: participantData.email,
-          status: participantData.status,
-          occasionId: occasion.id,
-          waitingListOccasionId: occasion.id,
+          approvalStatus: participantData.status,
+          WaitingOccasionBaseSchema: {
+          connect: { slug: occasionSlug },
         },
-      });
-    },
-
+      },
+    });
+  },
+}
+//getSortedOccasions(month: Month, year: number, category: OccasionCategory)
     
-    async rejectParticipantFromOccasion(occasionSlug: string, participantEmail: string) {
-      const occasion = await prisma.occasionBaseSchema.findUnique({ where: { slug: occasionSlug } });
-      if (!occasion) throw new Error('Occasion not found');
-      const participant = await prisma.participant.findUnique({
-        where: { email: participantEmail },
-      });
-      if (!participant) throw new Error('Participant not found');
-      
-      return await prisma.participant.update({
-        where: { id: participant.id },
-        data: {
-          status: 'rejected',
-          rejectedOccasionId: occasion.id,
-        },
-      });
-    },
-  };
-};
+  
+}
 
 export const occasionRepository = createOccationRepository()
 export type OccasionRepository = ReturnType<typeof createOccationRepository>;
 
-/*
- // Add participant to an occasion
-    async addParticipantToOccasion(occasionSlug: string, participantData: { name: string; email: string; status: string }) {
-      const occasion = await prisma.occasionBaseSchema.findUnique({ where: { slug: occasionSlug } });
-      if (!occasion) throw new Error('Occasion not found');
-      return await prisma.participant.create({
-        data: {
-          name: participantData.name,
-          email: participantData.email,
-          status: participantData.status,
-          occasionId: occasion.id,
-        },
-      });
-    },
-
-    // Add a participant to the waiting list
-    async addParticipantToWaitingList(occasionSlug: string, participantData: { name: string; email: string; status: string }) {
-      const occasion = await prisma.occasionBaseSchema.findUnique({ where: { slug: occasionSlug } });
-      if (!occasion) throw new Error('Occasion not found');
-      return await prisma.participant.create({
-        data: {
-          name: participantData.name,
-          email: participantData.email,
-          status: participantData.status,
-          occasionId: occasion.id,
-          waitingListOccasionId: occasion.id,
-        },
-      });
-    },
-
-    // Reject a participant from an occasion
-    async rejectParticipantFromOccasion(occasionSlug: string, participantEmail: string) {
-      const occasion = await prisma.occasionBaseSchema.findUnique({ where: { slug: occasionSlug } });
-      if (!occasion) throw new Error('Occasion not found');
-      const participant = await prisma.participant.findUnique({
-        where: { email: participantEmail },
-      });
-      if (!participant) throw new Error('Participant not found');
-      
-      return await prisma.participant.update({
-        where: { id: participant.id },
-        data: {
-          status: 'rejected',
-          rejectedOccasionId: occasion.id,
-        },
-      });
-    },
-  };
-};
-*/
 
 /*
 #### @/features/admin/services/repository/index.ts

@@ -1,8 +1,8 @@
-import { occasionRepository, OccasionRepository } from "../repository"; // Correct import now
+import { OccasionInput } from "@/types";
+import { OccasionRepository } from "../repository";
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
 import { UUID } from "crypto";
 import { CreateOccation } from "../../types";
-
 
 
 export const createOccasionService = (occasionRepository: OccasionRepository) => {
@@ -16,11 +16,11 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
         }
       },
 
-      async getOccasionById(id: UUID) {
+      async getOccasionById(slug: string) {
         try {
-          const occasion = await occasionRepository.getOccasionById(id);
+          const occasion = await occasionRepository.getOccasionById(slug);
           if (!occasion) {
-            throw new Error(`No occasion found with the ID: ${id}`);
+            throw new Error(`No occasion found with the ID: ${slug}`);
           }
           return occasion;
         } catch (error) {
@@ -36,18 +36,18 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
         }
       },
 
-      async deleteOccasion(id: UUID){
+      async deleteOccasion(occasionSlug: string){
        try {
-        const occasionAfterDelete = await occasionRepository.deleteOccasion(id)
+        const occasionAfterDelete = await occasionRepository.deleteOccasion(occasionSlug)
         return occasionAfterDelete
        } catch (error) {
         throw new Error("DeleteError")
        } 
       },
 
-      async updateOccation(id: UUID, data: Partial<OccasionBaseSchema>){
+      async updateOccation(occasionSlug: string, data: Partial<OccasionBaseSchema>){
         try{
-        const occasionToUpdate = await occasionRepository.updateOccasion(id, data)
+        const occasionToUpdate = await occasionRepository.updateOccasion(occasionSlug, data)
         return occasionToUpdate
       }catch{
         throw new Error("error updating")
