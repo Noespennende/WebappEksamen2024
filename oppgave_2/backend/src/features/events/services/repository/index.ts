@@ -1,12 +1,14 @@
 import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
+import {Occation} from "../../types/index"
+import { Result } from "@/types";
 
 const prisma = new PrismaClient()
 
 export const createOccationRepository = () => {
   return {
     async getAllOccations() {
-      const variable =  await prisma.occasionBaseSchema.findMany({
+      const prismadata =  await prisma.occasionBaseSchema.findMany({
         include: {
             participants: true,
             body:{
@@ -19,20 +21,12 @@ export const createOccationRepository = () => {
             templates: true
         }
       });
-
-      const bodyList = []
-
-      for(object in prisma.body) {
-      bodylist.push(object.content)
-      }
-
-const data = {id = prisma.id, .... body = bodyList}
-      console.log("getall sjekk " + JSON.stringify(variable))
-      return{success: true, data: variable}
+      const result: Result<Occation[]> = {success: true, data: prismadata}
+      return result
     },
 
     async getOccasionById(occationSlug: string) {
-        return await prisma.occasionBaseSchema.findUnique({
+        const prismdata = await prisma.occasionBaseSchema.findUnique({
           where: { slug: occationSlug },
           include: {
             participants: true,
@@ -41,6 +35,8 @@ const data = {id = prisma.id, .... body = bodyList}
             templates: true,
           },
         });
+        const result: Result<Occation[]> = {success: true, data: prismdata}
+        return result
       },
 
       async createOccasion(data: {
@@ -55,7 +51,7 @@ const data = {id = prisma.id, .... body = bodyList}
        
         
       }) {
-        return await prisma.occasionBaseSchema.create({
+        const prismdata = await prisma.occasionBaseSchema.create({
           data: {
             name: data.name,
             slug: data.slug,
@@ -67,6 +63,8 @@ const data = {id = prisma.id, .... body = bodyList}
             maxParticipants: data.maxParticipants,
           },
         });
+        const result: Result<Occation[]> = {success: true, data: prismdata}
+        return result
       },
       
 

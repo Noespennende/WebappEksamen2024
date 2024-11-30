@@ -1,6 +1,7 @@
 
 import { z } from "zod";
 import { OccassionSchema, OccationCreateSchema } from "../helpers/schema";
+import { MonthEnum, OccasionCategoryEnum, OccasionStatusEnum, ParticipantCreateSchema, ParticipantSchema, WeekdayEnum } from "@/helpers/schema";
 
 export type Occation = z.infer<typeof OccassionSchema>;
 
