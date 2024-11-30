@@ -51,9 +51,11 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
         throw new Error("error updating")
       }
     }
+
     
     };
   };
+
 
   export const occasionService = createOccasionService(occasionRepository)
   export type OccasionService = ReturnType<typeof createOccasionService>;
