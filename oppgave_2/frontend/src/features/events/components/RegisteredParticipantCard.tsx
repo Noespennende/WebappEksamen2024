@@ -14,7 +14,6 @@ type registeredParticipantCardProps = {
 export default function RegisteredParticipantCard ({participant, status, onOptionComit}: registeredParticipantCardProps){
 
     const [buttonText, setButtonText] = useState((participant.aprovalStatus === "Ingen") ? "Velg handling" : participant.aprovalStatus)
-    const adminActions = participantAprovalStatusEnum.options
 
     const handleCategoryClick = (option: adminParticipantAction) => {
 

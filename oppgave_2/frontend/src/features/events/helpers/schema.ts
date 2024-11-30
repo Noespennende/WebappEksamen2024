@@ -18,7 +18,8 @@ const OccasionBaseSchema = z.object({
 export const OccasionSchema = OccasionBaseSchema.extend({
     category: OccasionCategoryEnum,
     participants: z.array(ParticipantSchema),
-    waitinglistParticipants: z.array(ParticipantSchema)
+    waitinglistParticipants: z.array(ParticipantSchema),
+    recejectedParticipants:  z.array(ParticipantSchema)
 })
 
 export const adminParticipantActionEnum = z.enum(
@@ -26,7 +27,7 @@ export const adminParticipantActionEnum = z.enum(
 )
 
 export const participantStatusEnum = z.enum(
-    ["Deltager", "Venteliste",],
+    ["Deltager", "Venteliste", "Avslått"],
 )
 
 

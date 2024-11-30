@@ -19,12 +19,6 @@ export const OccasionStatusEnum = z.enum([
     "Ledig", "Fullt", "Vente liste"
 ])
 
-export const LoadingStatusEnum = z.enum([
-    "idle", "loading", "error", "success", "fetching", "posting", "deleting"
-])
-
-export const FetchEnum = z.enum(["get", "getOne", "post", "delete", "update"])
-
 export const participantAprovalStatusEnum = z.enum(
     ["Godkjent", "Avslått", "Ingen",],
 )

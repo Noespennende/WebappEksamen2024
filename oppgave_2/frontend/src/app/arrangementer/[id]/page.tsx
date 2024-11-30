@@ -8,7 +8,6 @@ import EventRegisterParticipants from "@/features/events/components/EventRegiste
 import { Occasion } from "@/features/events/types";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { boolean } from "zod";
 
 export default function Event(){
 
@@ -24,9 +23,10 @@ export default function Event(){
         body: ["qie9hg+09ehqg0hqaeg0åqehg0qehgqeghqea0opighqe0gihq0hgoieghqå3hqg0qhgqighq0hgq0ighq0hg0qhgqgqgqwgqwgqg3qgeag3q"],
         waitinglist: false,
         category: "Sport",
-        participants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com"},{id: crypto.randomUUID(), name: "per", email: "email@email.com"},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com"}],
-        waitinglistParticipants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com"},{id: crypto.randomUUID(), name: "per", email: "email@email.com"},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com"}],
-        maxParticipants: 20
+        participants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com", aprovalStatus: "Godkjent"},{id: crypto.randomUUID(), name: "per", email: "email@email.com", aprovalStatus: "Avslått"},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com", aprovalStatus:"Ingen"}],
+        waitinglistParticipants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com", aprovalStatus:"Ingen"},{id: crypto.randomUUID(), name: "per", email: "email@email.com", aprovalStatus:"Ingen"},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com", aprovalStatus:"Ingen"}],
+        maxParticipants: 20,
+        recejectedParticipants: []
     },]
 
     const status = {

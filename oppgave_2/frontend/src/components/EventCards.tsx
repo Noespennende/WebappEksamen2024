@@ -7,7 +7,7 @@ export default function EventCards(){
 
     /*const {data, status} = useEvents()*/
 
-    let status = {loading: true}
+    let status = {loading: false}
 
     /*temp kode. <SLETT></SLETT>*/
     const data: Occasion[] = []
@@ -18,9 +18,9 @@ export default function EventCards(){
             { status.loading ? (<div className="loader"></div>) : 
             (
                 <ul>
-                {data?.map((meet, index) => (
+                {data?.map((occasion, index) => (
                     <li className="eventCardListElement" key={`eventCard${index}`}>
-                        <EventCard occation={meet}/>
+                        <EventCard occation={occasion}/>
                     </li>
                 ))}
             </ul>

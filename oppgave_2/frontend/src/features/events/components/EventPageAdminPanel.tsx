@@ -33,10 +33,27 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
             <h3>Påmeldte deltagere</h3>
             {occasion.participants.map((participant, index) => (
                 <RegisteredParticipantCard
+                    key={`participants${index}`}
                     participant={participant}
-                    status={ occasion.participants.includes(participant) ? "Deltager" : "Venteliste"}
+                    status={"Deltager"}
                     onOptionComit={handleParticipantOptionComit}
-                    
+                />
+            ))}
+
+             {occasion.waitinglistParticipants.map((participant, index) => (
+                <RegisteredParticipantCard
+                    key={`Waiting list${index}`}
+                    participant={participant}
+                    status={"Venteliste"}
+                    onOptionComit={handleParticipantOptionComit}
+                />
+            ))}
+              {occasion.recejectedParticipants.map((participant, index) => (
+                <RegisteredParticipantCard
+                    key={`rejected list${index}`}
+                    participant={participant}
+                    status={"Avslått"}
+                    onOptionComit={handleParticipantOptionComit}
                 />
             ))}
         </section>
