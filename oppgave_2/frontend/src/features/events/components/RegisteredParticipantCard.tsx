@@ -1,30 +1,31 @@
 "use client";
 
 import { Participant } from "@/types/Types";
-import { adminParticipantAction, participantApprovalStatus, participantStatus, } from "../types";
-import { participantAprovalStatusEnum } from "@/helpers/schema";
+import { adminParticipantAction, participantStatus, } from "../types";
 import { useState } from "react";
 
 type registeredParticipantCardProps = {
     participant: Participant,
-    status: participantStatus
-    onOptionComit: (action: adminParticipantAction) => void
+    status: participantStatus,
+    onOptionComit: (action: adminParticipantAction, participant: Participant, previousStatus: participantStatus) => void
 }
 
-export default function RegisteredParticipantCard ({participant, status, onOptionComit}: registeredParticipantCardProps){
+export default function RegisteredParticipantCard ({participant, status, onOptionComit,}: registeredParticipantCardProps){
 
     const [buttonText, setButtonText] = useState((participant.aprovalStatus === "Ingen") ? "Velg handling" : participant.aprovalStatus)
 
     const handleCategoryClick = (option: adminParticipantAction) => {
-
         if(option === "Velg handling"){
+            participant.aprovalStatus = "Ingen"
             setButtonText("Velg handling")
         } else if (option === "Godkjenn"){
+            participant.aprovalStatus = "Godkjent"
             setButtonText("Godkjent")
         } else if (option === "Avslå") {
+            participant.aprovalStatus = "Avslått"
             setButtonText("Avslått")
         } 
-        onOptionComit(option)       
+        onOptionComit(option, participant, status)       
     }
 
     return(

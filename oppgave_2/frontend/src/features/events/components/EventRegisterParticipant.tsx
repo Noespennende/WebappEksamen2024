@@ -14,14 +14,13 @@ export default function EventRegisterParticipants({occationID, price, onNoPartic
 
     //const {status, add, error} = useEvents()
     const [participants, setParticipants] = useState<Participant[]>([
-        {id: crypto.randomUUID(), name: "", email: ""}
+        {id: crypto.randomUUID(), name: "", email: "",  aprovalStatus: "Ingen"}
     ])
     const combinedPrice = price * participants.length
-    const id = crypto.randomUUID
     const [errorMessage, setErrorMessage] = useState("")
 
     const handleAddParticipantClick = () => {
-        setParticipants([...participants, {id: crypto.randomUUID(), name: "", email: ""}] ) 
+        setParticipants([...participants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen"}] ) 
 
     }
 
@@ -41,7 +40,7 @@ export default function EventRegisterParticipants({occationID, price, onNoPartic
 
 
     const handleSubmitt = () => {
-        const participantHasEmbtyFields = participants.find(participant => !participant.name || !participant.email);
+        const participantHasEmbtyFields = participants.find(participant => !(participant.name.length >= 2)|| !participant.email);
 
         if(participantHasEmbtyFields){
             setErrorMessage("Alle deltagere må ha gyldig navn og epost")
