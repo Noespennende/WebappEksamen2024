@@ -1,8 +1,9 @@
 'use client';
-import { courses } from "@/data/data";
+
 import { Course } from "@/lib/types";
 import React, { useEffect, useState } from "react";
-import router from "next/router";
+import CourseCard from "./CourseCard";
+
 
 export default function Courses() {
     const [value, setValue] = useState("");
@@ -44,9 +45,7 @@ export default function Courses() {
     }, [fetchedData]);
 
 
-    const handleCourseClick = (slug: string,) => {
-  router.push(`/courses/${slug}`);
-};
+   
 
 
     useEffect(() => {
@@ -118,37 +117,7 @@ export default function Courses() {
         <section className="mt-6 grid grid-cols-3 gap-8" data-testid="courses">
           {data && data.length > 0 ? (
             data.map((course) => (
-              <article
-                className="rounded-lg border border-slate-400 px-6 py-8"
-                key={course.id}
-                data-testid="course_wrapper"
-                onClick={() => handleCourseClick(course.slug)}
-              >
-                <span className="block text-right capitalize">
-                [{course.category.name || "Ingen kategori"}]
-                </span>
-                <h3
-                  className="mb-2 text-base font-bold"
-                  data-testid="courses_title"
-                >
-                  <a href={`/courses/${course.slug}`}>{course.title}</a>
-                </h3>
-                <p
-                  className="mb-6 text-base font-light"
-                  data-testid="courses_description"
-                >
-                  {course.description}
-                </p>
-                <a
-                  className="font-semibold underline"
-                  data-testid="courses_url"
-                  
-                  href={`/courses/${course.slug}`}
-                
-                >
-                  Til kurs
-                </a>
-              </article>
+              <CourseCard key={course.id} course={course}/>
             ))
           ) : (
             <p data-testid="empty">Ingen kurs</p>
