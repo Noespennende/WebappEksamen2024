@@ -1,7 +1,7 @@
-import { CreateLesson } from "@/lib/types";
+import { CreateLesson, Lesson } from "@/lib/types";
 
 interface CreateLessonFieldsProps {
-  lesson: CreateLesson;
+  lesson: CreateLesson | Lesson;
   lessonIndex: number;
   handleLessonFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, lessonIndex: number, index?: number ) => void;
   addTextBox: () => void;

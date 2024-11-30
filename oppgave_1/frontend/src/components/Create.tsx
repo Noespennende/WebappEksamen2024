@@ -34,7 +34,7 @@ import { useCategories } from "@/hooks/useCategoriest";
   const isValid = (lessons: CreateLesson[]): boolean => {
     return lessons.every(lesson => {
       return lesson.title 
-      && lesson.slug && lesson.preAmble && lesson.text && lesson.text.length > 0;
+      && lesson.slug && lesson.preAmble;
     });
   };
   export const courseCreateSteps = [
@@ -43,7 +43,7 @@ import { useCategories } from "@/hooks/useCategoriest";
   ]
 
 export default function Create() {
-    const courseSlug = "javascript"
+    const courseSlug = "javascript-101"
     const lessonSlug = "variabler"
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
@@ -56,16 +56,21 @@ export default function Create() {
       categoryId: "",
       lessons: [],
     });
-    const [lessons, setLessons] = useState<CreateLesson[]>([]);
+    
     
     const { course } = useCourse(courseSlug);
     const lesson = useLesson(courseSlug, lessonSlug);
-
+    const [lessons, setLessons] = useState<(CreateLesson | Lesson)[]>(course?.lessons || []);
 
     const {categories} = useCategories()
 
     const categoryNames = categories.map((category: { name: string; }) => category.name);
 
+    useEffect(() => {
+      if (course?.lessons) {
+        setLessons(course.lessons);
+      }
+    }, [course]);
 
     useEffect(() => {
       if (course && lesson) {

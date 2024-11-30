@@ -1,8 +1,8 @@
-import { CreateLesson } from '@/lib/types';
+import { CreateLesson, Lesson } from '@/lib/types';
 import React from 'react';
 
 export interface LessonListProps {
-  lessons: Array<CreateLesson>;
+  lessons: Array<CreateLesson | Lesson>;
   currentLessonIndex: number;
   changeCurrentLesson: (index: number) => void;
   addLesson: () => void;

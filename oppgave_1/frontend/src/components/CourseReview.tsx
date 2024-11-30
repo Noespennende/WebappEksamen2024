@@ -1,4 +1,4 @@
-import { Category, CreateLesson } from '@/lib/types';
+import { Category, CreateLesson, Lesson } from '@/lib/types';
 import React from 'react';
 
 interface CourseReviewProps {
@@ -8,7 +8,7 @@ interface CourseReviewProps {
     description: string; 
     category: Category;  
   };
-  lessons: CreateLesson[];
+  lessons: (CreateLesson | Lesson )[] ;
 }
 
 export default function CourseReview({ courseFields, lessons }: CourseReviewProps) {
