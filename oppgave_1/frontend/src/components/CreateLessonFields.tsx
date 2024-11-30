@@ -3,7 +3,7 @@ import { CreateLesson } from "@/lib/types";
 interface CreateLessonFieldsProps {
   lesson: CreateLesson;
   lessonIndex: number;
-  handleLessonFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => void;
+  handleLessonFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, lessonIndex: number, index?: number ) => void;
   addTextBox: () => void;
   removeTextBox: (index: number) => void;
 }
@@ -14,7 +14,7 @@ export default function CreateLessonFields({
   handleLessonFieldChange,
   addTextBox,
   removeTextBox
-}:CreateLessonFieldsProps){
+} : CreateLessonFieldsProps){
   
   return (
     <div className="w-full">
@@ -58,29 +58,29 @@ export default function CreateLessonFields({
       </label>
 
       {/* Leksjonens tekstbokser */}
-      {lesson.text.length > 0 && lesson.text.map((field, index) => (
-        <div key={field.id}>
-          <label className="mt-4 flex flex-col" htmlFor={`text-${field.id}`}>
-            <span className="text-sm font-semibold">Tekst*</span>
-            <textarea
-              data-testid="form_lesson_text"
-              name="text"
-              id={`text-${field.id}`}
-              value={field.comment}
-              onChange={(e) => handleLessonFieldChange(e, index)}
-              className="w-full rounded bg-slate-100"
-              cols={30}
-            />
-          </label>
-          <button
-            className="text-sm font-semibold text-red-400"
-            type="button"
-            onClick={() => removeTextBox(index)}
-          >
-            Fjern
-          </button>
-        </div>
-      ))}
+    {lesson.text && lesson.text.length > 0 && lesson.text.map((field, index) => (
+      <div key={field.orderPosition}>
+        <label className="mt-4 flex flex-col" htmlFor={`text-${field.orderPosition}`}>
+          <span className="text-sm font-semibold">Tekst*</span>
+          <textarea
+            data-testid="form_lesson_text"
+            name="text"
+            id={`text-${field.orderPosition}`}
+            value={field.text}
+            onChange={(e) => handleLessonFieldChange(e, lessonIndex, index)}
+            className="w-full rounded bg-slate-100"
+            cols={30}
+          />
+        </label>
+        <button
+          className="text-sm font-semibold text-red-400"
+          type="button"
+          onClick={() => removeTextBox(index)}  
+        >
+          Fjern
+        </button>
+      </div>
+    ))}
 
       {/* Legg til tekstboks-knapp */}
       <button

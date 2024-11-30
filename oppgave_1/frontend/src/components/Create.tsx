@@ -237,53 +237,60 @@ export default function Create() {
       };
 
       const handleLessonFieldChange = (
-        event: { target: { name: string; value: string; }; },
-        index: number
+        event: { target: { name: string; value: string } },
+        lessonIndex: number,
+        index?: number,
       ) => {
         const { name, value } = event.target;
       
         // Hent den nåværende leksjonen
-        const currentLesson = lessons[index]; 
+        const currentLesson = lessons[lessonIndex];
+      
+        if (!currentLesson || (currentLesson.text && index && (index < 0 || index >= currentLesson.text?.length))) {
+          console.log("uhu: Index out of bounds", index);
+          return;
+        }
       
         // Hvis vi oppdaterer tittel eller slug
         if (name === 'title' || name === 'slug' || name === 'preAmble') {
           const updatedLessons = lessons.map((lesson, i) => {
-            if (i === index) {
+            if (i === lessonIndex) {
               return {
-                ...lesson,   // Behold resten av lesson
-                [name]: value,  // Oppdaterer felt
+                ...lesson,
+                [name]: value,
               };
             }
             return lesson;
           });
       
-          setLessons(updatedLessons); 
+          setLessons(updatedLessons);
         }
-        // Hvis vi oppdaterer tekstfelt (f.eks. 'text' i leksjonen)
+        // Hvis vi oppdaterer tekstfelt
         else if (name === 'text') {
-          const updatedText = currentLesson.text.map((text, i) => {
+          const updatedText = currentLesson.text?.map((textField, i) => {
             if (i === index) {
               return {
-                ...text,
-                text: value,  // Oppdater spesifikk tekst
+                ...textField,
+                text: value,
               };
             }
-            return text;
+            return textField;
           });
       
           const updatedLessons = lessons.map((lesson, i) => {
-            if (i === index) {
-              return { 
-                ...lesson, 
-                text: updatedText,  // Oppdater tekstarrayet
+            if (i === lessonIndex) {
+              return {
+                ...lesson,
+                text: updatedText,
               };
             }
             return lesson;
           });
       
-          setLessons(updatedLessons);  // Oppdaterer state med den nye listen
+          setLessons(updatedLessons);
         }
       };
+      
       
       
 
@@ -375,12 +382,15 @@ export default function Create() {
               Skjema sendt
             </p>
           ) : null}
-          {current === 2 ? ( 
-            <CourseReview courseFields={{
-        ...courseFields, 
-            category: courseFields.category || '', 
-    }} lessons={lessons} />
-          ) : null} 
+          {current === 2 ? (
+            <CourseReview
+              courseFields={{
+                ...courseFields,
+                category: categories.find(cat => cat.id === courseFields.categoryId) || { id: '', name: '' },
+              }}
+              lessons={lessons}
+            />
+          ) : null}
           <FormCheck success={success} formError={formError} />
         </form>
       </>
