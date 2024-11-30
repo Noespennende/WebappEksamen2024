@@ -364,7 +364,7 @@ Failour: {
     }
 }
 
-## /events/template/:template-id
+## /templates/:template-id
 ### Verb
 > get
 #### Responses
@@ -382,9 +382,6 @@ Failour: {
         message: String
     }
 }
-
-
-
 
 
 
