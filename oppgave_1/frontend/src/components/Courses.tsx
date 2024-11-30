@@ -7,23 +7,42 @@ import router from "next/router";
 export default function Courses() {
     const [value, setValue] = useState("");
     const [categories, setCategories] = useState<string[]>([]);
-    const [data, setData] = useState<Course[]>(courses);
+    const [fetchedData, setFetchedData] = useState<Course[]>([]);
+    const [data, setData] = useState<Course[]>(fetchedData);
+  
   
     const handleFilter = (event:any) => {
       const category = event.target.value;
-      console.log(category)
+      console.log("Valgt kategori " +category)
+      
       setValue(category);
-      if (category && category.length > 0) {
-        const content = courses.filter((course) =>
-          course.category.toLocaleLowerCase().includes(category.toLowerCase())
-        );
+      if (category) {
+
+        console.log("tester " + category)
         
-        setData(content);
+        const filtered = fetchedData.filter((course) => {
+      
+          console.log("course.category", course.category)
+          const courseName = course.category.name.toLowerCase();
+          console.log("inside " + courseName);
+          return courseName.includes(category.toLowerCase())
+        });
+        
+      console.log("kategir " + filtered)        
+      setData(filtered);
         
       } else {
-        setData(courses);
+        setData(fetchedData);
       }
     };
+
+    useEffect(() => {
+      console.log("Fetched data:", fetchedData);
+      if (fetchedData.length > 0) {
+        setData(fetchedData);
+      }
+    }, [fetchedData]);
+
 
     const handleCourseClick = (slug: string,) => {
   router.push(`/courses/${slug}`);
@@ -49,22 +68,17 @@ export default function Courses() {
         
           const formatData: Course [] = coursesData.data.map((course: Course) => ({
             ...course,
-            category: Array.isArray(course.category)
-              ? course.category
-              : course.category ? [course.category] : [], 
+
           }));
           
           console.log("Formatted data:", formatData);
          
-          setData(formatData);
+          setFetchedData(formatData);
+          console.log("data is ..." + data)
 
           const uniqueCategories = Array.from(
-            new Set(
-              formatData.flatMap((course) =>
-                course.category.map((cat) => cat.name)
-              )
-            )
-          ).map(String);
+            new Set(formatData.map((course) => course.category.name))
+          );
           setCategories(uniqueCategories);
         } catch (err) {
           console.error("Error fetching or formatting data:", err);
@@ -111,7 +125,7 @@ export default function Courses() {
                 onClick={() => handleCourseClick(course.slug)}
               >
                 <span className="block text-right capitalize">
-                  [{course.category.map((cat) => cat.name).join(", ")}]
+                [{course.category.name || "Ingen kategori"}]
                 </span>
                 <h3
                   className="mb-2 text-base font-bold"
