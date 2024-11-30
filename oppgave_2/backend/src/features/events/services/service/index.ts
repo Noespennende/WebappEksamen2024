@@ -45,9 +45,9 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
        } 
       },
 
-      async updateOccation(id: UUID, data: Partial<OccasionBaseSchema>){
+      async updateOccation(occasionSlug: string, data: Partial<OccasionBaseSchema>){
         try{
-        const occasionToUpdate = await occasionRepository.updateOccasion(id, data)
+        const occasionToUpdate = await occasionRepository.updateOccasion(occasionSlug, data)
         return occasionToUpdate
       }catch{
         throw new Error("error updating")
