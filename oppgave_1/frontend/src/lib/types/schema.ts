@@ -96,7 +96,7 @@ export const createLessonSchema = lessonBaseSchema.omit({
     commentBaseSchema.omit({
       id: true,
     })
-  ).default([]),
+  ).optional(),
 });
 
 export const createCourseSchema = courseBaseSchema.omit({

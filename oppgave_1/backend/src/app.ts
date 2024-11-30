@@ -81,6 +81,8 @@ app.post("/v1/courses", async (c) => {
     });
 
     if (!categoryExists) {
+
+      console.log("jajajaj ")
       return c.json(
         {
           success: false,

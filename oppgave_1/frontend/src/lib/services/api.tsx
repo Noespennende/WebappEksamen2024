@@ -1,5 +1,6 @@
 import { Category, Comment, Course, CreateCourse } from "../types"
 
+import { ofetch } from 'ofetch';
 
 export const getLesson = async (courseSlug: string, lessonSlug: string) => {
     try {
@@ -103,27 +104,35 @@ export const createComment = async (commentData: Comment, courseSlug: string, le
     }
 };
 
+// Funksjon som sender POST-forespørsel for å opprette et kurs
 export const createCourse = async (courseData: CreateCourse): Promise<Course> => {
     try {
-        const response = await fetch(`https://localhost:3999/courses/`,{
-            method: 'POST',
-            headers:{
-                'Content-Type': 'Application/json'
-            },
-            body: JSON.stringify(courseData)
-        })
-        if(!response.ok){
-            throw new Error("Cannot add the Course")
-        }
-        return await response.json()
+      // Bruk ofetch for å gjøre POST-forespørselen
+      const responseData = await ofetch('http://localhost:3999/v1/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(courseData),
+      });
+  
+      console.log('Created Course:', responseData);
+  
+      // Sjekk for suksess
+      if (responseData.success) {
+        return responseData.data as Course; // Returner kursobjektet som har ID
+      } else {
+        throw new Error('Error creating course: ' + responseData.error);
+      }
     } catch (error) {
-        console.error("Cannot create Course", error)
-        throw error
+      // Håndter feil for bruker
+      console.error('Error in createCourse:', error);
+      alert('Failed to create course: ' + (error instanceof Error ? error : 'Unknown error'));
+      throw error; // Kaster feilen videre
     }
+  };
+  
 
-    
-
-    };
     export const getCategories = async (): Promise<Category[]> => {
         try {
             const response = await fetch("http://localhost:3999/v1/categories");

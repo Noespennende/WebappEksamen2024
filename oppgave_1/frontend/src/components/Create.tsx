@@ -13,6 +13,7 @@ import FormCheck from "./FormCheck";
 import NavigationByStep from "./NavigationByStep";
 import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson, LessonText, CreateLessonText } from "@/lib/types";
 import { useCategories } from "@/hooks/useCategoriest";
+import { validateCreateLesson } from "@/lib/types/schema";
 
   const isValidCourse = (courseFields: CourseFieldsProps['courseFields']) => {
     const invalidFields: string[] = [];
@@ -31,7 +32,7 @@ import { useCategories } from "@/hooks/useCategoriest";
     return true;
   };
 
-  const isValid = (lessons: CreateLesson[]): boolean => {
+  const isValid = (lessons: (CreateLesson | Lesson)[]): boolean => {
     return lessons.every(lesson => {
       return lesson.title 
       && lesson.slug && lesson.preAmble;
@@ -62,6 +63,7 @@ export default function Create() {
     const lesson = useLesson(courseSlug, lessonSlug);
     const [lessons, setLessons] = useState<(CreateLesson | Lesson)[]>(course?.lessons || []);
 
+
     const {categories} = useCategories()
 
     const categoryNames = categories.map((category: { name: string; }) => category.name);
@@ -73,8 +75,25 @@ export default function Create() {
     }, [course]);
 
     useEffect(() => {
-      if (course && lesson) {
-        const lessonArray = Array.isArray(lesson) ? lesson : [];
+      if (course?.lessons) {
+        const validatedLessons = course.lessons.map((lesson) => {
+          const parseResult = validateCreateLesson(lesson);
+          if (parseResult.success) {
+            return parseResult.data; // Validerte data
+          } else {
+            // Håndter feil hvis nødvendig
+            console.error("Invalid lesson data", parseResult.error);
+            return null; // Eller en fallback-verdi
+          }
+        }).filter((lesson) => lesson !== null);
+    
+        setLessons(validatedLessons as (Lesson | CreateLesson)[]);
+      }
+    }, [course]);
+
+    useEffect(() => {
+      if (course) {
+        const lessonArray = Array.isArray(lesson) ? lesson : []; // Sørger for at lesson er en array
     
         setCourseFields((prevCourseFields) => ({
           ...prevCourseFields,
@@ -82,21 +101,20 @@ export default function Create() {
           slug: course.slug,
           description: course.description,
           categoryId: course.category.id,
-          lessons: lessonArray.length > 0
-            ? lessonArray.map((l) => ({
-                title: l.title,
-                slug: l.slug,
-                preAmble: l.preAmble,
-                comments: [],
-                text: l.text.map((t: { id: string; text: string }) => ({
-                  text: t.text,
-                  orderPosition: 0,
-                })),
-              }))
-            : [], 
+          lessons: lessonArray.map((l) => ({
+            title: l.title,
+            slug: l.slug,
+            preAmble: l.preAmble,
+            comments: l.comments ?? [], // Sett til tom array hvis comments er undefined
+            text: l.text?.map((t: { id: string; text: string }) => ({
+              text: t.text,
+              orderPosition: 0,
+            })) ?? [], // Sett til tom array hvis text er undefined
+          })),
         }));
       }
     }, [course, lesson]);
+    
 
 
     
@@ -107,25 +125,39 @@ export default function Create() {
   
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
       event.preventDefault();
+      
       setFormError(false);
       setSuccess(false);
-     
-
+    
       if (lessons.length > 0 && isValid(lessons) && isValidCourse(courseFields)) {
+        // Først oppdater tilstand til suksess når alt er validert
         setSuccess(true);
         setCurrent(2);
-
-        
-        await createCourse({
+    
+        const post = {
           ...courseFields,
-          categoryId: courseFields.categoryId, 
-          lessons,
-        });
+          categoryId: courseFields.categoryId,
+          lessons: lessons,
+        }
 
-        setTimeout(() => {
-          //router.push("/courses"); hvis denne ligger her blir den automatisk pusha til leksjoner i create fjern denne for å teste det
-        }, 500);
+        console.log("post " + post.slug)
+        try {
+          // Vent på at createCourse fullføres før du går videre
+          await createCourse(post);
+    
+          // Nå kan du navigere til kurs-siden etter en liten forsinkelse
+          setTimeout(() => {
+            // Navigere til kurs-siden etter vellykket innsending
+            //router.push("/courses");
+          }, 500); // Her kan du justere forsinkelsen etter behov
+    
+        } catch (error) {
+          // Håndter eventuelle feil fra createCourse
+          console.error("Error creating course:", error);
+          setFormError(true); // Sett formfeil hvis det oppstår en feil
+        }
       } else {
+        // Hvis valideringen feiler, sett formfeil
         setFormError(true);
       }
     };
