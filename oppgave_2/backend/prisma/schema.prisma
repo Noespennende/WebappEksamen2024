@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Participant {
+  id String @id @default(uuid()) 
+  name String
+  email String @unique
+  approvalStatus String
+  createdAt DateTime @default(now())
+  OccasionBaseSchema OccasionBaseSchema[] @relation("Participant")
+  WaitingOccasionBaseSchema OccasionBaseSchema[] @relation("WaitingParticipant")
+  RejectedOccasionBaseSchema OccasionBaseSchema[] @relation("RejectedParticipant")
+}
+
+model OccasionBaseSchema {
+  id String @id @default(uuid()) 
+  name String
+  slug String
+  price Int
+  adress String
+  waitingList Boolean
+  template String
+  maxParticipants Int
+  category String
+  participants Participant[] @relation("Participant")
+  waitingListParticipants Participant[] @relation("WaitingParticipant")
+  rejectedParticipants Participant[] @relation("RejectedParticipant")
+}
+
+model TemplateBaseSchema {
+  id String @id @default(uuid()) 
+  name String
+  price Int
+  maxParticipants Int
+  isPrivate Boolean
+  fixedPrice Boolean
+  allowSameDayEvent Boolean
+  waitList Boolean
+  limitedParticipants Boolean
+  fixedWeekDays TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+  relatedTemplates TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+}
+

@@ -16,7 +16,7 @@ export const MonthEnum = z.enum([
 ])
 
 export const OccasionStatusEnum = z.enum([
-    "Ledig", "Fullt", "Vente liste"
+    "Ledig", "Fullt", "Venteliste"
 ])
 
 export const participantAprovalStatusEnum = z.enum(
