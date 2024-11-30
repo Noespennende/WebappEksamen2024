@@ -13,7 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Participant {
   id String @id @default(uuid()) 
   name String
@@ -30,14 +29,17 @@ model OccasionBaseSchema {
   name String
   slug String
   price Int
-  adress String
+  adress String 
   waitingList Boolean
   template String
   maxParticipants Int
   category String
+  date DateTime 
   participants Participant[] @relation("Participant")
   waitingListParticipants Participant[] @relation("WaitingParticipant")
   rejectedParticipants Participant[] @relation("RejectedParticipant")
+  
+  templates TemplateBaseSchema[] @relation("OccasionToTemplate")
 }
 
 model TemplateBaseSchema {
@@ -50,7 +52,8 @@ model TemplateBaseSchema {
   allowSameDayEvent Boolean
   waitList Boolean
   limitedParticipants Boolean
-  fixedWeekDays TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+  fixedWeekDays OccasionBaseSchema[] @relation("OccasionToTemplate")
   relatedTemplates TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+  relatedTo TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
 }
 
