@@ -1,16 +1,18 @@
 import { Hono } from "hono";
-import { errorResponse } from "@/lib/error";
-import { eventService, EventService } from "../service";
+import { errorResponse } from "../../../../lib/error";
+import { occasionService, OccasionService } from "../service";
 import { deleteParam, eventCreate, eventDelete, eventsGet, eventsGetOne, eventsSort, eventUpdate, getOneParam, sortParam, updateParam } from "../../helpers/config";
 
 
-export const createEventController = (eventService: EventService) => {
+export const createEventController = (occasionService: OccasionService) => {
     const app = new Hono()
 
     //get all events
-    app.get(`${eventsGet}`, async (context) => {
+    app.get(`${eventsGet}`, async (context) => {   
         try {
-            const data = await eventService //GJØR RIKTIG KALL HER
+            const data = await occasionService.getAllOccasions() 
+
+            console.log(data)
 
             if (!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
@@ -26,8 +28,11 @@ export const createEventController = (eventService: EventService) => {
     //get sorted events
     app.get(`${eventsSort}`, async (context) => {
         try {
-            const sorting = context.req.param(sortParam)
-            const data = await eventService //GJØR RIKTIG KALL HER
+            const month = context.req.query("month")
+            const year = context.req.query("year")
+            const category = context.req.query("category")
+            const data = await occasionService.getAllOccasions(month, year, category)
+            console.log(month,  year, category) //GJØR RIKTIG KALL HER
             return context.json(data)
 
             if(!data.success){
@@ -42,8 +47,8 @@ export const createEventController = (eventService: EventService) => {
     //get one event
     app.get(`${eventsGetOne}`, async (context) => {
         try {
-            const sorting = context.req.param(getOneParam)
-            const data = await eventService //GJØR RIKTIG KALL HER
+            const slug = context.req.param(getOneParam)
+            const data = await occasionService.getOccasionById(slug) //GJØR RIKTIG KALL HER
             return context.json(data)
 
             if(!data.success){
@@ -60,7 +65,7 @@ export const createEventController = (eventService: EventService) => {
         try {
             const newEvent = await context.req.json()
 
-            const result = await eventService //GJØR RIKTIG KALL HER
+            const result = await occasionService.createAnOccasion(newEvent)
 
             if (!result.success){
                 return errorResponse(context, result.error.code, result.error.message)
@@ -77,9 +82,9 @@ export const createEventController = (eventService: EventService) => {
     app.patch(`${eventUpdate}`, async (context) => {
         try {
             const eventSlug= context.req.param(updateParam)
-            const eventToEdit = await context.req.json()
+            const eventData = await context.req.json()
 
-            const result = await eventService //GJØR RIKTIG KALL HER
+            const result = await occasionService.updateOccation(slug, eventData) //GJØR RIKTIG KALL HER
 
             if (!result.success){
                 return errorResponse(context, result.error.code, result.error.message)
@@ -97,7 +102,7 @@ export const createEventController = (eventService: EventService) => {
         try {
             const eventSlug= context.req.param(deleteParam)
 
-            const result = await eventService //GJØR RIKTIG KALL HER
+            const result = await occasionService.deleteOccasion(eventSlug) //GJØR RIKTIG KALL HER
 
             if (!result.success){
                 return errorResponse(context, result.error.code, result.error.message)
@@ -114,7 +119,7 @@ export const createEventController = (eventService: EventService) => {
     return app;
 }
 
-export const eventController = createEventController(eventService)
+export const eventController = createEventController(occasionService)
 
 /*
 

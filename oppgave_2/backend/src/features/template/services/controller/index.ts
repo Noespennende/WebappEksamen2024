@@ -1,20 +1,13 @@
 //MAL
-
-mport { Hono } from "hono";
-import HonoEnv from "@/app";
-import { errorResponse } from "@/lib/error";
-import { Failure, Result } from "@/types";
-import { EventService } from "../service";
+import { errorResponse } from "../../../../lib/error";
 import { cors } from "hono/cors";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { serve } from "@hono/node-server";
-import app from "@/app";
-import { date } from "zod";
 import { Hono } from "hono";
 import { getOneParam, templateCreate, templateGetOne, templatesGet } from "../helpers/config";
+import { templateService, TemplateService } from "../service";
 
 
-export const createTemplateController = (templateService: templateService) => {
+export const createTemplateController = (templateService: TemplateService) => {
     const app = new Hono()
 
     app.use("/*", cors()) //Endre hvis serveren skal autentikere hvor request kommer fra
@@ -39,7 +32,7 @@ export const createTemplateController = (templateService: templateService) => {
     app.get(`${templateGetOne}`, async (context) => {
         try {
             const templateID = context.req.param(getOneParam)
-            const data = await eventService //GJØR RIKTIG KALL HER
+            const data = await templateService//GJØR RIKTIG KALL HER
             return context.json(data)
             if(!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
@@ -82,4 +75,3 @@ export const templateController = createTemplateController(templateService)
 
 */
 
-const test = r

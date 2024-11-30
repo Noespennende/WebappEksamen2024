@@ -144,9 +144,8 @@ export const createOccationRepository = () => {
     },
   };
 };
-  };
-};
 
+export const occasionRepository = createOccationRepository()
 export type OccasionRepository = ReturnType<typeof createOccationRepository>;
 
 /*

@@ -1,7 +1,7 @@
-import { OccasionInput } from "@/types";
-import { OccasionRepository } from "../repository"; // Correct import now
+import { occasionRepository, OccasionRepository } from "../repository"; // Correct import now
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
 import { UUID } from "crypto";
+import { CreateOccation } from "../../types";
 
 
 
@@ -27,7 +27,7 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
           throw new Error("Error: Unable to fetch the occasion by ID");
         }
       },
-      async createAnOccasion(data: OccasionInput) { // denne typen kan kanskje endres?
+      async createAnOccasion(data: CreateOccation) { // denne typen kan kanskje endres?
         try {
           const newOccasion = await occasionRepository.createOccasion(data);
           return newOccasion;
@@ -53,8 +53,12 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
         throw new Error("error updating")
       }
     }
+    
     };
   };
+
+  export const occasionService = createOccasionService(occasionRepository)
+  export type OccasionService = ReturnType<typeof createOccasionService>;
     
 /*
 #### @/features/admin/services/service/index.ts
