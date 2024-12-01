@@ -68,7 +68,7 @@ export function useOccasion () {
     //get one
     const getOneOccasion = async (slug: string | undefined) => {
     setStatus("fetching")
-    await fetch(`${formatOccasionFetchUrl("get", slug)}`)
+    await fetch(`${formatOccasionFetchUrl("getOne", slug)}`)
     .then((response) => response.json())
     .then((responseData) => setData(responseData.data))
     .then(() => setStatus("success"))
