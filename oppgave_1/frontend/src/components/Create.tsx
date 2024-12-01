@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createCourse } from "@/lib/services/api";
+import { createCourse, updateCourse } from "@/lib/services/api";
 import { useLesson } from "@/hooks/useLesson";
 import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
@@ -13,16 +13,18 @@ import FormCheck from "./FormCheck";
 import NavigationByStep from "./NavigationByStep";
 import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson, LessonText, CreateLessonText, Result, Failure, ErrorCode } from "@/lib/types";
 import { useCategories } from "@/hooks/useCategoriest";
-import { validateCreateLesson } from "@/lib/types/schema";
+import { validateCreateLesson, validateLesson } from "@/lib/types/schema";
 
   const isValidCourse = (courseFields: CourseFieldsProps['courseFields']) => {
     const invalidFields: string[] = [];
+
+    const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
   
     if (!courseFields.title) invalidFields.push('title');
     if (!courseFields.slug) invalidFields.push('slug');
     if (!courseFields.description) invalidFields.push('description');
-    console.log("Category value: ", courseFields.categoryId);
-    if (!courseFields.categoryId) invalidFields.push('categoryId');
+    console.log("Category value: ", categoryId);
+    if (!categoryId) invalidFields.push('categoryId');
   
    
     if (invalidFields.length > 0) {
@@ -43,14 +45,14 @@ import { validateCreateLesson } from "@/lib/types/schema";
     { id: '2', name: 'Leksjoner' },
   ]
 
-export default function Create(props: { courseSlug: string }) {
+export default function Create(props: { courseSlug?: string }) {
     const { courseSlug } = props;
     
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
     const [current, setCurrent] = useState(0);
     const [currentLesson, setCurrentLesson] = useState(0);
-    const [courseFields, setCourseFields] = useState<CreateCourse>({
+    const [courseFields, setCourseFields] = useState<(CreateCourse | Course)>({
       title: "",
       slug: "",
       description: "",
@@ -59,7 +61,7 @@ export default function Create(props: { courseSlug: string }) {
     });
     
     
-    const { course } = useCourse(courseSlug);
+    const { course } = courseSlug ? useCourse(courseSlug) : { course: null }
     //const lesson = useLesson(courseSlug, lessonSlug);
     const [lessons, setLessons] = useState<(CreateLesson | Lesson)[]>(course?.lessons || []);
 
@@ -77,7 +79,7 @@ export default function Create(props: { courseSlug: string }) {
     useEffect(() => {
       if (course?.lessons) {
         const validatedLessons = course.lessons.map((lesson) => {
-          const parseResult = validateCreateLesson(lesson);
+          const parseResult = validateLesson(lesson);
           if (parseResult.success) {
             return parseResult.data; // Validerte data
           } else {
@@ -87,7 +89,7 @@ export default function Create(props: { courseSlug: string }) {
           }
         }).filter((lesson) => lesson !== null);
     
-        setLessons(validatedLessons as (Lesson | CreateLesson)[]);
+        setLessons(validatedLessons as Lesson[]);
       }
     }, [course]);
 
@@ -102,6 +104,7 @@ export default function Create(props: { courseSlug: string }) {
           description: course.description,
           categoryId: course.category.id,
           lessons: lessonArray.map((l : Lesson) => ({
+            id: l.id,
             title: l.title,
             slug: l.slug,
             preAmble: l.preAmble,
@@ -123,19 +126,38 @@ export default function Create(props: { courseSlug: string }) {
       setFormError(false);
       setSuccess(false);
     
+      const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
       if (lessons.length > 0 && isValid(lessons) && isValidCourse(courseFields)) {
-        const post = {
-          ...courseFields,
-          categoryId: courseFields.categoryId,
-          lessons: lessons,
+        
+        const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
+        let post = {
+          title: courseFields.title,
+          slug: courseFields.slug,
+          description: courseFields.description,
+          categoryId: categoryId,
+          lessons: lessons.map((lesson) => {
+            const originalLesson = course?.lessons?.find((l) => l.slug === lesson.slug);
+            return {
+              ...lesson,
+              ...(originalLesson?.id ? { id: originalLesson.id } : {}),
+            };
+          }),
         };
     
         try {
-          if (!course) {
+          if (!course  && (courseFields as Course)) {
             await createCourse(post);
           } else {
             console.log("IT WORKS");
             console.log("IT WORKS " + JSON.stringify(post));
+
+            if (courseSlug) {
+              console.log("SLUG " + courseSlug);
+
+              console.log("course orignal lessons ", course?.lessons)
+              console.log("Det vi sender til update ", post)
+              await updateCourse(courseSlug, post)
+            }
             // Gjøre await editCourse() kall her
           }
     
@@ -154,7 +176,7 @@ export default function Create(props: { courseSlug: string }) {
                 alert("Kan ikke lage kurs. Sluggen for kurset er ikke unik.");
                 break;
               case ErrorCode.LESSON_SLUG_NOT_UNIQUE:
-                alert("Kan ikke lage leksjon. Sluggen for leksjonen er ikke unik.");
+                alert("Kan ikke lage leksjoner. Sluggene er ikke unike innad i kurset.");
                 break;
               default:
                 alert(`Feil: ${errorResponse.message || 'Ukjent feil'}`);
@@ -366,10 +388,21 @@ export default function Create(props: { courseSlug: string }) {
       const selectedCategory = categories.find((cat) => cat.id === selectedCategoryId);
       console.log("selected cat " + selectedCategory?.name)
       
-      setCourseFields((prev) => ({
-        ...prev,
-        categoryId: selectedCategory?.id || prev.categoryId,
-      }));
+      const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
+      setCourseFields((prev) => {
+        // Hvis courseFields har category, sett category, ellers sett categoryId
+        if ('category' in prev) {
+          return {
+            ...prev,
+            category: selectedCategory || prev.category, // Hvis selectedCategory finnes, sett den, ellers behold eksisterende category
+          };
+        } else {
+          return {
+            ...prev,
+            categoryId: selectedCategory?.id || prev.categoryId, // Hvis selectedCategory finnes, sett den, ellers behold eksisterende categoryId
+          };
+        }
+      });
     };
   
     return (
@@ -427,14 +460,16 @@ export default function Create(props: { courseSlug: string }) {
               Skjema sendt
             </p>
           ) : null}
-          {current === 2 ? (
-            <CourseReview
-              courseFields={{
-                ...courseFields,
-                category: categories.find(cat => cat.id === courseFields.categoryId) || { id: '', name: '' },
-              }}
-              lessons={lessons}
-            />
+         {current === 2 ? (
+          <CourseReview
+            courseFields={{
+              ...courseFields,
+              category: 'categoryId' in courseFields 
+                ? categories.find(cat => cat.id === courseFields.categoryId) || { id: '', name: '' }
+                : courseFields.category, // Hvis courseFields har category, bruk den direkte
+            }}
+            lessons={lessons}
+          />
           ) : null}
           <FormCheck success={success} formError={formError} />
         </form>

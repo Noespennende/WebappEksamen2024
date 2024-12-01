@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 
 
-export default function CreationPage() {
+export default function EditPage() {
 
     const params = useParams<{ slug: string }>(); 
     const slug = params?.slug;
@@ -15,3 +15,4 @@ export default function CreationPage() {
       </div>
     );
   }
+

@@ -1,4 +1,4 @@
-import { Category, Comment, Course, CreateCourse, Result } from "../types"
+import { Category, Comment, Course, CreateCourse, CreateLesson, Result } from "../types"
 
 import { ofetch } from 'ofetch';
 
@@ -159,3 +159,40 @@ export const createCourse = async (courseData: CreateCourse): Promise<Result<Cou
         }
     
 }
+
+
+export const updateCourse = async (slug: string, courseData: CreateCourse): Promise<Result<Course>> => {
+    try {
+      const response = await fetch(`http://localhost:3999/v1/courses/${slug}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: courseData,
+        }),
+      });
+  
+      const responseData = await response.json();
+      console.log("Response from backend:", responseData);
+  
+      if (responseData.success) {
+        return {
+          success: true,
+          data: responseData.data,
+        };
+      } else {
+        throw {
+          success: false,
+          error: {
+            code: responseData.error.code,
+            message: responseData.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("Error updating course:", error);
+      throw error;
+    }
+  };
+  

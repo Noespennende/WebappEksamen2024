@@ -129,3 +129,7 @@ export const validateCreateCourse = (data: unknown) => {
 export const validateCreateLesson = (data: unknown) => {
   return createLessonSchema.safeParse(data)
 }
+
+export const validateLesson = (data: unknown) => {
+  return lessonSchema.safeParse(data)
+}

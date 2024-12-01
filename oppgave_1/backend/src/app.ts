@@ -328,7 +328,7 @@ app.delete('/v1/courses/:slug', async (c) => {
 
 app.put('/v1/courses/:slug', async (c) => {
   const { slug } = c.req.param(); // Hent slug fra URL-en
-  const { data, newLessons }: { data: Partial<Course>, newLessons: Lesson[] } = await c.req.json();
+  const { data }: { data: Partial<Course> } = await c.req.json();
 
   try {
     // Finner kurset
@@ -347,120 +347,48 @@ app.put('/v1/courses/:slug', async (c) => {
       }, 404);
     }
 
+    // Validering og oppdatering av leksjoner
+    const lessonsToUpdate = data?.lessons || [];
 
-    if (data.slug) {
-      const courseSlugExists = await prisma.course.findUnique({
-        where: {
-          slug: data.slug,
-        },
-      });
-
-      if (courseSlugExists) {
-        return c.json(
-          {
-            success: false,
-            error: `Slug already exists: ${courseSlugExists.slug} for course ${courseSlugExists.title}`,
-          },
-          400
-        );
-      }
-   }
-
-    /* Refaktorere - Kan bli egen metode utenfor, for bedre oversikt! */
-
-    // Samle slugs for eksisterende leksjoner
-    const existingLessonSlugs = existingCourse.lessons.map(lesson => lesson.slug);
-
-    // Samle slugs for oppdaterte leksjoner (de som har fått en ny slug)
-    const updatedLessonSlugs = data?.lessons
-      ? data.lessons.filter(lesson => lesson.slug).map(lesson => lesson.slug)
-      : [];
-
-    // Sjekk om newLessons er definert og et array, hvis ikke sett det til en tom liste
-    const newLessonSlugs = Array.isArray(newLessons) ? newLessons.map(lesson => lesson.slug) : [];
-
-    // Lag en liste med alle slugs som skal sjekkes
-    const allLessonSlugs = [
-      ...existingLessonSlugs, // Eksisterende leksjoners slugs
-      ...newLessonSlugs, // Nye leksjoners slugs
-      ...updatedLessonSlugs, // Oppdaterte leksjoners slugs
-    ];
-
-    // Sjekk om noen newLesson.slugs er de samme som updatedLessonSlugs
-    const duplicateNewAndUpdatedSlugs = newLessonSlugs.filter(slug => updatedLessonSlugs.includes(slug));
-
-    if (duplicateNewAndUpdatedSlugs.length > 0) {
-      return c.json({
-        success: false,
-        error: `The following new lesson slugs are the same as updated lesson slugs: ${duplicateNewAndUpdatedSlugs.join(', ')}`,
-      }, 400);
-    }
-
-    // Finn dupliserte slugs
-    const duplicateSlugs = allLessonSlugs.filter((slug, index, self) => self.indexOf(slug) !== index);
-
-    if (duplicateSlugs.length > 0) {
-      return c.json({
-        success: false,
-        error: `Already existing slugs in course found: ${duplicateSlugs.join(', ')}`,
-      }, 400);
-    }
-
-    /* *** */
-
-    // Legg til nye leksjoner
-    if (newLessons && newLessons.length > 0) {
-      for (const lesson of newLessons) {
-        
-        // Validerer leksjonen
-        const validationResult = validateCreateLesson(lesson);
-
-        if (!validationResult.success) {
-          return c.json(
-            {
-              success: false,
-              error: `Validation failed for lesson: ${validationResult.error.errors}`,
-            },
-            400
-          );
-        }
-
-        const lessonsData = {
-          ...lesson,
-          course: {
-            connect: { slug: existingCourse.slug }, // Kobler leksjonen til eksisterende kurs
-          },
-          text: lesson.text
-            ? {
-                create: lesson.text.map((lessonText) => ({
-                  ...lessonText
-                })),
-              }
-            : undefined,
-          comments: { create: [] },
-        };
-
-        // Opprett leksjonen dersom slug er unik
-        await prisma.lesson.create({
-          data: lessonsData,
-        });
-      }
-    }
-
-    // Oppdater kurs og relasjoner til kategori og eksisterende leksjoner
-    const updatedCourse = await prisma.course.update({
-      where: { slug },
-      data: {
-        ...data, // Spre innholdet fra data (som kan inneholde oppdaterte felter)
-        category: data?.category ? { connect: { id: data.category.id } } : undefined,
-        lessons: data?.lessons ? {
-          updateMany: data.lessons.map((lesson) => ({
+    const lessonUpdateData = lessonsToUpdate.reduce(
+      (acc, lesson) => {
+        if (lesson.id) {
+          // Oppdater eksisterende leksjon
+          acc.update.push({
             where: { id: lesson.id },
             data: {
-              ...lesson,
+              title: lesson.title,
+              slug: lesson.slug,
+              preAmble: lesson.preAmble,
             },
-          }))
-        } : undefined,
+          });
+        } else {
+          // Opprett ny leksjon hvis den ikke har et id
+          acc.create.push({
+            data: {
+              title: lesson.title,
+              slug: lesson.slug,
+              preAmble: lesson.preAmble,
+              course: { connect: { id: existingCourse.id } },
+            },
+          });
+        }
+        return acc;
+      },
+      { update: [], create: [] } as { update: any[]; create: any[] }
+    );
+
+    //const category = existingCourse.categoryId;
+    // Oppdater kurset med lessons-relasjonen og category-relasjonen
+    const updatedCourse = await prisma.course.update({
+      where: { id: existingCourse.id },
+      data: {
+        ...data, // Spre innholdet fra data (som kan inneholde oppdaterte felter)
+        category: data?.category ? { connect: { id: data.category.id } } : { connect: { id: "c830c3a0-27c6-4b60-89ff-91291b2fcfe5"} },
+        lessons: {
+          update: lessonUpdateData.update,
+          create: lessonUpdateData.create,
+        },
       },
       include: {
         lessons: true, // Inkluder alle leksjoner i oppdaterte kursdata
@@ -485,6 +413,10 @@ app.put('/v1/courses/:slug', async (c) => {
     }, 500);
   }
 });
+
+
+
+
 
 
 app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {

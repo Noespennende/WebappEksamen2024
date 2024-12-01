@@ -7,7 +7,8 @@ export default function CreateCourseFields({
   handleCategoryChange,
 }: CourseFieldsProps) {
 
-  console.log("Current category in courseFields:", courseFields.categoryId);
+  const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
+  console.log("Current category in courseFields:", categoryId);
 
   return (
     <div data-testid="course_step" className="max-w-lg">
@@ -54,7 +55,7 @@ export default function CreateCourseFields({
           data-testid="form_category"
           name="category"
           id="category"
-          value={courseFields.categoryId || ""}
+          value={categoryId || ""}
           onChange={handleCategoryChange}
         >
           <option disabled value="">
