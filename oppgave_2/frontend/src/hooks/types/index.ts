@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { FetchEnum, hookOccasionReturnSchema, hookTemplateReturnSchema, LoadingStatusEnum } from "../helpers/schema";
+import { FetchEnum, occasionHookReturnSchema, templateHookReturnSchema, StatusEnum } from "../helpers/schema";
 
-export type hookOccasionReturn = z.infer<typeof hookOccasionReturnSchema>
-export type hookTemplateReturn = z.infer<typeof hookTemplateReturnSchema>
-export type LoadingStatus = z.infer<typeof LoadingStatusEnum>
+export type OccasionHookReturn = z.infer<typeof occasionHookReturnSchema>
+export type hookTemplateReturn = z.infer<typeof templateHookReturnSchema>
+export type Status = z.infer<typeof StatusEnum>
 export type Fetch = z.infer<typeof FetchEnum>

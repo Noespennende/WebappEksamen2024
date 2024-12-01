@@ -5,7 +5,8 @@ import { z } from "zod";
 export const hookReturnSchemaBase = z.object({
     get: z.ZodFunction.arguments().return(z.any),
     getOne: z.ZodFunction.arguments(z.string()).return(z.any),
-    error: z.string(),
+    create: z.ZodFunction.arguments(z.string()).return(z.any),
+    error: z.string().nullable(),
     status: z.object({
         idle: z.boolean(),
         loading: z.boolean(),
@@ -18,20 +19,20 @@ export const hookReturnSchemaBase = z.object({
 })
 
 
-export const LoadingStatusEnum = z.enum([
+export const StatusEnum = z.enum([
     "idle", "loading", "error", "success", "fetching", "posting", "deleting"
 ])
 
 export const FetchEnum = z.enum(["get", "getOne", "post", "delete", "update"])
 
 
-export const hookOccasionReturnSchema = hookReturnSchemaBase.extend({
+export const occasionHookReturnSchema = hookReturnSchemaBase.extend({
     update: z.ZodFunction.arguments(OccasionSchema).return(z.any),
     remove: z.ZodFunction.arguments(z.string()).return(z.any),
     data: z.array(OccasionSchema),
 })
 
-export const hookTemplateReturnSchema = hookReturnSchemaBase.extend({
+export const templateHookReturnSchema = hookReturnSchemaBase.extend({
     data: z.array(TemplateSchema),
 })
 

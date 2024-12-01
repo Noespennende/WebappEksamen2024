@@ -84,7 +84,7 @@ export const createEventController = (occasionService: OccasionService) => {
             const eventSlug= context.req.param(updateParam)
             const eventData = await context.req.json()
 
-            const result = await occasionService.updateOccation(slug, eventData) //GJØR RIKTIG KALL HER
+            const result = await occasionService.updateOccation(eventSlug, eventData) 
 
             if (!result.success){
                 return errorResponse(context, result.error.code, result.error.message)
@@ -102,7 +102,7 @@ export const createEventController = (occasionService: OccasionService) => {
         try {
             const eventSlug= context.req.param(deleteParam)
 
-            const result = await occasionService.deleteOccasion(eventSlug) //GJØR RIKTIG KALL HER
+            const result = await occasionService.deleteOccasion(eventSlug) 
 
             if (!result.success){
                 return errorResponse(context, result.error.code, result.error.message)
