@@ -43,9 +43,9 @@ import { validateCreateLesson } from "@/lib/types/schema";
     { id: '2', name: 'Leksjoner' },
   ]
 
-export default function Create() {
-    const courseSlug = "javascript-101"
-    const lessonSlug = "variabler"
+export default function Create(props: { courseSlug: string }) {
+    const { courseSlug } = props;
+    
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
     const [current, setCurrent] = useState(0);
@@ -60,7 +60,7 @@ export default function Create() {
     
     
     const { course } = useCourse(courseSlug);
-    const lesson = useLesson(courseSlug, lessonSlug);
+    //const lesson = useLesson(courseSlug, lessonSlug);
     const [lessons, setLessons] = useState<(CreateLesson | Lesson)[]>(course?.lessons || []);
 
 
@@ -93,7 +93,7 @@ export default function Create() {
 
     useEffect(() => {
       if (course) {
-        const lessonArray = Array.isArray(lesson) ? lesson : []; // Sørger for at lesson er en array
+        const lessonArray: Lesson[] = course.lessons ? course.lessons : [];
     
         setCourseFields((prevCourseFields) => ({
           ...prevCourseFields,
@@ -101,26 +101,20 @@ export default function Create() {
           slug: course.slug,
           description: course.description,
           categoryId: course.category.id,
-          lessons: lessonArray.map((l) => ({
+          lessons: lessonArray.map((l : Lesson) => ({
             title: l.title,
             slug: l.slug,
             preAmble: l.preAmble,
-            comments: l.comments ?? [], // Sett til tom array hvis comments er undefined
-            text: l.text?.map((t: { id: string; text: string }) => ({
+            comments: l.comments ?? [], 
+            text: l.text?.map((t: LessonText) => ({
               text: t.text,
               orderPosition: 0,
-            })) ?? [], // Sett til tom array hvis text er undefined
+            })) ?? [], 
           })),
         }));
       }
-    }, [course, lesson]);
+    }, [course]);
     
-
-
-    
-
-
-
     const step = courseCreateSteps[current]?.name;
   
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -143,13 +137,17 @@ export default function Create() {
         console.log("post " + post.slug)
         try {
           // Vent på at createCourse fullføres før du går videre
-          await createCourse(post);
+          if (!course) {
+            await createCourse(post);
+          } else {
+            console.log("IT WORKS")
+            console.log("IT WORKS " + JSON.stringify(post))
+            // gjøre await editCourse() kall her 
+          }
     
           // Nå kan du navigere til kurs-siden etter en liten forsinkelse
-          setTimeout(() => {
             // Navigere til kurs-siden etter vellykket innsending
             //router.push("/courses");
-          }, 500); // Her kan du justere forsinkelsen etter behov
     
         } catch (error) {
           // Håndter eventuelle feil fra createCourse
