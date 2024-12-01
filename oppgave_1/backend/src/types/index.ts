@@ -15,3 +15,7 @@ export type Result<T> = Success<T> | Failure;
 
 
 
+export enum ErrorCode {
+  COURSE_SLUG_NOT_UNIQUE = "COURSE_SLUG_NOT_UNIQUE",
+  LESSON_SLUG_NOT_UNIQUE = "LESSON_SLUG_NOT_UNIQUE",
+}

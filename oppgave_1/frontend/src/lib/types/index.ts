@@ -80,9 +80,15 @@ export type Success<T> = {
 export type Failure = {
   success: false;
   error: {
-    code: string;
+    code: ErrorCode;
     message: string;
   };
 };
 
 export type Result<T> = Success<T> | Failure;
+
+
+export enum ErrorCode {
+  COURSE_SLUG_NOT_UNIQUE = "COURSE_SLUG_NOT_UNIQUE",
+  LESSON_SLUG_NOT_UNIQUE = "LESSON_SLUG_NOT_UNIQUE",
+}

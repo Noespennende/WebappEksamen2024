@@ -1,4 +1,4 @@
-import { Category, Comment, Course, CreateCourse } from "../types"
+import { Category, Comment, Course, CreateCourse, Result } from "../types"
 
 import { ofetch } from 'ofetch';
 
@@ -105,32 +105,37 @@ export const createComment = async (commentData: Comment, courseSlug: string, le
 };
 
 // Funksjon som sender POST-forespørsel for å opprette et kurs
-export const createCourse = async (courseData: CreateCourse): Promise<Course> => {
+export const createCourse = async (courseData: CreateCourse): Promise<Result<Course>> => {
     try {
-      // Bruk ofetch for å gjøre POST-forespørselen
-      const responseData = await ofetch('http://localhost:3999/v1/courses', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(courseData),
-      });
-  
-      console.log('Created Course:', responseData);
-  
-      // Sjekk for suksess
-      if (responseData.success) {
-        return responseData.data as Course; // Returner kursobjektet som har ID
-      } else {
-        throw new Error('Error creating course: ' + responseData.error);
+        const response = await fetch('http://localhost:3999/v1/courses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(courseData),
+        });
+
+        const responseData = await response.json();
+        console.log("Response from backend:", responseData);
+      
+        if (responseData.success) {
+          return responseData.data;
+        } else {
+            throw {
+                success: false,
+                error: {
+                  code: responseData.error.code,
+                  message: responseData.error.message,
+                },
+              };
+        }
+      
+      } catch (error) {
+
+        throw error; 
       }
-    } catch (error) {
-      // Håndter feil for bruker
-      console.error('Error in createCourse:', error);
-      alert('Failed to create course: ' + (error instanceof Error ? error : 'Unknown error'));
-      throw error; // Kaster feilen videre
-    }
   };
+  
   
 
     export const getCategories = async (): Promise<Category[]> => {

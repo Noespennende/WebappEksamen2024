@@ -11,7 +11,7 @@ import LessonCreateList, { LessonListProps } from "./LessonCreateList";
 import CourseReview from "./CourseReview";
 import FormCheck from "./FormCheck";
 import NavigationByStep from "./NavigationByStep";
-import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson, LessonText, CreateLessonText } from "@/lib/types";
+import { Lesson, Course, CourseFieldsProps, CreateCourse, CreateLesson, LessonText, CreateLessonText, Result, Failure, ErrorCode } from "@/lib/types";
 import { useCategories } from "@/hooks/useCategoriest";
 import { validateCreateLesson } from "@/lib/types/schema";
 
@@ -117,49 +117,59 @@ export default function Create(props: { courseSlug: string }) {
     
     const step = courseCreateSteps[current]?.name;
   
-    const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    const handleSubmit = async (event: { preventDefault: () => void }) => {
       event.preventDefault();
-      
+    
       setFormError(false);
       setSuccess(false);
     
       if (lessons.length > 0 && isValid(lessons) && isValidCourse(courseFields)) {
-        // Først oppdater tilstand til suksess når alt er validert
-        setSuccess(true);
-        setCurrent(2);
-    
         const post = {
           ...courseFields,
           categoryId: courseFields.categoryId,
           lessons: lessons,
-        }
-
-        console.log("post " + post.slug)
+        };
+    
         try {
-          // Vent på at createCourse fullføres før du går videre
           if (!course) {
             await createCourse(post);
           } else {
-            console.log("IT WORKS")
-            console.log("IT WORKS " + JSON.stringify(post))
-            // gjøre await editCourse() kall her 
+            console.log("IT WORKS");
+            console.log("IT WORKS " + JSON.stringify(post));
+            // Gjøre await editCourse() kall her
           }
     
-          // Nå kan du navigere til kurs-siden etter en liten forsinkelse
-            // Navigere til kurs-siden etter vellykket innsending
-            //router.push("/courses");
-    
-        } catch (error) {
-          // Håndter eventuelle feil fra createCourse
+          setCurrent(2);
+          setSuccess(true);
+        } catch (error: unknown) {
           console.error("Error creating course:", error);
-          setFormError(true); // Sett formfeil hvis det oppstår en feil
+        
+          // Sjekk om error er en Failure
+          if (error && (error as Failure).error) {
+            const errorResponse = (error as Failure).error;
+        
+            // Håndter feilkoder spesifikt ved å bruke enum
+            switch (errorResponse.code) {
+              case ErrorCode.COURSE_SLUG_NOT_UNIQUE:
+                alert("Kan ikke lage kurs. Sluggen for kurset er ikke unik.");
+                break;
+              case ErrorCode.LESSON_SLUG_NOT_UNIQUE:
+                alert("Kan ikke lage leksjon. Sluggen for leksjonen er ikke unik.");
+                break;
+              default:
+                alert(`Feil: ${errorResponse.message || 'Ukjent feil'}`);
+            }
+          } else {
+            alert("En uventet feil oppstod. Vennligst prøv igjen.");
+          }
+          setFormError(true);
         }
-      } else {
-        // Hvis valideringen feiler, sett formfeil
-        setFormError(true);
-      }
-    };
-  
+        
+    } else {
+      setFormError(true);
+    }
+  }
+    
     const addTextBox = () => {
       const updatedLessonText = lessons.map((lesson, i) => {
         if (currentLesson === i) {

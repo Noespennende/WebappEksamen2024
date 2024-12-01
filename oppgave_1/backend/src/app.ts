@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prisma } from "./prisma";
-import { Failure, Result, Success } from "./types";
+import { ErrorCode, Failure, Result, Success } from "./types";
 import { Category, Course, Lesson, validateCourse, validateCreateCourse, validateCreateLesson } from "./helpers/schema";
 
 const app = new Hono();
@@ -103,7 +103,10 @@ app.post("/v1/courses", async (c) => {
       return c.json(
         {
           success: false,
-          error: `Slug already exists: ${existingCourse.slug} for course ${existingCourse.title}`,
+          error: {
+            code: ErrorCode.COURSE_SLUG_NOT_UNIQUE,
+            message: `Slug already exists: ${existingCourse.slug} for course ${existingCourse.title}`
+          }
         },
         400
       );
@@ -125,6 +128,7 @@ app.post("/v1/courses", async (c) => {
       comments: { create: [] }, 
     })) ?? [];
 
+    /*
     // Sjekker om Lesson-slug er unik innad kurset () (siden /kurs/:kursid:/lesson/:lessonid:)
     const courseSlug = validationResult.data.slug;
     for (const lesson of lessonsData) {
@@ -149,7 +153,30 @@ app.post("/v1/courses", async (c) => {
       }
     }
 
-    // Opprettelse data er valider -> opprett Course og Lesson 
+    */
+
+     // Sjekker om Lessons-slug er unik innad i det nye kurset
+     const newLessonSlugs = Array.isArray(lessonsData) ? lessonsData.map(lesson => lesson.slug) : [];
+
+     // Finn dupliserte slugs
+     const duplicateSlugs = newLessonSlugs.filter((slug, index, self) => self.indexOf(slug) !== index);
+ 
+     if (duplicateSlugs.length > 0) {
+      return c.json(
+        {
+          success: false,
+          error: {
+            code: ErrorCode.LESSON_SLUG_NOT_UNIQUE,
+            message: `Already existing slugs in course found: ${duplicateSlugs.join(', ')}`,
+          }
+        },
+        400
+      );
+     }
+     
+    
+
+    // Opprettelse data er validert -> opprett Course og Lesson 
     const createCourseData = {
       title: validationResult.data.title,
       slug: validationResult.data.slug,
