@@ -1,6 +1,6 @@
 import { Template } from "@/features/template/types"
 import { Status, templateHookReturn } from "./types"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { formatTemplateFetchUrl } from "@/helpers/config"
 
@@ -77,6 +77,13 @@ export function useTemplate () {
         .finally(() => resetToIdle()
         )}
 
+    useEffect(() => {
+        //Fetch occasions from server
+        const controller = new AbortController()
+        getTemplates()
+        return() => controller.abort()
+    },[getTemplates])
+    
 
 
     //Return object
