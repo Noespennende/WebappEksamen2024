@@ -27,16 +27,17 @@ export const createTemplateRepository = () => {
             isPrivate: false
           },
           include: {
-            fixedWeekDays:{
-              select: {
-                weekdays:true
-              }
+            fixedWeekDays: {  
+                select: {
+                    weekdays: true  
+                }
             }
-          }
-          
-        })
+        }
+    });
+    
 
-        const result: Result<Template> = {success:true, data: prismadata}
+        const result: Result<Template[]> = {success:true, data: prismadata}
+        return result
       } catch (error) {
         const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to fetch Templates" } };
         return result;
@@ -100,3 +101,6 @@ export const createTemplateRepository = () => {
 
   }
 }
+
+export const templateRepository = createTemplateRepository()
+export type TemplateRepository = ReturnType<typeof createTemplateRepository>

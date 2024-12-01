@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { OccasionCategoryEnum, ParticipantSchema } from "@/helpers/schema";
+import { MonthEnum, OccasionCategoryEnum, ParticipantSchema } from "../../../helpers/schema";
 
 const bodyEntry = z.object({
     id: z.string(),
@@ -48,3 +48,17 @@ export const validateOccation = (data: unknown) => {
 export const validateCreateOccation = (data: unknown) => {
     return OccationCreateSchema.safeParse(data)
 }
+
+export const getMonthIndex = (month: string): number => {
+    const result = MonthEnum.safeParse(month);
+
+  
+    if (!result.success) {
+      throw new Error(`Invalid month: ${month}`);
+    }
+    const validMonth = result.data; 
+    const index = MonthEnum.options.indexOf(validMonth);
+    
+    return index;
+  };
+
