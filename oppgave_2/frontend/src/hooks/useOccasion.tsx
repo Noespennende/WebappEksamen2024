@@ -1,6 +1,6 @@
 import { Occasion } from "@/features/events/types"
 import { Status } from "./types"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { formatOccasionFetchUrl} from "@/helpers/config"
 import {OccasionHookReturn} from "../hooks/types"
 import { useRouter } from "next/router"
@@ -49,8 +49,20 @@ export function useOccasion () {
     .then((responseData) => setData(responseData))
     .then(() => setStatus("success"))
     .catch((error) => {setError(`Error while fetching data: ${error}`), setStatus("error")})
-    .finally(() => resetToIdle())
+    .finally(() => {resetToIdle(), console.log(error, data)})
     }, [])
+    
+
+    //get sorted
+    const getSortedOccasions = async (slug: string | undefined) => {
+        setStatus("fetching")
+        await fetch(`${formatOccasionFetchUrl("getSorted", slug)}`)
+        .then((response) => response.json())
+        .then((responseData) => setData(responseData))
+        .then(() => setStatus("success"))
+        .catch((error) => {setError(`Error while fetching data: ${error}`), setStatus("error")})
+        .finally(() => resetToIdle())
+        }
 
 
     //get one
@@ -112,10 +124,19 @@ export function useOccasion () {
     )}
 
 
+    useEffect(() => {
+        //Fetch occasions from server
+        const controller = new AbortController()
+        getOccasions()
+        return() => controller.abort()
+    },[getOccasions])
+
+
     //Return object
     const returnResponse: OccasionHookReturn = {
         get: getOccasions,
         getOne: getOneOccasion,
+        getSorted: getSortedOccasions,
         create: addOccasion,
         update: updateOccasion,
         remove: removeOccasion,

@@ -12,8 +12,6 @@ export const createEventController = (occasionService: OccasionService) => {
         try {
             const data = await occasionService.getAllOccasions() 
 
-            console.log(data)
-
             if (!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
             }

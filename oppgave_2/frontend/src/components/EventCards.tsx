@@ -2,15 +2,12 @@
 
 import { Occasion } from "@/features/events/types";
 import EventCard from "./EventCard";
+import { useOccasion } from "@/hooks/useOccasion";
 
 export default function EventCards(){
 
-    /*const {data, status} = useEvents()*/
-
-    let status = {loading: false}
-
-    /*temp kode. <SLETT></SLETT>*/
-    const data: Occasion[] = []
+    const {data, status, get} = useOccasion()
+    
 
     return(
         <section id="eventCards">

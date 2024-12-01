@@ -17,13 +17,14 @@ export const occasionDelete = `/delete`
 
 export const formatOccasionFetchUrl = (fetchType: Fetch, id?: string) => {
     if (fetchType === "get"){
-        return (`${backendUrl}${eventUrl}${occasionGet}`)
+        return (`${backendUrl}${eventUrl}`)
+    } else if (fetchType === "getSorted"){
+        return `${backendUrl}${eventUrl}/${id}`
     } else if (fetchType === "post"){
         return `${backendUrl}${eventUrl}${occasionCreate}`
     } else if (fetchType==="getOne" && id != null){
         return `${backendUrl}${eventUrl}${occasionGetOne}${id}`
     } else if (fetchType==="delete" && id != null){
-        console.log("hit")
         return `${backendUrl}${eventUrl}/${id}${occasionDelete}`
     } else if (fetchType === "update"){
         return `${backendUrl}${eventUrl}${occasionCreate}/${id}$`

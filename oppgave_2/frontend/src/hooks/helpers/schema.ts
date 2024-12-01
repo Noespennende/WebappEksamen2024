@@ -23,10 +23,11 @@ export const StatusEnum = z.enum([
     "idle", "loading", "error", "success", "fetching", "posting", "deleting"
 ])
 
-export const FetchEnum = z.enum(["get", "getOne", "post", "delete", "update"])
+export const FetchEnum = z.enum(["get", "getOne", "post", "delete", "update", "getSorted"])
 
 
 export const occasionHookReturnSchema = hookReturnSchemaBase.extend({
+    getSorted: z.ZodFunction.arguments().return(z.any),
     update: z.ZodFunction.arguments(OccasionSchema).return(z.any),
     remove: z.ZodFunction.arguments(z.string()).return(z.any),
     data: z.array(OccasionSchema),

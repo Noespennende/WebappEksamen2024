@@ -1,8 +1,9 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
-import { createEventController, eventController } from "./features/events/services/controller";
+import { eventController } from "./features/events/services/controller";
 import { templateController } from "./features/template/services/controller";
+import { eventUrl, templateUrl } from "./config";
 
 
 const makeApp = (
@@ -27,8 +28,8 @@ const makeApp = (
     );
   });
 
-  app.route("/event", eventController);
-  app.route("/templates", templateController);
+  app.route(eventUrl, eventController);
+  app.route(templateUrl, templateController);
 
 
   return app;
