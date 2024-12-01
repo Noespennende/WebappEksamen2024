@@ -1,6 +1,6 @@
 import { Result } from "@/types";
 import { CreateTemplate, Template } from "../..";
-import { TemplateRepository } from "../repository";
+import { templateRepository, TemplateRepository } from "../repository";
 import { UUID } from "crypto";
 
 
@@ -76,5 +76,5 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
     }
 }
 
-export const templateService = createTemplateService(/*templateRepository*/)
+export const templateService = createTemplateService(templateRepository)
 export type TemplateService = ReturnType<typeof createTemplateService>;
