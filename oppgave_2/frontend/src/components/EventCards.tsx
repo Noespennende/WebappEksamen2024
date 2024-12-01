@@ -3,11 +3,18 @@
 import { Occasion } from "@/features/events/types";
 import EventCard from "./EventCard";
 import { useOccasion } from "@/hooks/useOccasion";
+import { useEffect } from "react";
 
 export default function EventCards(){
 
-    const {data, status, get} = useOccasion()
+    const {data, status} = useOccasion()
     
+    
+    useEffect(() => {
+        console.log(data)
+    }, [data])
+
+
 
     return(
         <section id="eventCards">

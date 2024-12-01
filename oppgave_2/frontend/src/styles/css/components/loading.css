@@ -1,12 +1,5 @@
 /*Loading animasjon hentet fra: https://css-loaders.com/filling/*/
-
-:root{
-    /*colors*/
-    --lightGreen: #d8fa00;
-    --green: #b4cc1e;
-    --darkGray: #191919;
-  }
-
+@import '../helpers/root.css';
 
 .loader {
   width: fit-content;
