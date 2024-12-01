@@ -1,7 +1,8 @@
 import { occasionRepository, OccasionRepository } from "../repository";
 
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
-import { CreateOccation } from "../../types";
+import { CreateOccation, Month, OccasionCategory } from "../../types";
+import { MonthEnum, OccasionCategoryEnum } from "@/helpers/schema";
 
 
 export const createOccasionService = (occasionRepository: OccasionRepository) => {
@@ -20,6 +21,8 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
           const occasion = await occasionRepository.getOccasionById(slug);
           if (!occasion) {
             throw new Error(`No occasion found with the ID: ${slug}`);
+
+            // result success false
           }
           return occasion;
         } catch (error) {
@@ -51,12 +54,21 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
       }catch{
         throw new Error("error updating")
       }
+    },
+
+  
+    async sortedOccasions(year: number, month: Month, category: OccasionCategory) {
+
+      const occasions = await occasionRepository.getSortedOccasions(year, month, category);
+      if (!occasions.success) {
+        throw new Error("Error fetching sorted occasions");
+      }
+      return occasions
     }
-
-    
-    };
   };
+}
 
+  
 
   export const occasionService = createOccasionService(occasionRepository)
   export type OccasionService = ReturnType<typeof createOccasionService>;

@@ -1,10 +1,10 @@
-export const createTemplateService = (/*templateRepository: TemplateRepository*/) => {
-    return { 
-    };
-  };
+import { Result } from "@/types";
+import { CreateTemplate, Template } from "../..";
+import { TemplateRepository } from "../repository";
+import { UUID } from "crypto";
 
-  export const templateService = createTemplateService(/*templateRepository*/)
-  export type TemplateService = ReturnType<typeof createTemplateService>;
+
+ 
 /*
 #### @/features/admin/services/service/index.ts
 - Laget mellom controller og repository
@@ -21,18 +21,60 @@ export const createTemplateService = (/*templateRepository: TemplateRepository*/
 
 */
 
-import { CreateParticipant } from "@/types";
-import { createParticipant, findParticipantById } from "../repository";
+export const createTemplateService = (templateRepository: TemplateRepository) => {
+    return {
+        async getAllTemplates(){
+            try {
+                const templates = await templateRepository.getAllTemplates()
 
-export const registerParticipant = async (data: CreateParticipant) => {
-    const participant = await createParticipant(data);
-    return participant;
-};
+                if(!templates){
+                    const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Failed to get templates" } };
+                    return result
+                }
+                const result: Result<Template[]> = {success: true, data: templates}
+                return result
 
-export const getParticipantDetails = async (id: string) => {
-    const participant = await findParticipantById(id);
-    if (!participant) {
-        throw new Error("Participant not found");
+            } catch (error) {
+                const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Failed to get templates" } };
+                    return result
+            }
+        },
+
+        async getATemplate(id: UUID){
+            try {
+                const singleTemplate = await templateRepository.getOneTemplate(id)
+
+                if(!singleTemplate){
+                    const result: Result<null> = {success: false, error:{code: "NOT_FOUND", message: `Template with id: ${id} not found`}}
+                    return result
+                }
+                const result: Result<Template> = {success: true, data: singleTemplate}
+                return result
+
+            } catch (error) {
+                const result: Result<null> = {success: false, error:{code: "NOT_FOUND", message: `Template with id: ${id} not found`}}
+                    return result
+            }
+        },
+
+        async createTemplate(data: CreateTemplate){
+            try {
+                const newTemplate = await templateRepository.createTemplate(data)
+                
+                if(!newTemplate){
+                    const result: Result<null> = {success: false, error:{code: "BAD_REQUEST", message: "Failed to create template due to a server error"}}
+                    return result
+                }
+                const result: Result<Template> = {success: true, data: newTemplate}
+                return result
+
+            } catch (error) {
+                const result: Result<null> = {success: false, error:{code: "BAD_REQUEST", message: "Failed to create template due to a server error"}}
+                return result
+            }
+        }
     }
-    return participant;
-};
+}
+
+export const templateService = createTemplateService(/*templateRepository*/)
+export type TemplateService = ReturnType<typeof createTemplateService>;
