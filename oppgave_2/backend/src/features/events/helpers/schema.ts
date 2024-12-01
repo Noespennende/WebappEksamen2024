@@ -2,6 +2,11 @@
 import { z } from "zod";
 import { OccasionCategoryEnum, ParticipantSchema } from "@/helpers/schema";
 
+const bodyEntry = z.object({
+    id: z.string(),
+    content: z.string(),
+    occasionId: z.string()
+})
 
 const OccassionBaseSchema = z.object({
     id: z.string().uuid(),
@@ -10,11 +15,13 @@ const OccassionBaseSchema = z.object({
     price: z.number(),
     date: z.date(),
     address: z.string(),
-    body: z.array(z.string()),
+    body: z.array(bodyEntry),
     waitingList: z.boolean(),
     template: z.string().uuid().optional(),
     maxParticipants: z.number().min(1).optional()
 });
+
+
 
 export const OccassionSchema = OccassionBaseSchema.extend({
     category: OccasionCategoryEnum,

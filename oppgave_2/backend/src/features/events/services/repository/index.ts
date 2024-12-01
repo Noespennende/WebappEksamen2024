@@ -1,15 +1,19 @@
 import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
+import {Occation} from "../../types/index"
+import { Result } from "@/types";
 
 const prisma = new PrismaClient()
 
 export const createOccationRepository = () => {
   return {
     async getAllOccations() {
-      const variable =  await prisma.occasionBaseSchema.findMany({
-        include: {
+      try {
+        
+        const prismadata = await prisma.occasionBaseSchema.findMany({
+          include: {
             participants: true,
-            body:{
+            body: {
               select: {
                 content: true
               }
@@ -17,22 +21,26 @@ export const createOccationRepository = () => {
             waitingListParticipants: true,
             rejectedParticipants: true,
             templates: true
-        }
-      });
+          }
+        });
 
-      const bodyList = []
-
-      for(object in prisma.body) {
-      bodylist.push(object.content)
+        const result: Result<Occation[]> = { success: true, data: prismadata };
+        
+        return result;
+      } catch (error) {
+        
+        console.error("retrieving occasions Failed :", error);
+        const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to fetch occasions" } };
+        return result;
       }
-
-const data = {id = prisma.id, .... body = bodyList}
-      console.log("getall sjekk " + JSON.stringify(variable))
-      return{success: true, data: variable}
     },
+  
+
 
     async getOccasionById(occationSlug: string) {
-        return await prisma.occasionBaseSchema.findUnique({
+
+      try {
+        const prismdata = await prisma.occasionBaseSchema.findUnique({
           where: { slug: occationSlug },
           include: {
             participants: true,
@@ -41,7 +49,13 @@ const data = {id = prisma.id, .... body = bodyList}
             templates: true,
           },
         });
-      },
+        const result: Result<Occation[]> = {success: true, data: prismdata}
+        return result
+      } catch (error) {
+        console.error(`retrieving occasion with slug: ${occationSlug} Failed :`, error);
+        const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: `failed to fetch occasionwith slug: ${occationSlug}` } };
+        return result;
+      }},
 
       async createOccasion(data: {
         name: string;
@@ -52,35 +66,66 @@ const data = {id = prisma.id, .... body = bodyList}
         waitingList: boolean;
         template?: string | null;
         maxParticipants?: number;
-       
-        
       }) {
-        return await prisma.occasionBaseSchema.create({
-          data: {
-            name: data.name,
-            slug: data.slug,
-            price: data.price,
-            adress: data.address,
-            body: data.body,
-            waitingList: data.waitingList,
-            template: data.template ?? null,
-            maxParticipants: data.maxParticipants,
-          },
-        });
+        try {
+       
+          const prismdata = await prisma.occasionBaseSchema.create({
+            data: {
+              name: data.name,
+              slug: data.slug,
+              price: data.price,
+              adress: data.address,
+              body: data.body,
+              waitingList: data.waitingList,
+              template: data.template ?? null,
+              maxParticipants: data.maxParticipants,
+            },
+          });
+    
+          const result: Result<Occation[]> = { success: true, data: prismdata };
+          return result;
+      
+        } catch (error) {
+          console.error("Error creating occasion:", error);
+
+      
+          const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to create Occasion" } };
+        return result;
+        }
+
       },
       
 
       async updateOccasion(occasionSlug: string, data: Partial<Omit<OccasionBaseSchema, 'id' | 'slug'>>) {
-        return await prisma.occasionBaseSchema.update({
+        try{
+        const prismData =  await prisma.occasionBaseSchema.update({
           where: { slug: occasionSlug},
           data,
-        });
+        })
+        const result: Result<Occation[]> = { success: true, data: prismData };
+        return result;
+      }catch(error){
+        console.log("error updating Occasion")
+        const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to update Occasion"}}
+        
+        return result
+      }
       },
 
       async deleteOccasion(occasionSlug: string) {
-        return await prisma.occasionBaseSchema.delete({
-          where: { slug: occasionSlug },
-        });
+        try {
+          const prismData =await prisma.occasionBaseSchema.delete({
+            where: { slug: occasionSlug },
+          });
+
+          const result: Result<Occation[]> = { success: true, data: prismData };
+        return result;
+        } catch (error) {
+          console.log("error deleting Occasion")
+          const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}
+          
+          return result
+        }
       },
       
     async addParticipantToOccasion(occasionSlug: string, participantData: { name: string; email: string; approvalStatus: string }) {

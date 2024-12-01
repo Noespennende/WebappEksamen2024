@@ -38,7 +38,7 @@ model OccasionBaseSchema {
   participants            Participant[]        @relation("Participant")
   waitingListParticipants Participant[]        @relation("WaitingParticipant")
   rejectedParticipants    Participant[]        @relation("RejectedParticipant")
-  body                    String[]         
+  body                    BodyEntry[]          @relation("OccasionToBodyEntries")
   templates               TemplateBaseSchema[] @relation("OccasionToTemplate")
 }
 
