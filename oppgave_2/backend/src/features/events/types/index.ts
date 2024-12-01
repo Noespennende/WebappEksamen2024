@@ -18,3 +18,4 @@ export type Weekday = z.infer<typeof WeekdayEnum>
 export type Month = z.infer<typeof MonthEnum>
 
 export type OccasionStatus = z.infer<typeof OccasionStatusEnum>
+

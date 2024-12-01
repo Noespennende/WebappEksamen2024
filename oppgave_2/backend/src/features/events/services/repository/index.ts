@@ -1,9 +1,10 @@
 import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
 import {Occation} from "../../types/index"
-import { Result } from "@/types";
+import { Month, OccasionCategory, Result } from "@/types";
 
 const prisma = new PrismaClient()
+
 
 export const createOccationRepository = () => {
   return {
@@ -25,7 +26,7 @@ export const createOccationRepository = () => {
         });
 
         const result: Result<Occation[]> = { success: true, data: prismadata };
-        
+      
         return result;
       } catch (error) {
         
@@ -158,8 +159,29 @@ export const createOccationRepository = () => {
       },
     });
   },
+
+  
+  async getSortedOccasions(year: number, month: Month,  category: OccasionCategory){
+    const monthIndex = Object.keys(month).indexOf(month);
+    const startDate = new Date(year, monthIndex, 1);
+    const endDate = new Date(year, monthIndex + 1, 1);
+    const occasions = await prisma.occasionBaseSchema.findMany({
+      where: {
+          category,
+          date: {
+              gte: startDate,
+              lt: endDate,
+          },
+      },
+  });
+
+  const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}
+          
+  return result
+  
 }
-//getSortedOccasions(month: Month, year: number, category: OccasionCategory)
+}
+
     
   
 }
