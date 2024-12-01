@@ -59,7 +59,16 @@ model TemplateBaseSchema {
   allowSameDayEvent   Boolean
   waitList            Boolean
   limitedParticipants Boolean
-  fixedWeekDays       OccasionBaseSchema[] @relation("OccasionToTemplate")
+  fixedWeekDays       weekDays[]
   relatedTemplates    TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
   relatedTo           TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+
+  occasions OccasionBaseSchema[] @relation("OccasionToTemplate")
+}
+
+model weekDays {
+  id       String @id @default(uuid())
+  weekdays String
+
+  TemplateBaseSchema TemplateBaseSchema[]
 }
