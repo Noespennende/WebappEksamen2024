@@ -16,7 +16,7 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
     //const [course, setCourse] = useState(null);
     
    
-    const [comment, setComment] = useState("");
+    const [commentBody, setCommentBody] = useState("");
     const lesson: ALesson | undefined = useLesson(courseSlug, lessonSlug);
     const { course } = useCourse(courseSlug);
     
@@ -40,7 +40,7 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
     }, [lessonComment]);
   
     const handleComment = (event: any) => {
-      setComment(event.target.value);
+      setCommentBody(event.target.value);
     };
   
     const handleName = (event: any) => {
@@ -51,18 +51,24 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
       event.preventDefault();
       setFormError(false);
       setSuccess(false);
-      if (!comment || !name) {
+      if (!commentBody || !name) {
         setFormError(true);
+
+        
+
       } else {
-        await createComment({
-          id: `${Math.floor(Math.random() * 1000 + 1)}`,
-          createdBy: {
-            id: Math.floor(Math.random() * 1000 + 1),
-            name,
-          },
-          comment,
-          lesson: { slug: lessonSlug },
-        });
+        const comment = {
+          comment: commentBody,
+          createdById: "2cf48635-28f4-4747-a300-a64e7cbad9f7"
+        };
+        
+
+        console.log("comment is.. ", comment )
+        try {
+          await createComment(comment, courseSlug, lessonSlug);
+        } catch(error) {
+          console.log("mh ", error)
+        }
         const commentsData = await getComments(courseSlug, lessonSlug);
         setComments(commentsData);
         console.log('Fetched comments:', commentsData);
@@ -139,7 +145,7 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
                 type="text"
                 name="comment"
                 id="comment"
-                value={comment}
+                value={commentBody}
                 onChange={handleComment}
                 className="w-full rounded bg-slate-100"
                 cols="30"

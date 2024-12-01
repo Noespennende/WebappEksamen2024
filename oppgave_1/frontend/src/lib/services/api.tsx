@@ -1,4 +1,4 @@
-import { Category, Comment, Course, CreateCourse, CreateLesson, Result } from "../types"
+import { Category, Comment, Course, CreateComment, CreateCourse, CreateLesson, Result } from "../types"
 
 import { ofetch } from 'ofetch';
 
@@ -83,26 +83,44 @@ export const getComments = async (courseSlug: string, lessonSlug: string): Promi
     }
 };
 
-export const createComment = async (commentData: Comment, courseSlug: string, lessonSlug: string): Promise<Comment> => {
+export const createComment = async (comment: CreateComment, courseSlug: string, lessonSlug: string) => {
     try {
-        const response = await fetch(`http://localhost:4000/v1/courses/${courseSlug}/lessons/${lessonSlug}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(commentData),  
-        });
-
-        if (!response.ok) {
-            throw new Error('Cannot add the comment');
-        }
-
-        return await response.json();
+      const response = await fetch(`http://localhost:3999/v1/courses/${courseSlug}/lessons/${lessonSlug}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Sørger for at vi sender JSON-data
+        },
+        body: JSON.stringify(comment),
+      });
+  
+      // Logg den rå responsen fra serveren
+      const rawResponse = await response.text();
+      console.log("Raw response: ", rawResponse);
+  
+      // Prøv å parse responsen som JSON
+      let data;
+      try {
+        data = JSON.parse(rawResponse);
+      } catch (jsonError) {
+        console.error("Failed to parse JSON:", jsonError);
+        console.error("Raw response body:", rawResponse);
+        return null;
+      }
+  
+      if (response.ok) {
+        console.log('Comment added successfully:', data);
+        return data; // Returnerer den oppdaterte leksjonen med kommentarene
+      } else {
+        console.error('Error adding comment:', data.error);
+        return null;
+      }
     } catch (error) {
-        console.error('Cannot create comment:', error);
-        throw error;
+      console.error('Network or server error:', error);
+      return null;
     }
-};
+  };
+  
+  
 
 // Funksjon som sender POST-forespørsel for å opprette et kurs
 export const createCourse = async (courseData: CreateCourse): Promise<Result<Course>> => {

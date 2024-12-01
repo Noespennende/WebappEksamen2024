@@ -112,10 +112,10 @@ export const CreateLessonTextSchema = lessonTextBaseSchema.omit({
 })
 
 export const createCommentSchema = commentBaseSchema.omit({
-    id: true
+    id: true,
+    lessonSlug: true
 }).extend({
     createdById: z.string().uuid(),
-    lessonSlug: z.string().min(1),
 })
 
 export const validateCourse = (data: unknown) => {

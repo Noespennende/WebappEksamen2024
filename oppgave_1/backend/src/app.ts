@@ -466,71 +466,96 @@ app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
 
 
 app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
-  const { courseslug, lessonslug } = c.req.param(); // Hent slug-parametrene fra URL-en
-  const { comment, createdById } = await c.req.json(); // Hent kommentarens tekst og createdById fra body
+  try {
+    console.log("Request params:", c.req.param()); // Logg alle parametrene fra URL-en
+    
+    const courseslug = c.req.param('courseslug'); // Hent 'courseslug' fra URL-en
+    const lessonslug = c.req.param('lessonslug'); // Hent 'lessonslug' fra URL-en
+    
+    const comment = await c.req.json();  // Hent kommentar-objektet fra forespørselen
 
-  // Finn leksjonen basert på både courseSlug og lessonSlug
-  const lesson = await prisma.lesson.findFirst({
-    where: {
-      course: {
-        slug: courseslug, // Kursets slug
-      },
-      slug: lessonslug, // Leksjonens slug
-    },
-  });
+    console.log("Received request body: ", comment);
 
-  if (!lesson) {
-    return c.json({ success: false, error: 'Lesson or course not found' }, 404);
-  }
+    // Logg hele kommentarobjektet
+    console.error("comment object: ", comment);
+    console.error("Received comment:", comment.comment, "CreatedById:", comment.createdById);
 
-  // Sjekker om brukeren eksisterer i databasen
-  const user = await prisma.user.findUnique({
-    where: { id: createdById },
-  });
-
-  if (!user) {
-    return c.json({ success: false, error: 'User not found' }, 404); // Brukeren eksisterer ikke
-  }
-
-  // Opprett en ny kommentar og knytt den til leksjonen og brukeren
-  const newComment = await prisma.comment.create({
-    data: {
-      comment: comment,
-      createdById: createdById,
-      lessonId: lesson.id, // Knytt kommentaren til leksjonen
-    },
-  });
-
-  const updatedLesson = await prisma.lesson.findUnique({
-    where: { id: lesson.id },
-    include: {
-      //course: true, // -> Trenger vi all course data eller kanskje bare categoryid?
-      course: {
-        select: {
-          title: true,
-          category: true // Henter hele category som er knyttet til kurset
+    // Finn leksjonen basert på både courseSlug og lessonSlug
+    const lesson = await prisma.lesson.findFirst({
+      where: {
+        course: {
+          slug: courseslug, // Kursets slug
         },
+        slug: lessonslug, // Leksjonens slug
       },
-      text: true,  // Inkluder text-relasjonen for leksjonen
-      comments: {
-        select: {
-          comment: true,
-          createdBy:{
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        }
-      }, // Inkluder comments-relasjonen for leksjonen
-    },
-  });
+    });
 
-  return c.json({
-    success: true,
-    data: updatedLesson, // Returnerer hele leksjonen
-  });
+    if (!lesson) {
+      console.error("Lesson or course not found");
+      return c.json({ success: false, error: 'Lesson or course not found' }, 404);
+    }
+
+    console.log("Lesson details:", courseslug, lessonslug, comment, comment.createdById);
+
+    // Sjekk om brukeren eksisterer i databasen
+    const user = await prisma.user.findUnique({
+      where: { id: comment.createdById }, // Bruk createdById her
+    });
+
+    if (!user) {
+      console.error("User not found");
+      return c.json({ success: false, error: 'User not found' }, 404); // Brukeren eksisterer ikke
+    }
+
+    // Opprett en ny kommentar og knytt den til leksjonen og brukeren
+    const newComment = await prisma.comment.create({
+      data: {
+        comment: comment.comment, // Bruk den faktiske kommentaren
+        createdById: comment.createdById,
+        lessonId: lesson.id, // Knytt kommentaren til leksjonen
+      },
+    });
+
+    console.log("New comment created:", newComment);
+
+    // Finn den oppdaterte leksjonen med kommentarene
+    const updatedLesson = await prisma.lesson.findUnique({
+      where: { id: lesson.id },
+      include: {
+        course: {
+          select: {
+            title: true,
+            category: true, // Henter hele category som er knyttet til kurset
+          },
+        },
+        text: true, // Inkluder text-relasjonen for leksjonen
+        comments: {
+          select: {
+            comment: true,
+            createdBy: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        }, // Inkluder comments-relasjonen for leksjonen
+      },
+    });
+
+    return c.json({
+      success: true,
+      data: updatedLesson, // Returnerer hele leksjonen
+    });
+  } catch (error) {
+    console.error("Error processing comment:", error);
+    return c.json({ success: false, error: 'Internal server error' }, 500);
+  }
 });
+
+
+
+
 
 app.get("/v1/categories", async (c) => {
   try {
