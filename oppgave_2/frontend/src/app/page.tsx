@@ -8,7 +8,7 @@ import React from "react";
 
 export default function Home() {
   return (
-    <section>
+    <section id="homePage">
       <HomePageSort/>
       <Link href="/opprett/arrangement" className="button" id="createEventButton">Opprett arrangement</Link>
       <EventCards/>

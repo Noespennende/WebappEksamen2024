@@ -5,12 +5,15 @@ export function Navigation() {
 
     return (
         <nav>
+            <div id="logoAndHomeButton">
             <Link href="/" id="logo">
-                <img src="/images/logo.png"></img>
+                <img  src="/images/logo.png"></img>
             </Link>
-            <Link href="/" className="navbutton">
+            <Link href="/" className="navButton">
                 Hjem
             </Link>
+            </div>
+            
             <Link href="/" className="navButton">
                     Admin login
             </Link>
