@@ -25,9 +25,12 @@ export const createEventController = (occasionService: OccasionService) => {
     //get sorted events
     app.get(`${eventsSort}`, async (context) => {
         try {
-            const month = context.req.query("month")
-            const year = context.req.query("year")
-            const category = context.req.query("category")
+            const slug = context.req.param(sortParam)
+            const parameters = slug.split("-")
+            const month = parameters[0] === "null" ? null : parameters[0]
+            const year = parameters[1] === "null" ? null : parameters[1]
+            const category = parameters[2] === "null" ? null : parameters[2]
+
             const data = await occasionService.getSortedOccasions(month, year, category)
             console.log(month,  year, category) //GJØR RIKTIG KALL HER
             return context.json(data)

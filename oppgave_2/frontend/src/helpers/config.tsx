@@ -20,7 +20,7 @@ export const formatOccasionFetchUrl = (fetchType: Fetch, id?: string) => {
     if (fetchType === "get"){
         return (`${backendUrl}${eventUrl}`)
     } else if (fetchType === "getSorted"){
-        return `${backendUrl}${eventUrl}/${id}`
+        return `${backendUrl}${eventUrl}/sort/${id}`
     } else if (fetchType === "post"){
         return `${backendUrl}${eventUrl}${occasionCreate}`
     } else if (fetchType==="getOne" && id != null){

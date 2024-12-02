@@ -54,8 +54,9 @@ export function useOccasion () {
     
 
     //get sorted
-    const getSortedOccasions = async (slug: string | undefined) => {
+    const getSortedOccasions = async (month: string | null, year: string | null, category: string | null) => {
         setStatus("fetching")
+        const slug = `${month ?? "null"}-${year ?? "null"}-${category ?? "null"}`;
         await fetch(`${formatOccasionFetchUrl("getSorted", slug)}`)
         .then((response) => response.json())
         .then((responseData) => setData(responseData.data))

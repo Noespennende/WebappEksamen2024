@@ -2,9 +2,6 @@
 
 import { Occasion } from "@/features/events/types";
 import EventCard from "./EventCard";
-import { useOccasion } from "@/hooks/useOccasion";
-import { useEffect } from "react";
-import { useTemplate } from "@/hooks/useTemplate";
 
 type eventCardsProps = {
     occasionList: Occasion[]

@@ -5,12 +5,16 @@ import YearSortInput from "./YearSortInput";
 import { MonthEnum, OccasionCategoryEnum } from "@/helpers/schema";
 
 type homePageSortProps = {
+    currentMonth: string | null
+    currentYear: string | null,
+    currentCategory: string | null,
     onMonthSort: (month: string) => void,
     onYearSort: (year: number) => void,
     onCategorySort: (category: string) => void;
 }
 
-export default function HomePageSort({onMonthSort, onYearSort, onCategorySort}: homePageSortProps){
+export default function HomePageSort({currentMonth,currentYear, currentCategory, onMonthSort, onYearSort, onCategorySort}: homePageSortProps){
+
 
     const handleMonthDropdownClick = (month: string) => {
         onMonthSort(month)
@@ -19,6 +23,8 @@ export default function HomePageSort({onMonthSort, onYearSort, onCategorySort}: 
     const handleYearInput = (yearInput: number) => {
         if(yearInput > 999){
             onYearSort(yearInput)
+        } else if (yearInput < 10){
+            onYearSort(0)
         }
     }
 
@@ -29,9 +35,9 @@ export default function HomePageSort({onMonthSort, onYearSort, onCategorySort}: 
     return(
         <section id="homePageSort">
             <h3>Sorter:</h3>
-            <Dropdown defaultText="Måned" options={MonthEnum.options} onCategorySelect={handleMonthDropdownClick}/>
-            <YearSortInput onInput={handleYearInput}/>
-            <Dropdown defaultText="Kategori" options={OccasionCategoryEnum.options} onCategorySelect={handleCategorySelect}/>
+            <Dropdown defaultText="Måned" startingCategory={currentMonth} options={MonthEnum.options} onCategorySelect={handleMonthDropdownClick}/>
+            <YearSortInput startingYear={currentYear} onInput={handleYearInput}/>
+            <Dropdown defaultText="Kategori" startingCategory={currentCategory} options={OccasionCategoryEnum.options} onCategorySelect={handleCategorySelect}/>
         </section>
     )
 }
