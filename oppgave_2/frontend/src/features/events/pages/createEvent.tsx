@@ -298,17 +298,17 @@ export default function CreateEventPage() {
           <div>
             <label htmlFor="body">Arrangementsbeskrivelse</label>
             <div>
-              {fields.body.value.map((paragraph: string, index: number) => (
+              {(fields.body.value.length === 0 ? [''] : fields.body.value).map((paragraph: string, index: number) => (
                 <div key={index}>
                   <textarea
                     value={paragraph}
                     onChange={(e) => handleBodyChange(index, e.target.value)}
                   />
                   {fields.body.error && (
-          <span style={{ color: 'red' }}>
-            {fields.body.error.split(", ")[index]} {/* Hent feilmeldingen for paragrafen */}
-          </span>
-        )}
+                    <span style={{ color: 'red' }}>
+                      {fields.body.error.split(", ")[index]} {/* Hent feilmeldingen for paragrafen */}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

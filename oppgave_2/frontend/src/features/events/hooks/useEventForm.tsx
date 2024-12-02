@@ -32,10 +32,29 @@ type EventFields = {
   body: string[];
 };
 
+
+const validateAllFields = (
+  fields: Record<keyof EventFields, FieldState>, 
+  events: Pick<Occasion, 'template' | 'date' | 'name'>[]) => {
+  let newFields = { ...fields };
+
+  Object.keys(fields).forEach((key) => {
+    const fieldKey = key as keyof EventFields;
+    const value = fields[fieldKey].value;
+    const validation = validateField(fieldKey, value, newFields, events);
+
+    // Oppdater validitet og feilmelding for hvert felt
+    newFields[fieldKey].isValid = validation.isValid;
+    newFields[fieldKey].error = validation.error || undefined;
+  });
+
+  return newFields;  // Returnerer de validerte feltene
+};
+
 const validateField = (
   key: keyof EventFields,
   value: string | boolean | number | Date | undefined,
-  fields: Record<keyof EventFields, FieldState>, // Legg til `fields` som argument
+  fields: Record<keyof EventFields, FieldState>,
   events: Pick<Occasion, 'template' | 'date' | 'name'>[]
 ) => {
   switch (key) {
@@ -136,24 +155,28 @@ const validateField = (
       } else {
         return { isValid: false, error: 'Velg en gyldig kategori' };
       }
-    case 'body':
-      if (Array.isArray(value)) {
-        const invalidParagraphs = value
-          .map((paragraph, index) => {
-            if (paragraph.trim().length < 10) {
-              return `Paragraf ${index + 1} må være minst 10 tegn lang`;
-            }
-            return null;
-          })
-          .filter((error) => error !== null);
-        
-        if (invalidParagraphs.length > 0) {
-          return { isValid: false, error: invalidParagraphs.join(", ") };
+      case 'body':
+        if (Array.isArray(value)) {
+          if (value.length === 0 || value.every(paragraph => paragraph.trim().length === 0)) {
+            return { isValid: false, error: 'Beskrivelse kan ikke være tom' };
+          }
+      
+          const invalidParagraphs = value
+            .map((paragraph, index) => {
+              if (paragraph.trim().length < 10) {
+                return `Paragraf ${index + 1} må være minst 10 tegn lang`;
+              }
+              return null;
+            })
+            .filter((error) => error !== null);
+          
+          if (invalidParagraphs.length > 0) {
+            return { isValid: false, error: invalidParagraphs.join(", ") };
+          }
+          
+          return { isValid: true, error: undefined };
         }
-        
-        return { isValid: true, error: undefined };
-      }
-      return { isValid: false, error: 'Beskrivelse må være spesifisert' };
+        return { isValid: false, error: 'Beskrivelse må være spesifisert' };
     case 'template':
     case 'isPrivate':
     case 'fixedPrice':
@@ -177,7 +200,7 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
         key,
         {
           value: initialValues[key as keyof EventFields] ?? undefined,
-          isValid: true, // Setter som true som standard
+          isValid: false, // Setter som true som standard
           isDirty: false,
           isTouched: false,
           error: undefined,
@@ -209,6 +232,8 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
       newValue = value;
     }
   
+
+    
     // Oppdater state for feltet
     setFields((prevFields) => {
       const newFields = { ...prevFields };
@@ -251,10 +276,15 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validatedFields = validateAllFields(fields, events);
+
+    setFields(validatedFields);
   
     // Check if there are any invalid fields
     const hasErrors = Object.values(fields).some(field => !field.isValid);
     if (hasErrors) {
+      //validate her eller noe, for å trigge erorr visninger
       console.log('Validation errors found. Submission aborted.');
       return;
     }
