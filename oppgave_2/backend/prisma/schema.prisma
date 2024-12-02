@@ -17,8 +17,9 @@ model Participant {
   id                         String               @id @default(uuid())
   name                       String
   email                      String               @unique
-  approvalStatus             String
-  createdAt                  DateTime             @default(now())
+  approvalStatus             String     
+  registerDate               DateTime             
+  approvalDate               DateTime?            
   OccasionBaseSchema         OccasionBaseSchema[] @relation("Participant")
   WaitingOccasionBaseSchema  OccasionBaseSchema[] @relation("WaitingParticipant")
   RejectedOccasionBaseSchema OccasionBaseSchema[] @relation("RejectedParticipant")
@@ -31,7 +32,8 @@ model OccasionBaseSchema {
   price                   Int
   adress                  String
   waitingList             Boolean
-  template                String?
+  template                TemplateBaseSchema?  @relation("OccasionTemplate", fields: [templateId], references: [id])
+  templateId              String?        
   maxParticipants         Int?
   category                String
   date                    DateTime
@@ -39,14 +41,6 @@ model OccasionBaseSchema {
   waitingListParticipants Participant[]        @relation("WaitingParticipant")
   rejectedParticipants    Participant[]        @relation("RejectedParticipant")
   body                    BodyEntry[]          @relation("OccasionToBodyEntries")
-  templates               TemplateBaseSchema[] @relation("OccasionToTemplate")
-}
-
-model BodyEntry {
-  id         String             @id @default(uuid())
-  content    String
-  occasion   OccasionBaseSchema @relation("OccasionToBodyEntries", fields: [occasionId], references: [id])
-  occasionId String
 }
 
 model TemplateBaseSchema {
@@ -63,8 +57,17 @@ model TemplateBaseSchema {
   relatedTemplates    TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
   relatedTo           TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
 
-  occasions OccasionBaseSchema[] @relation("OccasionToTemplate")
+  occasions OccasionBaseSchema[] @relation("OccasionTemplate")
 }
+
+model BodyEntry {
+  id         String             @id @default(uuid())
+  content    String
+  occasion   OccasionBaseSchema @relation("OccasionToBodyEntries", fields: [occasionId], references: [id])
+  occasionId String
+}
+
+
 
 model weekDays {
   id       String @id @default(uuid())

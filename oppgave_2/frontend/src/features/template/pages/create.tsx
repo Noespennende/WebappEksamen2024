@@ -16,7 +16,7 @@ export default function CreateTemplatePage() {
     fixedPrice: false,
     price: 0,
     limitedParticipants: false,
-    maxParticipants: 0,
+    maxParticipants: 1,
     fixedWeekdays: [], 
   };
 

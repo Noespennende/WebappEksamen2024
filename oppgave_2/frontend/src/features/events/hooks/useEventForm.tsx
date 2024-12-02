@@ -2,6 +2,8 @@ import { WeekdayEnum } from '@/helpers/schema';
 import { Weekday } from '@/types/Types';
 import { useState, ChangeEvent } from 'react';
 import { Occasion } from '../types';
+import { validateCreateEvent } from '../helpers/schema';
+import { UUID } from 'crypto';
 
 type FieldState = {
   value: any;
@@ -14,25 +16,45 @@ type FieldState = {
 
 type EventFields = {
   name: string;
-  template: string;
+  address: string;
+  template: UUID | undefined;
   isPrivate: boolean;
   allowSameDayEvent: boolean;
-  waitList: boolean;
+  waitinglist: boolean;
   fixedPrice: boolean;
   price: number;
   limitedParticipants: boolean;
   maxParticipants: number;
-  fixedWeekdays: string[],
+  fixedWeekdays: Weekday[],
   date: string;
   category: string;
   slug: string;
-  description: string;
+  body: string[];
+};
+
+
+const validateAllFields = (
+  fields: Record<keyof EventFields, FieldState>, 
+  events: Pick<Occasion, 'template' | 'date' | 'name'>[]) => {
+  let newFields = { ...fields };
+
+  Object.keys(fields).forEach((key) => {
+    const fieldKey = key as keyof EventFields;
+    const value = fields[fieldKey].value;
+    const validation = validateField(fieldKey, value, newFields, events);
+
+    // Oppdater validitet og feilmelding for hvert felt
+    newFields[fieldKey].isValid = validation.isValid;
+    newFields[fieldKey].error = validation.error || undefined;
+  });
+
+  return newFields;  // Returnerer de validerte feltene
 };
 
 const validateField = (
   key: keyof EventFields,
   value: string | boolean | number | Date | undefined,
-  fields: Record<keyof EventFields, FieldState>, // Legg til `fields` som argument
+  fields: Record<keyof EventFields, FieldState>,
   events: Pick<Occasion, 'template' | 'date' | 'name'>[]
 ) => {
   switch (key) {
@@ -41,6 +63,13 @@ const validateField = (
         return { isValid: true, error: undefined };
       } else {
         return { isValid: false, error: 'Navn må være mer enn 3 tegn' };
+      }
+
+    case 'address':
+      if (typeof value === 'string' && value.trim().length > 3) {
+        return { isValid: true, error: undefined };
+      } else {
+        return { isValid: false, error: 'Addressen må være mer enn 3 tegn' };
       }
     case 'price':
       if (typeof value === 'number' && !isNaN(value)) {
@@ -126,19 +155,35 @@ const validateField = (
       } else {
         return { isValid: false, error: 'Velg en gyldig kategori' };
       }
-    case 'description':
-      if (typeof value === 'string' && value.trim().length > 10) {
-        return { isValid: true, error: undefined };
-      } else if (typeof value === 'string' && value.trim().length > 0) {
-        return { isValid: false, error: 'Beskrivelsen må være minst 10 tegn lang' };
-      } else {
+      case 'body':
+        if (Array.isArray(value)) {
+          if (value.length === 0 || value.every(paragraph => paragraph.trim().length === 0)) {
+            return { isValid: false, error: 'Beskrivelse kan ikke være tom' };
+          }
+      
+          const invalidParagraphs = value
+            .map((paragraph, index) => {
+              if (paragraph.trim().length < 5) {
+                return `Paragraf ${index + 1} må være minst 5 tegn lang`;
+              }
+              return null;
+            })
+            .filter((error) => error !== null);
+          
+          if (invalidParagraphs.length > 0) {
+            return { isValid: false, error: invalidParagraphs.join(", ") };
+          }
+          
+          return { isValid: true, error: undefined };
+        }
         return { isValid: false, error: 'Beskrivelse må være spesifisert' };
-      }
     case 'template':
+    case 'fixedWeekdays':
+      return { isValid: true, error: undefined };
     case 'isPrivate':
     case 'fixedPrice':
     case 'allowSameDayEvent':
-    case 'waitList':
+    case 'waitinglist':
     case 'limitedParticipants':
       if (typeof value === 'boolean') {
         return { isValid: true, error: undefined };
@@ -150,6 +195,7 @@ const validateField = (
   }
 };
 
+
 export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 'template' | 'date' | 'name'>[]) {
   const [fields, setFields] = useState<Record<keyof EventFields, FieldState>>(
     Object.fromEntries(
@@ -157,7 +203,7 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
         key,
         {
           value: initialValues[key as keyof EventFields] ?? undefined,
-          isValid: true, // Setter som true som standard
+          isValid: false, // Setter som true som standard
           isDirty: false,
           isTouched: false,
           error: undefined,
@@ -167,45 +213,61 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
     ) as Record<keyof EventFields, FieldState>
   );
 
+
+  const resetFields = (initialValues: EventFields) => {
+    setFields((prevFields) => {
+      const resetFields = Object.fromEntries(
+        Object.keys(prevFields).map((key) => [
+          key,
+          {
+            value: initialValues[key as keyof EventFields] ?? undefined,
+            isValid: false,
+            isDirty: false,
+            isTouched: false,
+            error: undefined,
+            disabled: false,
+          },
+        ])
+      );
+      return resetFields as Record<keyof EventFields, FieldState>;
+    });
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
     key: keyof EventFields
   ) => {
-    if (fields[key]?.disabled) return; // Håndter at endringer ikke skjer hvis feltet er disabled
-  
+    if (fields[key]?.disabled) return;
+    
     const { value, type } = e.target;
-  
+    
     let newValue: string | boolean | number | undefined;
-  
-    // Håndter spesifikke felt-typer
+    
+    // Handle specific field types
     if (type === 'checkbox') {
       newValue = (e.target as HTMLInputElement).checked;
     } else if (type === 'number' || key === 'price' || key === 'maxParticipants') {
       newValue = value ? parseFloat(value) : undefined;
-    } else if (type === 'date') {
-      newValue = value ? new Date(value).toISOString().split('T')[0] : undefined; // ISO-format
     } else {
       newValue = value;
     }
   
-    // Oppdater state for feltet
-    setFields((prevFields) => {
-      const newFields = { ...prevFields };
+      setFields((prevFields) => {
+        const newFields = { ...prevFields };
   
-      newFields[key] = {
-        ...newFields[key],
-        value: newValue,
-        isDirty: true,
-        isTouched: true,
-      };
+        newFields[key] = {
+          ...newFields[key],
+          value: newValue,
+          isDirty: true,
+          isTouched: true,
+        };
   
-      // Valider feltet
-      const validation = validateField(key, newValue, newFields, events);
-      newFields[key].error = validation.error || undefined;
-      newFields[key].isValid = validation.isValid;
+        const validation = validateField(key, newValue, newFields, events);
+        newFields[key].error = validation.error || undefined;
+        newFields[key].isValid = validation.isValid;
   
-      return newFields;
-    });
+        return newFields;
+      });
   };
   
 
@@ -231,35 +293,51 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const hasErrors = Object.values(fields).some(field => !field.isValid);
-    if (hasErrors) {
+    const validatedFields = validateAllFields(fields, events);
+
+    setFields(validatedFields);
+  
+    const hasErrors = Object.entries(fields).filter(([key, field]) => !field.isValid);
+
+    if (hasErrors.length > 0) {
       console.log('Validation errors found. Submission aborted.');
+      // Logg detaljene for hvert felt med feil
+      hasErrors.forEach(([key, field]) => {
+        console.log(`Field "${key}" has error: ${field.error}`);
+      });
       return;
     }
 
-    const templateData: Record<string, any> = {};
-
+    const eventData: Record<string, any> = {};
+  
     Object.entries(fields).forEach(([key, { value, disabled }]) => {
-      if (disabled) return; // Hopp over disabled felt når du bygger templateData
+      //if (disabled) return;
 
       if (key === 'price' || key === 'maxParticipants') {
-        const numberValue = value ? Number(value) : undefined;
-        templateData[key] = numberValue;
+          const numberValue = Number(value);
+          eventData[key] = numberValue;
+      } else if (key === 'date') {
+          const dateValue = value ? new Date(value) : undefined;
+          eventData[key] = dateValue;
+      }  else if (key === 'waitinglist') {
+          const booleanValue = value === true || value === 'true';
+        eventData[key] = booleanValue;
       } else {
-        templateData[key] = value;
+          eventData[key] = value;
       }
+  });
+  
+    const validated = validateCreateEvent(eventData);
 
-      if (key === 'price' && !fields.fixedPrice.value) {
-        delete templateData[key]; // Hvis 'fixedPrice' er false, hopp over prisfelt
-      }
-
-      if (key === 'maxParticipants' && !fields.limitedParticipants.value) {
-        delete templateData[key]; // Hvis 'limitedParticipants' er false, hopp over maxParticipants
-      }
-    });
-
-    console.log(templateData);
-    return templateData;
+    console.log("Try data: ", eventData)
+  
+    if (!validated.success) {
+      console.error("Validation failed:", validated.error.format());
+    } else {
+      console.log("Validation passed:", validated.data);
+    }
+  
+    return validated;
   };
 
   return {
@@ -267,5 +345,6 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
     handleInputChange,
     setFieldValue,
     handleSubmit,
+    resetFields,
   };
 }

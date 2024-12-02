@@ -11,7 +11,7 @@
 */
 
 import { CreateParticipant, Result, Weekday } from '@/types';
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, TemplateBaseSchema } from '@prisma/client'
 import { CreateTemplate, Template } from '../..';
 import { UUID } from 'crypto';
 
@@ -91,8 +91,40 @@ export const createTemplateRepository = () => {
       } catch (error) {
         throw new Error("error")
       }
-    }
+    },
 
+    async updateTemplate(id: string, data: Partial<Omit<TemplateBaseSchema, "id">>){
+
+      try {
+        const prismaData = await prisma.templateBaseSchema.update({
+          where: {id: id},
+          data,
+        })
+        if(!prismaData){
+          throw new Error("Error updating the template")
+        }
+        return prismaData
+      } catch (error) {
+        throw new Error("error")
+      }
+      
+    },
+
+    async deleteTemplate(id: string){
+      try {
+        const prismaData = await prisma.templateBaseSchema.delete({
+          where: {id: id}
+        })
+
+        if(!prismaData){
+          throw new Error("Error deleteing the template")
+        }
+        return prismaData
+
+      } catch (error) {
+        throw new Error("error")
+      }
+    }
 
   }
 }

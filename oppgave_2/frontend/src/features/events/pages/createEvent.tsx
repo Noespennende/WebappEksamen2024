@@ -7,10 +7,11 @@ import { useEffect, useState } from 'react';
 export default function CreateEventPage() {
   const initialValues = {
     name: '',
-    template: '',
+    address: '',
+    template: undefined,
     isPrivate: false,
     allowSameDayEvent: false,
-    waitList: false,
+    waitinglist: false,
     fixedPrice: false,
     price: 0,
     limitedParticipants: false ,
@@ -19,7 +20,7 @@ export default function CreateEventPage() {
     date: '', 
     category: '',
     slug: '',
-    description: '',
+    body: [] as string[],
   };
 
   const events = [ 
@@ -36,7 +37,7 @@ export default function CreateEventPage() {
   ];
 
 
-  const { fields, handleInputChange, handleSubmit, setFieldValue } = useEventForm(initialValues, events);
+  const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(initialValues, events);
 
   
   
@@ -120,10 +121,8 @@ export default function CreateEventPage() {
     console.log(selectedTemplateId)
     if (selectedTemplateId === "") {
       // Nullstiller
-      (Object.keys(fields) as Array<keyof typeof fields>).forEach((key) => {
-        setFieldValue(key, initialValues[key], false);
-      });
-      setFieldValue('template', "");  // Ensure template is also reset
+      resetFields(initialValues)
+      setFieldValue('template', undefined);  // Ensure template is also reset
       return;
     }
   
@@ -137,11 +136,21 @@ export default function CreateEventPage() {
       setFieldValue('isPrivate', selectedTemplate.isPrivate);
       setFieldValue('fixedPrice', selectedTemplate.fixedPrice);
       setFieldValue('allowSameDayEvent', selectedTemplate.allowSameDayEvent, selectedTemplate.allowSameDayEvent);
-      setFieldValue('waitList', selectedTemplate.waitList);
+      setFieldValue('waitinglist', selectedTemplate.waitList);
       setFieldValue('limitedParticipants', selectedTemplate.limitedParticipants);
       setFieldValue('fixedWeekdays', selectedTemplate.fixedWeekdays);
     }
   };
+
+  const addParagraph = () => {
+    setFieldValue('body', [...fields.body.value, ""]); 
+  }
+
+  const handleBodyChange = (index: number, value: string) => {
+    const newBody = [...fields.body.value];
+    newBody[index] = value;
+    setFieldValue('body', newBody);
+  }
   
 
   return (
@@ -197,19 +206,6 @@ export default function CreateEventPage() {
           </div>
 
           <div>
-            <label htmlFor="category">Type</label>
-            <input
-              id="category"
-              type="text"
-              value={fields.category.value}
-              onChange={(e) => handleInputChange(e, 'category')}
-              placeholder="Kategori"
-              disabled={fields.slug.disabled}
-            />
-            {fields.category.error && <span style={{ color: 'red' }}>{fields.category.error}</span>}
-          </div>
-
-          <div>
             <label htmlFor="name">Arrangement navn</label>
             <input
               id="name"
@@ -232,6 +228,19 @@ export default function CreateEventPage() {
               placeholder="Slug"
             />
             {fields.slug.error && <span style={{ color: 'red' }}>{fields.slug.error}</span>}
+          </div>
+
+          <div>
+            <label htmlFor="address">Arrangements adresse</label>
+            <input
+              id="address"
+              type="text"
+              value={fields.address.value}
+              onChange={(e) => handleInputChange(e, 'address')}
+              placeholder="Adresse.."
+              disabled={fields.address.disabled}
+            />
+            {fields.address.error && <span style={{ color: 'red' }}>{fields.address.error}</span>}
           </div>
 
           <div>
@@ -262,24 +271,33 @@ export default function CreateEventPage() {
           
 
           <div>
-            <label htmlFor="waitList">Tillatt venteliste</label>
+            <label htmlFor="waitinglist">Tillatt venteliste</label>
             <input
-              id="waitList"
+              id="waitinglist"
               type="checkbox"
-              checked={fields.waitList.value}
-              onChange={(e) => handleInputChange(e, 'waitList')}
+              checked={fields.waitinglist.value}
+              onChange={(e) => handleInputChange(e, 'waitinglist')}
             />
           </div>
 
           <div>
-            <label htmlFor="description">Beskrivelse</label>
-            <textarea
-              id="description"
-              value={fields.description.value || ''}
-              onChange={(e) => handleInputChange(e, 'description')}
-              placeholder="Beskriv arrangementet"
-            />
-            {fields.description.error && <span style={{ color: 'red' }}>{fields.description.error}</span>}
+            <label htmlFor="body">Arrangementsbeskrivelse</label>
+            <div>
+              {(fields.body.value.length === 0 ? [''] : fields.body.value).map((paragraph: string, index: number) => (
+                <div key={index}>
+                  <textarea
+                    value={paragraph}
+                    onChange={(e) => handleBodyChange(index, e.target.value)}
+                  />
+                  {fields.body.error && (
+                    <span style={{ color: 'red' }}>
+                      {fields.body.error.split(", ")[index]} {/* Hent feilmeldingen for paragrafen */}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={addParagraph}>Legg til paragraf</button>
           </div>
 
           <div>
