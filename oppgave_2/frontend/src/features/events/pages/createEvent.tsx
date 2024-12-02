@@ -38,7 +38,7 @@ export default function CreateEventPage() {
     }
   ];
 
-  const { data, create } = useOccasion()
+  const { data, create, error } = useOccasion()
 
 
   const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(initialValues, data);
@@ -109,6 +109,7 @@ export default function CreateEventPage() {
       
       console.log("Data sent for post ", wrappedData)
       create(wrappedData)
+      console.log(error)
       
       } else {
         //console.error("Validation failed:", validatedData.error.format());

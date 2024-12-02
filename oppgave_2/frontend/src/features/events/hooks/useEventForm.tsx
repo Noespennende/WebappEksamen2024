@@ -112,10 +112,10 @@ const validateField = (
 
         const conflictingEvent = events?.find(
           (event) => {
-            console.log(
+            /*console.log(
               `Checking event: ${event.template} with date: ${event.date.getFullYear()}-${event.date.getMonth() + 1}-${event.date.getDate()}`, 
               `Against: ${fields.template.value} with date: ${dateValue.getFullYear()}-${dateValue.getMonth() + 1}-${dateValue.getDate()}`
-            );
+            );*/
             return event.template === fields.template.value && 
            event.date.getFullYear() === dateValue.getFullYear() && 
            event.date.getMonth() === dateValue.getMonth() && 

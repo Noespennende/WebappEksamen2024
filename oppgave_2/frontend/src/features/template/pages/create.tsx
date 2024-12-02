@@ -24,7 +24,7 @@ export default function CreateTemplatePage() {
   
   //const { status, data, error, add } = useTemplate()
 
-  const { create } = useTemplate()
+  const { create, error } = useTemplate()
 
   const onSubmit = (data: any) => {
 
@@ -42,6 +42,8 @@ export default function CreateTemplatePage() {
       
       console.log("Data sent for post ", wrappedData)
       create(wrappedData); 
+
+      console.log(error)
 
       } else {
         //console.error("Validation failed:", validatedData.error.format());
