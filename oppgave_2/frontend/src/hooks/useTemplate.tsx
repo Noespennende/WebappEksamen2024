@@ -62,7 +62,7 @@ export function useTemplate () {
         .finally(() => resetToIdle())
     }
 
-    //create occasion
+    //create temlate
     const addTemplate = async (data: Template) => {
         setStatus("posting")
         await fetch(`${formatTemplateFetchUrl("post")}`,
@@ -72,13 +72,46 @@ export function useTemplate () {
                 'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         })
-        .then((response) => {!response.ok ? (setError(`Post request failed: ${response.status}`), setStatus("error")) : (setStatus("success"), redirect(`/arrangementer/${data.slug}`))})
+        .then((response) => {!response.ok ? (setError(`Post request failed: ${response.status}`), setStatus("error")) : (setStatus("success"))})
+        .then((responsedata) => {setData(responsedata.data),  redirect(`/arrangementer/mal/${data.id}`)})
         .catch((error => {setError(`Error while posting data: ${error}`), setStatus("error")}))
         .finally(() => resetToIdle()
         )}
 
+
+        //delete template
+    const removeTemplate = async (id: string) => {
+        setStatus("deleting")
+        await fetch(`${formatTemplateFetchUrl("delete", id)}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'},
+            body: ""
+        })
+        .then((response) => {!response.ok ? (setError(`Delete request failed: ${response.status}`), setStatus("error")) : (setStatus("success"), redirect("/"))})
+        .catch((error => {setError(`Error while deleteing data: ${error}`), setStatus("error")}))
+        .finally(() => resetToIdle())   
+        }
+    
+        //update Template
+        const updateTemplate = async (data: Template) => {
+            setStatus("posting")
+            await fetch(`${formatTemplateFetchUrl("update", data.id)}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then((response) => {!response.ok ? (setError(`Post request failed: ${response.status}`), setStatus("error")) : (setStatus("success"), redirect(`/arrangementer/mal/${data.id}`))})
+            .catch((error => {setError(`Error while posting data: ${error}`), setStatus("error")}))
+            .finally(() => resetToIdle()
+        )}
+
+
     useEffect(() => {
-        //Fetch occasions from server
+        //Fetch templates from server
         const controller = new AbortController()
         getTemplates()
         return() => controller.abort()
@@ -91,6 +124,8 @@ export function useTemplate () {
         get: getTemplates,
         getOne: getOneTemplate,
         create: addTemplate,
+        remove: removeTemplate,
+        update: updateTemplate,
         data: data,
         error: error,
         status: {

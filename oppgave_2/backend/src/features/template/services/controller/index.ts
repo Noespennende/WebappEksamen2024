@@ -1,7 +1,7 @@
 //MAL
 import { errorResponse } from "../../../../lib/error";
 import { Hono } from "hono";
-import { getOneParam, templateCreate, templateGetOne, templatesGet } from "../helpers/config";
+import { deleteParam, getOneParam, patchParam, templateCreate, templateDelete, templateGetOne, templatePatch, templatesGet } from "../helpers/config";
 import { templateService, TemplateService } from "../service";
 
 
@@ -52,6 +52,45 @@ export const createTemplateController = (templateService: TemplateService) => {
             return context.json(response)
         } catch (error) {
             return errorResponse(context, "INTERNAL_SERVER_ERROR", "Server failed to update the data")
+        }
+    })
+
+
+    //update template
+    app.patch(`${templatePatch}`, async (context) => {
+        try {
+            const eventID= context.req.param(patchParam)
+            const eventData = await context.req.json()
+
+            const result = await templateService.updateTemplate(eventID, eventData) 
+
+            if (!result.success){
+                return errorResponse(context, result.error.code, result.error.message)
+            }
+
+            return context.json(result)
+
+        } catch (error) {
+            return errorResponse(context, "INTERNAL_SERVER_ERROR", "Server failed to update the data")
+        }
+    })
+
+
+    //delete template
+    app.delete(`${templateDelete}`, async (context) => {
+        try {
+            const eventSlug= context.req.param(deleteParam)
+
+            const result = await templateService.deleteTemplate(eventSlug) 
+
+            if (!result.success){
+                return errorResponse(context, result.error.code, result.error.message)
+            }
+
+            return context.json(result)
+
+        } catch (error) {
+            return errorResponse(context, "INTERNAL_SERVER_ERROR", "Server failed to delete the data")
         }
     })
 

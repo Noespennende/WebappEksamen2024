@@ -43,6 +43,10 @@ export const formatTemplateFetchUrl  = (fetchType: Fetch, id?: string) => {
         return `${backendUrl}${templateUrl}/create`
     } else if (fetchType==="getOne" && id != null){
         return `${backendUrl}${templateUrl}/${id}`
+    } else if (fetchType=="delete" && id != null){
+        return `${backendUrl}${templateUrl}/delete/${id}`
+    } else if (fetchType=="update" && id != null) {
+        return `${backendUrl}${templateUrl}/update/${id}`
     }
 
 }

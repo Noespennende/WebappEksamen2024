@@ -4,6 +4,7 @@ import { Occasion } from "@/features/events/types";
 import EventCard from "./EventCard";
 import { useOccasion } from "@/hooks/useOccasion";
 import { useEffect } from "react";
+import { useTemplate } from "@/hooks/useTemplate";
 
 export default function EventCards(){
 
@@ -11,7 +12,6 @@ export default function EventCards(){
     
     
     useEffect(() => {
-        console.log(data)
     }, [data])
 
 
