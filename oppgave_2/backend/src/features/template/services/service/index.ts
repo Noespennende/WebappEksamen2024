@@ -2,6 +2,7 @@ import { Result } from "@/types";
 import { CreateTemplate, Template } from "../..";
 import { templateRepository, TemplateRepository } from "../repository";
 import { randomUUID, UUID, } from "crypto";
+import { TemplateBaseSchema } from "@prisma/client";
 
 
  
@@ -76,6 +77,40 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
             } catch (error) {
                 const result: Result<null> = {success: false, error:{code: "BAD_REQUEST", message: "Failed to create template due to a server error"}}
                 return result
+            }
+        },
+
+        async updateTemplate(id: string, data: Partial<TemplateBaseSchema>){
+            try {
+                const templateUpdate = await templateRepository.updateTemplate(id, data)
+
+                if(!templateUpdate){
+                    const result: Result<null> = {success: false, error: {code: "BAD_REQUEST", message:"Unable to update template"}}
+                    return result
+                }
+
+                const result: Result<Template[]> = {success: true, data: templateUpdate}
+                return result
+            } catch (error) {
+                const result: Result<null> = {success: false, error: {code: "BAD_REQUEST", message:"Unable to update template"}}
+                    return result
+            }
+        },
+
+        async deleteTemplate(id: string){
+            try {
+                const templateAfterDelete = await templateRepository.deleteTemplate(id)
+
+                if(!templateAfterDelete){
+                    const result: Result<null> = {success: false, error: {code: "BAD_REQUEST", message:"Unable to update template"}}
+                    return result
+                }
+                const result: Result<Template[]> = {success: true, data: templateAfterDelete}
+                return result
+
+            } catch (error) {
+                const result: Result<null> = {success: false, error: {code: "BAD_REQUEST", message:"Unable to update template"}}
+                    return result
             }
         }
     }
