@@ -21,7 +21,7 @@ export const createOccationRepository = () => {
             },
             waitingListParticipants: true,
             rejectedParticipants: true,
-            templates: true
+            template: true
           }
         });
 
