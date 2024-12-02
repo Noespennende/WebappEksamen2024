@@ -3,8 +3,7 @@ import Link from "next/link";
 import { adminParticipantAction, Occasion, participantApprovalStatus, participantStatus } from "../types";
 import RegisteredParticipantCard from "./RegisteredParticipantCard";
 import { Participant } from "@/types/Types";
-import { useEffect, useState } from "react";
-import { boolean } from "zod";
+import {  useState } from "react";
 import AdminParticipantFormCard from "./AdminParticipantFormCard";
 import { useOccasion } from "@/hooks/useOccasion";
 

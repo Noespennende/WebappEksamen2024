@@ -30,9 +30,8 @@ export const createEventController = (occasionService: OccasionService) => {
             const month = parameters[0] === "null" ? null : parameters[0]
             const year = parameters[1] === "null" ? null : parameters[1]
             const category = parameters[2] === "null" ? null : parameters[2]
-
-            const data = await occasionService.getSortedOccasions(month, year, category)
-            console.log(month,  year, category) //GJØR RIKTIG KALL HER
+            console.log(month,  year, category) 
+            const data = await occasionService.sortedOccasions(year, month, category)
             return context.json(data)
 
             if(!data.success){
@@ -48,7 +47,7 @@ export const createEventController = (occasionService: OccasionService) => {
     app.get(`${eventsGetOne}`, async (context) => {
         try {
             const slug = context.req.param(getOneParam)
-            const data = await occasionService.getOccasionById(slug) //GJØR RIKTIG KALL HER
+            const data = await occasionService.getOccasionById(slug) 
             return context.json(data)
 
             if(!data.success){
