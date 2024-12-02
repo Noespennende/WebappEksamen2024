@@ -35,7 +35,7 @@ type EventFields = {
 
 const validateAllFields = (
   fields: Record<keyof EventFields, FieldState>, 
-  events: Pick<Occasion, 'template' | 'date' | 'name'>[]) => {
+  events?: Pick<Occasion, 'template' | 'date' | 'name'>[]) => {
   let newFields = { ...fields };
 
   Object.keys(fields).forEach((key) => {
@@ -55,7 +55,7 @@ const validateField = (
   key: keyof EventFields,
   value: string | boolean | number | Date | undefined,
   fields: Record<keyof EventFields, FieldState>,
-  events: Pick<Occasion, 'template' | 'date' | 'name'>[]
+  events?: Pick<Occasion, 'template' | 'date' | 'name'>[]
 ) => {
   switch (key) {
     case 'name':
@@ -110,7 +110,7 @@ const validateField = (
         // Sjekker om det finnes et event med samme mal og dato
         console.log("Existing events:", events);
 
-        const conflictingEvent = events.find(
+        const conflictingEvent = events?.find(
           (event) => {
             console.log(
               `Checking event: ${event.template} with date: ${event.date.getFullYear()}-${event.date.getMonth() + 1}-${event.date.getDate()}`, 
@@ -196,7 +196,7 @@ const validateField = (
 };
 
 
-export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 'template' | 'date' | 'name'>[]) {
+export function useEventForm(initialValues: EventFields, events?: Pick<Occasion, 'template' | 'date' | 'name'>[]) {
   const [fields, setFields] = useState<Record<keyof EventFields, FieldState>>(
     Object.fromEntries(
       Object.keys(initialValues).map((key) => [

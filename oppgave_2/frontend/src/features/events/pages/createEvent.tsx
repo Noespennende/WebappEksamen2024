@@ -1,6 +1,7 @@
 "use client";
 
 import { useEventForm } from '@/features/events/hooks/useEventForm';
+import { useOccasion } from '@/hooks/useOccasion';
 import { useTemplate } from '@/hooks/useTemplate';
 import { useEffect, useState } from 'react';
 
@@ -23,6 +24,7 @@ export default function CreateEventPage() {
     body: [] as string[],
   };
 
+  /* TEMP */
   const events = [ 
     {
       name: "Football Tournament",
@@ -36,12 +38,11 @@ export default function CreateEventPage() {
     }
   ];
 
+  const { data, create } = useOccasion()
 
-  const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(initialValues, events);
 
-  
-  
-  
+  const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(initialValues, data);
+
 
   const templates = [
     {
@@ -104,8 +105,11 @@ export default function CreateEventPage() {
     
     if (validatedData.success) {
         
-        console.log("test :", validatedData)
-
+      const wrappedData = [validatedData.data]
+      
+      console.log("Data sent for post ", wrappedData)
+      create(wrappedData)
+      
       } else {
         //console.error("Validation failed:", validatedData.error.format());
         //console.log(error)
