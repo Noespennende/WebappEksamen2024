@@ -4,7 +4,8 @@ CREATE TABLE "Participant" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "approvalStatus" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "registerDate" DATETIME NOT NULL,
+    "approvalDate" DATETIME
 );
 
 -- CreateTable
@@ -15,10 +16,18 @@ CREATE TABLE "OccasionBaseSchema" (
     "price" INTEGER NOT NULL,
     "adress" TEXT NOT NULL,
     "waitingList" BOOLEAN NOT NULL,
-    "template" TEXT NOT NULL,
-    "maxParticipants" INTEGER NOT NULL,
+    "template" TEXT,
+    "maxParticipants" INTEGER,
     "category" TEXT NOT NULL,
     "date" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "BodyEntry" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "content" TEXT NOT NULL,
+    "occasionId" TEXT NOT NULL,
+    CONSTRAINT "BodyEntry_occasionId_fkey" FOREIGN KEY ("occasionId") REFERENCES "OccasionBaseSchema" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -32,6 +41,12 @@ CREATE TABLE "TemplateBaseSchema" (
     "allowSameDayEvent" BOOLEAN NOT NULL,
     "waitList" BOOLEAN NOT NULL,
     "limitedParticipants" BOOLEAN NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "weekDays" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "weekdays" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -67,6 +82,14 @@ CREATE TABLE "_OccasionToTemplate" (
 );
 
 -- CreateTable
+CREATE TABLE "_TemplateBaseSchemaToweekDays" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+    CONSTRAINT "_TemplateBaseSchemaToweekDays_A_fkey" FOREIGN KEY ("A") REFERENCES "TemplateBaseSchema" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_TemplateBaseSchemaToweekDays_B_fkey" FOREIGN KEY ("B") REFERENCES "weekDays" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_TemplateFixedWeekdays" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
@@ -76,6 +99,9 @@ CREATE TABLE "_TemplateFixedWeekdays" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Participant_email_key" ON "Participant"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OccasionBaseSchema_slug_key" ON "OccasionBaseSchema"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_Participant_AB_unique" ON "_Participant"("A", "B");
@@ -100,6 +126,12 @@ CREATE UNIQUE INDEX "_OccasionToTemplate_AB_unique" ON "_OccasionToTemplate"("A"
 
 -- CreateIndex
 CREATE INDEX "_OccasionToTemplate_B_index" ON "_OccasionToTemplate"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_TemplateBaseSchemaToweekDays_AB_unique" ON "_TemplateBaseSchemaToweekDays"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_TemplateBaseSchemaToweekDays_B_index" ON "_TemplateBaseSchemaToweekDays"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_TemplateFixedWeekdays_AB_unique" ON "_TemplateFixedWeekdays"("A", "B");

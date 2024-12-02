@@ -30,7 +30,7 @@ export const ParticipantBaseSchema = z.object({
     name: z.string().min(2),
     email: z.string().email(),
     registerDate: z.date(),
-    aprovalDate: z.date().nullable(),
+    approvalDate: z.date().nullable(),
 });
 
 

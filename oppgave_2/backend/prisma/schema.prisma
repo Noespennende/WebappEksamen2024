@@ -17,8 +17,10 @@ model Participant {
   id                         String               @id @default(uuid())
   name                       String
   email                      String               @unique
-  approvalStatus             String
-  createdAt                  DateTime             @default(now())
+  approvalStatus             String     
+  registerDate               DateTime             
+  approvalDate               DateTime?            
+  
   OccasionBaseSchema         OccasionBaseSchema[] @relation("Participant")
   WaitingOccasionBaseSchema  OccasionBaseSchema[] @relation("WaitingParticipant")
   RejectedOccasionBaseSchema OccasionBaseSchema[] @relation("RejectedParticipant")
