@@ -28,7 +28,7 @@ export const createEventController = (occasionService: OccasionService) => {
             const month = context.req.query("month")
             const year = context.req.query("year")
             const category = context.req.query("category")
-            const data = await occasionService.getAllOccasions(month, year, category)
+            const data = await occasionService.getSortedOccasions(month, year, category)
             console.log(month,  year, category) //GJØR RIKTIG KALL HER
             return context.json(data)
 

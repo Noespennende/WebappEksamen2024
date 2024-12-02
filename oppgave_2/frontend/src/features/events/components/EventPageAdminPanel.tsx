@@ -202,7 +202,8 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     ))) : ""}
                     
                 </div>
-                <p className={error ? `error` : `message`}>{message}</p>
+                { error && message.length > 0 ? <p className={`error`}>{message}</p> : ""}
+                { !error && message.length > 0 ? <p className={`message`}>{message}</p> : ""}
                 <div id="eventPageAdminPanelAdminParticipantsButtons">
                     <button className="button" onClick={handleAddParticipant}>Legg til deltager</button>
                     {isAddParticipant ? <button className="button" onClick={handleSubmittParticipants}>Meld på deltagere</button> : ""}

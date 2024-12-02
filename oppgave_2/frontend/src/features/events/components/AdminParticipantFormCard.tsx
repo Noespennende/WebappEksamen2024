@@ -52,22 +52,22 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
     return(
         <div className="adminParticipantFormCard">
             <form className="adminParticipantFormCardForm">
-            <div className="adminParticipantFormCardNameSection">
-                <label htmlFor="adminParticipantFormCardName">Navn</label>
-                <input type="text" id="adminParticipantFormCarName" value={participant.name} onChange={handleNameChange} name="adminParticipantFormCarName" placeholder="Navn Navnessen..."/>
-            </div>
-            <div className="adminParticipantFormCardEmailSection">
-                <label htmlFor="adminParticipantFormCardEmail">Navn</label>
-                <input type="text" id="adminParticipantFormCarEmail" value={participant.email} onChange={handleEmailChange} name="adminParticipantFormCarEmail" placeholder="navn@email.no..."/>
-            </div>
-        </form>
-        <button className={`adminParticipantFormCardDropdownButton ${participant.aprovalStatus}`}>{buttonText}</button>
-        <ul className="dropdownOptions">
-            <li onClick={() => handleStatusChange("Velg handling")} className="choseAction">"Velg handling"</li>
-            <li  onClick={() => handleStatusChange("Godkjenn")} className="approved">Godkjenn</li>
-            <li  onClick={() => handleStatusChange("Avslå")} className="denied">Avslå</li>
-            <li  onClick={() => handleStatusChange("Slett")} className="delete">Slett</li>
-        </ul>
+                <div className="adminParticipantFormCardNameSection">
+                    <label htmlFor="adminParticipantFormCardName">Navn</label>
+                    <input type="text" id="adminParticipantFormCarName" value={participant.name} onChange={handleNameChange} name="adminParticipantFormCarName" placeholder="Navn Navnessen..."/>
+                </div>
+                <div className="adminParticipantFormCardEmailSection">
+                    <label htmlFor="adminParticipantFormCardEmail">Epost</label>
+                    <input type="text" id="adminParticipantFormCarEmail" value={participant.email} onChange={handleEmailChange} name="adminParticipantFormCarEmail" placeholder="navn@email.no..."/>
+                </div>
+            </form>
+            <button className={`adminParticipantFormCardDropdownButton ${participant.aprovalStatus}`}>{buttonText}</button>
+            <ul className="dropdownOptions">
+                <li onClick={() => handleStatusChange("Velg handling")} className="choseAction">Velg handling</li>
+                <li  onClick={() => handleStatusChange("Godkjenn")} className="approved">Godkjenn</li>
+                <li  onClick={() => handleStatusChange("Avslå")} className="denied">Avslå</li>
+                <li  onClick={() => handleStatusChange("Slett")} className="delete">Slett</li>
+            </ul>
         </div>
     )
 }

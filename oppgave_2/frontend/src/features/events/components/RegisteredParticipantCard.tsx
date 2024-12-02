@@ -35,7 +35,7 @@ export default function RegisteredParticipantCard ({participant, status, onOptio
             <p className="RegisteredParticipantCardStatus">{status}</p>
             <button className={`RegisteredParticipantCardStatusDropdownButton ${participant.aprovalStatus}`}>{buttonText}</button>
             <ul className="dropdownOptions">
-                <li onClick={() => handleCategoryClick("Velg handling")} className="choseAction">"Velg handling"</li>
+                <li onClick={() => handleCategoryClick("Velg handling")} className="choseAction">Velg handling</li>
                 <li  onClick={() => handleCategoryClick("Godkjenn")} className="approved">Godkjenn</li>
                 <li  onClick={() => handleCategoryClick("Avslå")} className="denied">Avslå</li>
                 <li  onClick={() => handleCategoryClick("Slett")} className="delete">Slett</li>

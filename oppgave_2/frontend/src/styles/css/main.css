@@ -76,4 +76,33 @@ body {
   animation: moveFadeIn 0.5s ease forwards;
 }
 
+.error{
+  display: inline-block;
+  color: var(--white);
+  background-color: var(--errorColor);
+  font-weight: var(--bold);
+  text-align: center;
+  padding: .5rem 1rem;
+  align-self: center;
+  justify-self: center;
+  border-radius: 10px;
+  transform: translateY(20px);
+  animation: moveFadeIn 0.5s ease forwards;
+}
+
+.message{
+  display: inline-block;
+  color: var(--green);
+  background-color: var(--darkGray);
+  font-weight: var(--bold);
+  text-align: center;
+  padding: .5rem 1rem;
+  align-self: center;
+  justify-self: center;
+  border-radius: 10px;
+  transform: translateY(20px);
+  animation: moveFadeIn 0.5s ease forwards;
+}
+
+
 
