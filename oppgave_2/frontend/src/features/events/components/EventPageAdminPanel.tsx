@@ -6,6 +6,7 @@ import { Participant } from "@/types/Types";
 import { useEffect, useState } from "react";
 import { boolean } from "zod";
 import AdminParticipantFormCard from "./AdminParticipantFormCard";
+import { useOccasion } from "@/hooks/useOccasion";
 
 
 type EventPageAdminPanelProps = {
@@ -16,7 +17,8 @@ type EventPageAdminPanelProps = {
 
 export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps){
 
-    //const {update, status, remove} = useEvents()
+    const {update, status, remove} = useOccasion()
+
     const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}])
     const [isAddParticipant, setIsAddParticipant] = useState<boolean>(false)
     const [message, setmessage] = useState("")
@@ -25,7 +27,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     const handleDeleteOccasion = () => {
         
-        //remove(occasion.id)
+        remove(occasion.id)
     }
 
     const handleSubmittParticipants = () =>  {
@@ -84,7 +86,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                 setmessage("Alle deltagere som har plass er blitt lagt til arrangementet. Resten er avslått.")
             }
 
-            //update(Occassion)
+            update(occasion)
         }
     }
 
@@ -156,59 +158,61 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     return(
         <section id="eventPageAdminPanel">
-            <h2 id="eventPageAdminPanelHeader">Admin panel</h2>
-            <div id="editDeleteDownloadEventButtons">
-                <Link href={`/opprett/arrangement/${occasion.id}`} className="button">Rediger innhold</Link>
-                <Link href={`/arrangement/${occasion.id}/lastned`} className="button">Last ned statistikk</Link>
-                <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
-            </div>
-            <div id="eventPageAdminPanelProfit">
-                <p id="eventPageAdminPanelProfitProfits">{`${occasion.price * (occasion.participants.length)}`} kr </p>
-                <p id="eventPageAdminPanelProfitText">samlet forventet intekt</p>
-            </div>
-            
-            <section id="eventPageAdminPanelParticipants">
-                <h3>Påmeldte deltagere:</h3>
-                {occasion.participants.map((participant, index) => (
-                    <RegisteredParticipantCard
-                        key={`participants${index}`}
-                        participant={participant}
-                        status={"Deltager"}
-                        onOptionComit={handleParticipantOptionComit}
-                    />
-                ))}
+            {status.loading  ? <div className="loader"></div> : (<>
+                <h2 id="eventPageAdminPanelHeader">Admin panel</h2>
+                <div id="editDeleteDownloadEventButtons">
+                    <Link href={`/opprett/arrangement/${occasion.id}`} className="button">Rediger innhold</Link>
+                    <Link href={`/arrangement/${occasion.id}/lastned`} className="button">Last ned statistikk</Link>
+                    <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
+                </div>
+                <div id="eventPageAdminPanelProfit">
+                    <p id="eventPageAdminPanelProfitProfits">{`${occasion.price * (occasion.participants.length)}`} kr </p>
+                    <p id="eventPageAdminPanelProfitText">samlet forventet intekt</p>
+                </div>
+                
+                <section id="eventPageAdminPanelParticipants">
+                    <h3>Påmeldte deltagere:</h3>
+                    {occasion.participants.map((participant, index) => (
+                        <RegisteredParticipantCard
+                            key={`participants${index}`}
+                            participant={participant}
+                            status={"Deltager"}
+                            onOptionComit={handleParticipantOptionComit}
+                        />
+                    ))}
 
-                {occasion.waitinglistParticipants.map((participant, index) => (
-                    <RegisteredParticipantCard
-                        key={`Waiting list${index}`}
-                        participant={participant}
-                        status={"Venteliste"}
-                        onOptionComit={handleParticipantOptionComit}
-                    />
-                ))}
-                {occasion.recejectedParticipants.map((participant, index) => (
-                    <RegisteredParticipantCard
-                        key={`rejected list${index}`}
-                        participant={participant}
-                        status={"Avslått"}
-                        onOptionComit={handleParticipantOptionComit}
-                    />
-                ))}
-            </section>
-            <section id="eventPageAdminPanelAdminParticipants">
-                <div id="eventPageAdminPanelAdminParticipantsForms">
-                    {isAddParticipant ? (adminAssignedParticipants.map((particpant, index) => (
-                        <AdminParticipantFormCard key={`adminParticipantFormCard${index}`} participant={particpant} onDelete={handleAdminAddedParticipantDelete}/> 
-                    ))) : ""}
-                    
-                </div>
-                { error && message.length > 0 ? <p className={`error`}>{message}</p> : ""}
-                { !error && message.length > 0 ? <p className={`message`}>{message}</p> : ""}
-                <div id="eventPageAdminPanelAdminParticipantsButtons">
-                    <button className="button" onClick={handleAddParticipant}>Legg til deltager</button>
-                    {isAddParticipant ? <button className="button" onClick={handleSubmittParticipants}>Meld på deltagere</button> : ""}
-                </div>
-            </section>
+                    {occasion.waitinglistParticipants.map((participant, index) => (
+                        <RegisteredParticipantCard
+                            key={`Waiting list${index}`}
+                            participant={participant}
+                            status={"Venteliste"}
+                            onOptionComit={handleParticipantOptionComit}
+                        />
+                    ))}
+                    {occasion.recejectedParticipants.map((participant, index) => (
+                        <RegisteredParticipantCard
+                            key={`rejected list${index}`}
+                            participant={participant}
+                            status={"Avslått"}
+                            onOptionComit={handleParticipantOptionComit}
+                        />
+                    ))}
+                </section>
+                <section id="eventPageAdminPanelAdminParticipants">
+                    <div id="eventPageAdminPanelAdminParticipantsForms">
+                        {isAddParticipant ? (adminAssignedParticipants.map((particpant, index) => (
+                            <AdminParticipantFormCard key={`adminParticipantFormCard${index}`} participant={particpant} onDelete={handleAdminAddedParticipantDelete}/> 
+                        ))) : ""}
+                        
+                    </div>
+                    { error && message.length > 0 ? <p className={`error`}>{message}</p> : ""}
+                    { !error && message.length > 0 ? <p className={`message`}>{message}</p> : ""}
+                    <div id="eventPageAdminPanelAdminParticipantsButtons">
+                        <button className="button" onClick={handleAddParticipant}>Legg til deltager</button>
+                        {isAddParticipant ? <button className="button" onClick={handleSubmittParticipants}>Meld på deltagere</button> : ""}
+                    </div>
+                </section>
+                </>)}
         </section>
     )
 }
