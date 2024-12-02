@@ -2,6 +2,8 @@ import { WeekdayEnum } from '@/helpers/schema';
 import { Weekday } from '@/types/Types';
 import { useState, ChangeEvent } from 'react';
 import { Occasion } from '../types';
+import { validateCreateEvent } from '../helpers/schema';
+import { UUID } from 'crypto';
 
 type FieldState = {
   value: any;
@@ -14,19 +16,20 @@ type FieldState = {
 
 type EventFields = {
   name: string;
-  template: string;
+  address: string;
+  template: UUID | undefined;
   isPrivate: boolean;
   allowSameDayEvent: boolean;
-  waitList: boolean;
+  waitinglist: boolean;
   fixedPrice: boolean;
   price: number;
   limitedParticipants: boolean;
   maxParticipants: number;
-  fixedWeekdays: string[],
+  fixedWeekdays: Weekday[],
   date: string;
   category: string;
   slug: string;
-  description: string;
+  body: string[];
 };
 
 const validateField = (
@@ -41,6 +44,13 @@ const validateField = (
         return { isValid: true, error: undefined };
       } else {
         return { isValid: false, error: 'Navn må være mer enn 3 tegn' };
+      }
+
+    case 'address':
+      if (typeof value === 'string' && value.trim().length > 3) {
+        return { isValid: true, error: undefined };
+      } else {
+        return { isValid: false, error: 'Addressen må være mer enn 3 tegn' };
       }
     case 'price':
       if (typeof value === 'number' && !isNaN(value)) {
@@ -126,19 +136,29 @@ const validateField = (
       } else {
         return { isValid: false, error: 'Velg en gyldig kategori' };
       }
-    case 'description':
-      if (typeof value === 'string' && value.trim().length > 10) {
+    case 'body':
+      if (Array.isArray(value)) {
+        const invalidParagraphs = value
+          .map((paragraph, index) => {
+            if (paragraph.trim().length < 10) {
+              return `Paragraf ${index + 1} må være minst 10 tegn lang`;
+            }
+            return null;
+          })
+          .filter((error) => error !== null);
+        
+        if (invalidParagraphs.length > 0) {
+          return { isValid: false, error: invalidParagraphs.join(", ") };
+        }
+        
         return { isValid: true, error: undefined };
-      } else if (typeof value === 'string' && value.trim().length > 0) {
-        return { isValid: false, error: 'Beskrivelsen må være minst 10 tegn lang' };
-      } else {
-        return { isValid: false, error: 'Beskrivelse må være spesifisert' };
       }
+      return { isValid: false, error: 'Beskrivelse må være spesifisert' };
     case 'template':
     case 'isPrivate':
     case 'fixedPrice':
     case 'allowSameDayEvent':
-    case 'waitList':
+    case 'waitinglist':
     case 'limitedParticipants':
       if (typeof value === 'boolean') {
         return { isValid: true, error: undefined };
@@ -182,9 +202,10 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
       newValue = (e.target as HTMLInputElement).checked;
     } else if (type === 'number' || key === 'price' || key === 'maxParticipants') {
       newValue = value ? parseFloat(value) : undefined;
-    } else if (type === 'date') {
+    /*} else if (type === 'date') {
       newValue = value ? new Date(value).toISOString().split('T')[0] : undefined; // ISO-format
-    } else {
+    */
+      } else {
       newValue = value;
     }
   
@@ -230,36 +251,52 @@ export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    // Check if there are any invalid fields
     const hasErrors = Object.values(fields).some(field => !field.isValid);
     if (hasErrors) {
       console.log('Validation errors found. Submission aborted.');
       return;
     }
-
-    const templateData: Record<string, any> = {};
-
+  
+    // Construct the event data from the form fields
+    const eventData: Record<string, any> = {};
+  
     Object.entries(fields).forEach(([key, { value, disabled }]) => {
-      if (disabled) return; // Hopp over disabled felt når du bygger templateData
+      // Skip disabled fields if needed
+      if (disabled) return;
 
+      // Handle specific field types
       if (key === 'price' || key === 'maxParticipants') {
-        const numberValue = value ? Number(value) : undefined;
-        templateData[key] = numberValue;
+          const numberValue = Number(value);
+          eventData[key] = numberValue;
+      } else if (key === 'date') {
+          // Convert string date to Date object
+          const dateValue = value ? new Date(value) : undefined;
+          eventData[key] = dateValue;
+      }  else if (key === 'waitinglist') {
+          const booleanValue = value === true || value === 'true';
+        eventData[key] = booleanValue;
       } else {
-        templateData[key] = value;
+          eventData[key] = value;
       }
+  });
+  
+    // Validate the event data using the Zod schema
+    const validated = validateCreateEvent(eventData);
 
-      if (key === 'price' && !fields.fixedPrice.value) {
-        delete templateData[key]; // Hvis 'fixedPrice' er false, hopp over prisfelt
-      }
-
-      if (key === 'maxParticipants' && !fields.limitedParticipants.value) {
-        delete templateData[key]; // Hvis 'limitedParticipants' er false, hopp over maxParticipants
-      }
-    });
-
-    console.log(templateData);
-    return templateData;
+    console.log("Try data: ", eventData)
+  
+    if (!validated.success) {
+      // Log the validation errors
+      console.error("Validation failed:", validated.error.format());
+    } else {
+      // Validation passed
+      console.log("Validation passed:", validated.data);
+      // Here, you can proceed to submit the event data (e.g., send it to an API)
+    }
+  
+    return validated;
   };
 
   return {
