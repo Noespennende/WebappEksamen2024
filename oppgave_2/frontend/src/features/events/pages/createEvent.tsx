@@ -37,7 +37,7 @@ export default function CreateEventPage() {
   ];
 
 
-  const { fields, handleInputChange, handleSubmit, setFieldValue } = useEventForm(initialValues, events);
+  const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(initialValues, events);
 
   
   
@@ -121,9 +121,7 @@ export default function CreateEventPage() {
     console.log(selectedTemplateId)
     if (selectedTemplateId === "") {
       // Nullstiller
-      (Object.keys(fields) as Array<keyof typeof fields>).forEach((key) => {
-        setFieldValue(key, initialValues[key], false);
-      });
+      resetFields(initialValues)
       setFieldValue('template', undefined);  // Ensure template is also reset
       return;
     }
@@ -205,19 +203,6 @@ export default function CreateEventPage() {
             {fields.category.error && (
               <span style={{ color: 'red' }}>{fields.category.error}</span>
             )}
-          </div>
-
-          <div>
-            <label htmlFor="category">Type</label>
-            <input
-              id="category"
-              type="text"
-              value={fields.category.value}
-              onChange={(e) => handleInputChange(e, 'category')}
-              placeholder="Kategori"
-              disabled={fields.slug.disabled}
-            />
-            {fields.category.error && <span style={{ color: 'red' }}>{fields.category.error}</span>}
           </div>
 
           <div>
