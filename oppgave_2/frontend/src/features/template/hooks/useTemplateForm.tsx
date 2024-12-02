@@ -52,6 +52,8 @@ const validateField = (key: keyof TemplateFields, value: any): { isValid: boolea
             } else {
                 return { isValid: false, error: 'Maks deltakere må være et gyldig tall' };
             }
+      case 'fixedWeekdays':
+        return { isValid: true, error: undefined };
       case 'isPrivate':
       case 'fixedPrice':
       case 'allowSameDayEvent':
@@ -66,6 +68,25 @@ const validateField = (key: keyof TemplateFields, value: any): { isValid: boolea
       default:
         return { isValid: false, error: 'Invalid field.' };
     }
+  };
+
+
+  const validateAllFields = (
+    fields: Record<keyof TemplateFields, FieldState>
+  ): Record<keyof TemplateFields, FieldState> => {
+    let newFields = { ...fields };
+  
+    Object.keys(fields).forEach((key) => {
+      const fieldKey = key as keyof TemplateFields;
+      const value = fields[fieldKey].value;
+      const validation = validateField(fieldKey, value);
+  
+      // Update validity and error message for each field
+      newFields[fieldKey].isValid = validation.isValid;
+      newFields[fieldKey].error = validation.error || undefined;
+    });
+  
+    return newFields; // Return the validated fields
   };
 
 
@@ -154,14 +175,22 @@ export function useTemplateForm(initialValues: TemplateFields) {
   // Skal renames til noe mer riktig
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const hasErrors = Object.values(fields).some(field => !field.isValid);
-    if (hasErrors) {
-        console.log("Validation errors found. Submission aborted.");
-        console.log(fields)
-        return; // Forhindrer innsending dersom det er feil
-    }
 
+
+    const validatedFields = validateAllFields(fields);
+    
+    setFields(validatedFields);
+    
+    const hasErrors = Object.entries(fields).filter(([key, field]) => !field.isValid);
+
+    if (hasErrors.length > 0) {
+      console.log('Validation errors found. Submission aborted.');
+      // Logg detaljene for hvert felt med feil
+      hasErrors.forEach(([key, field]) => {
+        console.log(`Field "${key}" has error: ${field.error}`);
+      });
+      return;
+    }
     const templateData: Record<string, any> = {};
   
     
