@@ -16,18 +16,11 @@ CREATE TABLE "OccasionBaseSchema" (
     "price" INTEGER NOT NULL,
     "adress" TEXT NOT NULL,
     "waitingList" BOOLEAN NOT NULL,
-    "template" TEXT,
+    "templateId" TEXT,
     "maxParticipants" INTEGER,
     "category" TEXT NOT NULL,
-    "date" DATETIME NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "BodyEntry" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "content" TEXT NOT NULL,
-    "occasionId" TEXT NOT NULL,
-    CONSTRAINT "BodyEntry_occasionId_fkey" FOREIGN KEY ("occasionId") REFERENCES "OccasionBaseSchema" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "date" DATETIME NOT NULL,
+    CONSTRAINT "OccasionBaseSchema_templateId_fkey" FOREIGN KEY ("templateId") REFERENCES "TemplateBaseSchema" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -41,6 +34,14 @@ CREATE TABLE "TemplateBaseSchema" (
     "allowSameDayEvent" BOOLEAN NOT NULL,
     "waitList" BOOLEAN NOT NULL,
     "limitedParticipants" BOOLEAN NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "BodyEntry" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "content" TEXT NOT NULL,
+    "occasionId" TEXT NOT NULL,
+    CONSTRAINT "BodyEntry_occasionId_fkey" FOREIGN KEY ("occasionId") REFERENCES "OccasionBaseSchema" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -71,14 +72,6 @@ CREATE TABLE "_RejectedParticipant" (
     "B" TEXT NOT NULL,
     CONSTRAINT "_RejectedParticipant_A_fkey" FOREIGN KEY ("A") REFERENCES "OccasionBaseSchema" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_RejectedParticipant_B_fkey" FOREIGN KEY ("B") REFERENCES "Participant" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "_OccasionToTemplate" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
-    CONSTRAINT "_OccasionToTemplate_A_fkey" FOREIGN KEY ("A") REFERENCES "OccasionBaseSchema" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_OccasionToTemplate_B_fkey" FOREIGN KEY ("B") REFERENCES "TemplateBaseSchema" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -120,12 +113,6 @@ CREATE UNIQUE INDEX "_RejectedParticipant_AB_unique" ON "_RejectedParticipant"("
 
 -- CreateIndex
 CREATE INDEX "_RejectedParticipant_B_index" ON "_RejectedParticipant"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_OccasionToTemplate_AB_unique" ON "_OccasionToTemplate"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_OccasionToTemplate_B_index" ON "_OccasionToTemplate"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_TemplateBaseSchemaToweekDays_AB_unique" ON "_TemplateBaseSchemaToweekDays"("A", "B");
