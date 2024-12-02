@@ -1,3 +1,5 @@
+import { WeekdayEnum } from '@/helpers/schema';
+import { Weekday } from '@/types/Types';
 import { useState, ChangeEvent } from 'react';
 
 type FieldState = {
@@ -6,7 +8,7 @@ type FieldState = {
   isDirty: boolean;
   isTouched: boolean;
   error: string | undefined;
-  disabled?: boolean; // Legger til disabled-status for hvert felt
+  disabled?: boolean;
 };
 
 type EventFields = {
@@ -19,12 +21,18 @@ type EventFields = {
   price: number;
   limitedParticipants: boolean;
   maxParticipants: number;
+  fixedWeekdays: string[],
   date: string;
   category: string;
   slug: string;
+  description: string;
 };
 
-const validateField = (key: keyof EventFields, value: any): { isValid: boolean, error: string | undefined } => {
+const validateField = (
+  key: keyof EventFields,
+  value: string | boolean | number | Date | undefined,
+  fields: Record<keyof EventFields, FieldState> // Legg til `fields` som argument
+) => {
   switch (key) {
     case 'name':
       if (typeof value === 'string' && value.trim().length > 3) {
@@ -58,18 +66,44 @@ const validateField = (key: keyof EventFields, value: any): { isValid: boolean, 
       } else {
         return { isValid: false, error: 'Slug må være en ikke-tom streng' };
       }
-    case 'date':
-      if (typeof value === 'string' && value.trim().length > 0) {
-        return { isValid: true, error: undefined };
-      } else {
-        return { isValid: false, error: 'Dato må være spesifisert' };
-      }
-    case 'category':
-      if (typeof value === 'string' && value.trim().length > 0) {
-        return { isValid: true, error: undefined };
-      } else {
-        return { isValid: false, error: 'Kategori må være spesifisert' };
-      }
+      case 'date':
+        let dateValue: Date | null = null;
+        if (typeof value === 'string' && value.trim()) {
+          dateValue = new Date(value);
+        } else if (value instanceof Date && !isNaN(value.getTime())) {
+          dateValue = value;
+        }
+
+        // Sjekker ukedagen og om den faller utenfor fixedWeekdays
+        if (dateValue && !isNaN(dateValue.getTime())) {
+          const days: Weekday[] = WeekdayEnum.options; //["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const selectedDay = days[dateValue.getDay()];
+        
+          console.log("selected: ", selectedDay);
+        
+          // Sjekker om selectedDay er i fixedDays
+          if (fields.fixedWeekdays && fields.fixedWeekdays.value.length > 0) {
+            if (!fields.fixedWeekdays.value.includes(selectedDay)) {
+              return { isValid: false, error: `Datoen kan ikke falle på en ${selectedDay}` };
+            }
+          }
+          return { isValid: true, error: undefined }; 
+        }
+        
+      case 'category':
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return { isValid: true, error: undefined };
+        } else {
+          return { isValid: false, error: 'Velg en gyldig kategori' };
+        }
+      case 'description':
+        if (typeof value === 'string' && value.trim().length > 10) {
+          return { isValid: true, error: undefined };
+        } else if (typeof value === 'string' && value.trim().length > 0) {
+          return { isValid: false, error: 'Beskrivelsen må være minst 10 tegn lang' };
+        } else {
+          return { isValid: false, error: 'Beskrivelse må være spesifisert' };
+        }
     case 'template':
     case 'isPrivate':
     case 'fixedPrice':
@@ -104,39 +138,46 @@ export function useEventForm(initialValues: EventFields) {
   );
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
     key: keyof EventFields
   ) => {
     if (fields[key]?.disabled) return; // Håndter at endringer ikke skjer hvis feltet er disabled
-
-    const { value, type } = e.target as HTMLInputElement;
-
+  
+    const { value, type } = e.target;
+  
     let newValue: string | boolean | number | undefined;
-
+  
+    // Håndter spesifikke felt-typer
     if (type === 'checkbox') {
       newValue = (e.target as HTMLInputElement).checked;
-    } else if (key === 'price' || key === 'maxParticipants') {
+    } else if (type === 'number' || key === 'price' || key === 'maxParticipants') {
       newValue = value ? parseFloat(value) : undefined;
+    } else if (type === 'date') {
+      newValue = value ? new Date(value).toISOString().split('T')[0] : undefined; // ISO-format
     } else {
       newValue = value;
     }
-
+  
+    // Oppdater state for feltet
     setFields((prevFields) => {
       const newFields = { ...prevFields };
+  
       newFields[key] = {
         ...newFields[key],
         value: newValue,
         isDirty: true,
         isTouched: true,
       };
-
-      const validation = validateField(key, newValue);
+  
+      // Valider feltet
+      const validation = validateField(key, newValue, newFields);
       newFields[key].error = validation.error || undefined;
       newFields[key].isValid = validation.isValid;
-
+  
       return newFields;
     });
   };
+  
 
   const setFieldValue = (key: keyof EventFields, value: any, disabled: boolean = false) => {
     setFields((prevFields) => {
@@ -149,7 +190,7 @@ export function useEventForm(initialValues: EventFields) {
         disabled: disabled, // Setter disabled til ønsket verdi
       };
 
-      const validation = validateField(key, value);
+      const validation = validateField(key, value, newFields);
       newFields[key].error = validation.error || undefined;
       newFields[key].isValid = validation.isValid;
 

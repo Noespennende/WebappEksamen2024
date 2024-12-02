@@ -6,8 +6,7 @@ export const OccasionCategoryEnum = z.enum([
 ])
 
 export const WeekdayEnum = z.enum([
-    "Monday", "Tuesday", "Wednesday", "Thursday", 
-    "Friday", "Saturday", "Sunday"
+   "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 ])
 
 export const MonthEnum = z.enum([
