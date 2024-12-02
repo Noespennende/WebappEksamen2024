@@ -1,6 +1,8 @@
 "use client";
 
 import { useEventForm } from '@/features/events/hooks/useEventForm';
+import { useTemplate } from '@/hooks/useTemplate';
+import { useEffect, useState } from 'react';
 
 export default function CreateEventPage() {
   const initialValues = {
@@ -13,12 +15,16 @@ export default function CreateEventPage() {
     price: 0,
     limitedParticipants: false ,
     maxParticipants: 0,
+    fixedWeekdays: [],
     date: '', 
     category: '',
     slug: '',
+    description: '',
   };
 
+
   const { fields, handleInputChange, handleSubmit, setFieldValue } = useEventForm(initialValues);
+
 
   const templates = [
     {
@@ -59,8 +65,12 @@ export default function CreateEventPage() {
     },
   ];
 
-  const templateOptions = templates.map(template => template.name);
+  const categories = ["Sport", "Social", "Meeting", "Other"];
 
+
+
+  const templateOptions = templates.map(template => template.name);
+  const categoryOptions = categories;
 
   const onSubmit = (data: React.FormEvent) => {
 
@@ -74,7 +84,7 @@ export default function CreateEventPage() {
     
     if (validatedData.success) {
         
-        // add-call fra useEvent
+        console.log("test :", validatedData)
 
       } else {
         //console.error("Validation failed:", validatedData.error.format());
@@ -107,6 +117,7 @@ export default function CreateEventPage() {
       setFieldValue('allowSameDayEvent', selectedTemplate.allowSameDayEvent, selectedTemplate.allowSameDayEvent);
       setFieldValue('waitList', selectedTemplate.waitList);
       setFieldValue('limitedParticipants', selectedTemplate.limitedParticipants);
+      setFieldValue('fixedWeekdays', selectedTemplate.fixedWeekdays);
     }
   };
   
@@ -130,19 +141,37 @@ export default function CreateEventPage() {
                 <option key={index} value={template}>{template}</option>
               ))}
             </select>
-            {fields.template.error && <span style={{ color: 'red' }}>{fields.template.error}</span>}
           </div>
 
           <div>
             <label htmlFor="date">Velg dato</label>
             <input
               id="date"
-              type="text"
-              value={fields.date.value}
-              onChange={(e) => handleInputChange(e, 'date')}
-              placeholder="Dato"
+              type="date" // Endret fra "text" til "date"
+              value={fields.date.value || ''} // Sett initial verdi, håndter null/undefined
+              onChange={(e) => handleInputChange(e, 'date')} // Håndter endring
+              placeholder="Velg en dato"
             />
             {fields.date.error && <span style={{ color: 'red' }}>{fields.date.error}</span>}
+          </div>
+
+          <div>
+            <label htmlFor="category">Type</label>
+            <select
+              id="category"
+              value={fields.category.value}
+              onChange={(e) => handleInputChange(e, 'category')}
+            >
+              <option value="">Velg en kategori</option>
+              {categoryOptions.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            {fields.category.error && (
+              <span style={{ color: 'red' }}>{fields.category.error}</span>
+            )}
           </div>
 
           <div>
@@ -156,6 +185,19 @@ export default function CreateEventPage() {
               disabled={fields.slug.disabled}
             />
             {fields.category.error && <span style={{ color: 'red' }}>{fields.category.error}</span>}
+          </div>
+
+          <div>
+            <label htmlFor="name">Arrangement navn</label>
+            <input
+              id="name"
+              type="text"
+              value={fields.name.value}
+              onChange={(e) => handleInputChange(e, 'name')}
+              placeholder="Kategori"
+              disabled={fields.name.disabled}
+            />
+            {fields.name.error && <span style={{ color: 'red' }}>{fields.name.error}</span>}
           </div>
 
           <div>
@@ -208,15 +250,14 @@ export default function CreateEventPage() {
           </div>
 
           <div>
-            <label htmlFor="slug">Beskrivelse</label>
-            <input
-              id="slug"
-              type="text"
-              value={fields.slug.value}
-              onChange={(e) => handleInputChange(e, 'slug')}
-              placeholder="Slug"
+            <label htmlFor="description">Beskrivelse</label>
+            <textarea
+              id="description"
+              value={fields.description.value || ''}
+              onChange={(e) => handleInputChange(e, 'description')}
+              placeholder="Beskriv arrangementet"
             />
-            {fields.slug.error && <span style={{ color: 'red' }}>{fields.slug.error}</span>}
+            {fields.description.error && <span style={{ color: 'red' }}>{fields.description.error}</span>}
           </div>
 
           <div>
