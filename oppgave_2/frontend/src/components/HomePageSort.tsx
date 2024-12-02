@@ -12,6 +12,8 @@ export default function HomePageSort(){
     const handleYearInput = (yearInput: number) => {
         if(yearInput > 999){
 
+        } else if (yearInput.toString.length <= 0){
+            
         }
     }
 
@@ -20,8 +22,8 @@ export default function HomePageSort(){
     }
 
     return(
-        <section id="frontPageSort">
-            <h3>Sorter</h3>
+        <section id="homePageSort">
+            <h3>Sorter:</h3>
             <Dropdown defaultText="Måned" options={MonthEnum.options} onCategorySelect={handleMonthDropdownClick}/>
             <YearSortInput onInput={handleYearInput}/>
             <Dropdown defaultText="Kategori" options={OccasionCategoryEnum.options} onCategorySelect={handleCategorySelect}/>

@@ -1,7 +1,7 @@
 import { Result } from "@/types";
 import { CreateTemplate, Template } from "../..";
-import { TemplateRepository } from "../repository";
-import { UUID } from "crypto";
+import { templateRepository, TemplateRepository } from "../repository";
+import { randomUUID, UUID, } from "crypto";
 
 
  
@@ -42,13 +42,18 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
 
         async getATemplate(id: UUID){
             try {
+                /*const validUUID = isUuid(id)
+                if (!validUUID) {
+                    const result: Result<null> = {success: false, error:{code: "INVALID_UUID", message:`The provided ID: ${id} ist not valid uuid`}
+                    };*/
+
                 const singleTemplate = await templateRepository.getOneTemplate(id)
 
                 if(!singleTemplate){
                     const result: Result<null> = {success: false, error:{code: "NOT_FOUND", message: `Template with id: ${id} not found`}}
                     return result
                 }
-                const result: Result<Template> = {success: true, data: singleTemplate}
+                const result: Result<Template[]> = {success: true, data: singleTemplate}
                 return result
 
             } catch (error) {
@@ -65,7 +70,7 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
                     const result: Result<null> = {success: false, error:{code: "BAD_REQUEST", message: "Failed to create template due to a server error"}}
                     return result
                 }
-                const result: Result<Template> = {success: true, data: newTemplate}
+                const result: Result<Template[]> = {success: true, data: newTemplate}
                 return result
 
             } catch (error) {
@@ -76,5 +81,9 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
     }
 }
 
-export const templateService = createTemplateService(/*templateRepository*/)
+export const templateService = createTemplateService(templateRepository)
 export type TemplateService = ReturnType<typeof createTemplateService>;
+
+function isUuid(id: string) {
+    throw new Error("Function not implemented.");
+}

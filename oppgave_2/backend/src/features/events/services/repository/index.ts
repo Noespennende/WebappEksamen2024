@@ -25,9 +25,9 @@ export const createOccationRepository = () => {
           }
         });
 
-        const result: Result<Occation[]> = { success: true, data: prismadata };
+        
       
-        return result;
+        return prismadata;
       } catch (error) {
         
         console.error("retrieving occasions Failed :", error);
@@ -50,8 +50,7 @@ export const createOccationRepository = () => {
             templates: true,
           },
         });
-        const result: Result<Occation[]> = {success: true, data: prismdata}
-        return result
+        return prismdata
       } catch (error) {
         console.error(`retrieving occasion with slug: ${occationSlug} Failed :`, error);
         const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: `failed to fetch occasionwith slug: ${occationSlug}` } };
@@ -83,8 +82,7 @@ export const createOccationRepository = () => {
             },
           });
     
-          const result: Result<Occation[]> = { success: true, data: prismdata };
-          return result;
+          return prismdata
       
         } catch (error) {
           console.error("Error creating occasion:", error);
@@ -103,8 +101,7 @@ export const createOccationRepository = () => {
           where: { slug: occasionSlug},
           data,
         })
-        const result: Result<Occation[]> = { success: true, data: prismData };
-        return result;
+        return prismData
       }catch(error){
         console.log("error updating Occasion")
         const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to update Occasion"}}
@@ -119,8 +116,7 @@ export const createOccationRepository = () => {
             where: { slug: occasionSlug },
           });
 
-          const result: Result<Occation[]> = { success: true, data: prismData };
-        return result;
+          return prismData
         } catch (error) {
           console.log("error deleting Occasion")
           const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}

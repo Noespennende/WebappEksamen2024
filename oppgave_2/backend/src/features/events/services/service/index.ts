@@ -1,8 +1,9 @@
 import { occasionRepository, OccasionRepository } from "../repository";
 
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
-import { CreateOccation, Month, OccasionCategory } from "../../types";
+import { CreateOccation, Month, OccasionCategory, Occation } from "../../types";
 import { MonthEnum, OccasionCategoryEnum } from "@/helpers/schema";
+import { Result } from "@/types";
 
 
 export const createOccasionService = (occasionRepository: OccasionRepository) => {
@@ -10,49 +11,86 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
       async getAllOccasions() {
         try {
           const occasions = await occasionRepository.getAllOccations();
-          return occasions;
+
+          if(!occasions){
+            const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Failed to get occations" } };
+              return result
+          }
+          const result: Result<Occation[]> = {success: true, data: occasions}
+              return result
+
         } catch (error) {
-          throw new Error("Error: Can't find any Occasions");
+          const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Failed to get occations" } };
+              return result
         }
       },
 
+      
       async getOccasionById(slug: string) {
         try {
           const occasion = await occasionRepository.getOccasionById(slug);
           if (!occasion) {
-            throw new Error(`No occasion found with the ID: ${slug}`);
-
-            // result success false
+            const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: `occations with slug ${slug} not found` } };
+              return result
           }
-          return occasion;
+
+          const result: Result<Occation[]> = {success: true, data: occasion}
+              return result
+
         } catch (error) {
-          throw new Error("Error: Unable to fetch the occasion by ID");
+          const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: `occations with slug ${slug} not found` } };
+              return result
         }
       },
       async createAnOccasion(data: CreateOccation) { // denne typen kan kanskje endres?
         try {
           const newOccasion = await occasionRepository.createOccasion(data);
-          return newOccasion;
+
+          if(!newOccasion){
+            const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: "Failed to create occation" } };
+              return result
+          }
+
+          const result: Result<Occation[]> = {success: true, data: newOccasion}
+              return result
+
         } catch (error) {
-          throw new Error(`Can't create the new occasion. Details: ${error}`);
+          const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: "Failed to create occation" } };
+              return result
         }
       },
 
       async deleteOccasion(occasionSlug: string){
        try {
         const occasionAfterDelete = await occasionRepository.deleteOccasion(occasionSlug)
-        return occasionAfterDelete
+        
+        if(!occasionAfterDelete){
+          const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: "Failed to delete occation" } };
+              return result
+        }
+
+        const result: Result<Occation[]> = {success: true, data: occasionAfterDelete}
+            return result
        } catch (error) {
-        throw new Error("DeleteError")
+        const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: "Failed to delete occation" } };
+              return result
        } 
       },
 
       async updateOccation(occasionSlug: string, data: Partial<OccasionBaseSchema>){
         try{
         const occasionToUpdate = await occasionRepository.updateOccasion(occasionSlug, data)
-        return occasionToUpdate
+        
+        if(!occasionToUpdate){
+          const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Failed to update occation" } };
+              return result
+        }
+        const result: Result<Occation[]> = {success: true, data: occasionToUpdate}
+        return result
+
       }catch{
-        throw new Error("error updating")
+        const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Failed to update occation" } };
+        return result
       }
     },
 

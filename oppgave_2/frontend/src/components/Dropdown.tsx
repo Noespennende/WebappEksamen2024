@@ -22,7 +22,7 @@ export default function Dropdown({defaultText, options, onCategorySelect} : drop
         <div className = "dropdown">
             <button className="dropdownButton">{buttonText}</button>
             <ul className="dropdownOptions">
-                <li onClick={() => handleCategoryClick(defaultText)}>{defaultText}</li>
+                <li onClick={() => handleCategoryClick(defaultText)}>Ingen sortering</li>
                 {options.map((option, index) => (
                     <li key={`${option}`+`${index}`} onClick={() => handleCategoryClick(option)}>{option}</li>
                 )
