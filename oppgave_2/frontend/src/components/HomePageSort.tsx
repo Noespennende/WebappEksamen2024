@@ -1,24 +1,29 @@
 "use client";
+import { Month, OccasionCategory } from "@/types/Types";
 import Dropdown from "./Dropdown";
 import YearSortInput from "./YearSortInput";
 import { MonthEnum, OccasionCategoryEnum } from "@/helpers/schema";
 
-export default function HomePageSort(){
+type homePageSortProps = {
+    onMonthSort: (month: string) => void,
+    onYearSort: (year: number) => void,
+    onCategorySort: (category: string) => void;
+}
 
-    const handleMonthDropdownClick = (month: String) => {
-        const monthEnum: typeof MonthEnum = Object.keys(MonthEnum).find((key) => MonthEnum[key as keyof typeof MonthEnum] === month)
+export default function HomePageSort({onMonthSort, onYearSort, onCategorySort}: homePageSortProps){
+
+    const handleMonthDropdownClick = (month: string) => {
+        onMonthSort(month)
     }
 
     const handleYearInput = (yearInput: number) => {
         if(yearInput > 999){
-
-        } else if (yearInput.toString.length <= 0){
-            
+            onYearSort(yearInput)
         }
     }
 
-    const handleCategorySelect = (eventCategory: String) => {
-        const eventCategoryEnum: typeof OccasionCategoryEnum = Object.keys(OccasionCategoryEnum).find((key) => OccasionCategoryEnum[key as keyof typeof OccasionCategoryEnum] === eventCategory)
+    const handleCategorySelect = (eventCategory: string) => {
+        onCategorySort(eventCategory)
     }
 
     return(

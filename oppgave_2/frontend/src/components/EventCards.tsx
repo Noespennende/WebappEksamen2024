@@ -6,30 +6,27 @@ import { useOccasion } from "@/hooks/useOccasion";
 import { useEffect } from "react";
 import { useTemplate } from "@/hooks/useTemplate";
 
-export default function EventCards(){
-
-    const {data, status} = useOccasion()
-    
-    
-    useEffect(() => {
-    }, [data])
+type eventCardsProps = {
+    occasionList: Occasion[]
+}
 
 
+export default function EventCards({occasionList}: eventCardsProps){
 
     return(
         <section id="eventCards">
 
-            { status.loading ? (<div className="loader"></div>) : 
+            { occasionList ? 
             (
                 <ul>
-                {data?.map((occasion, index) => (
+                {occasionList.map((occasion, index) => (
                     <li className="eventCardListElement" key={`eventCard${index}`}>
                         <EventCard occation={occasion}/>
                     </li>
-                ))}
+                ))} 
             </ul>
 
-            )
+            ) : (<div className="loader"></div>) 
         }
             
         </section>

@@ -2,9 +2,9 @@
 import { useState } from "react"
 
 type dropdownProps = {
-    defaultText: String,
-    options: String[],
-    onCategorySelect: (selectedCategory: String) => void;
+    defaultText: string,
+    options: string[],
+    onCategorySelect: (selectedCategory: string) => void;
 }
 
 export default function Dropdown({defaultText, options, onCategorySelect} : dropdownProps) {
@@ -13,7 +13,7 @@ export default function Dropdown({defaultText, options, onCategorySelect} : drop
 
 
 
-    const handleCategoryClick = (selectedCategory: String) => {
+    const handleCategoryClick = (selectedCategory: string) => {
         setButtonText(selectedCategory)
         onCategorySelect(selectedCategory)
     }
