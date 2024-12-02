@@ -36,11 +36,10 @@ export const createTemplateRepository = () => {
     });
     
 
-        const result: Result<Template[]> = {success:true, data: prismadata}
-        return result
+        return prismadata
+        
       } catch (error) {
-        const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to fetch Templates" } };
-        return result;
+        throw new Error("error")
       }
     },
 
@@ -50,11 +49,9 @@ export const createTemplateRepository = () => {
           where: {id: id}
         })
 
-        const result: Result<Template> = {success: true, data: prismadata}
-        return result
+        return prismadata
       } catch (error) {
-        const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to fetch Templates"}}
-        return result
+        throw new Error("error")
       }
     },
 
@@ -90,11 +87,9 @@ export const createTemplateRepository = () => {
             
           }
         })
-        const result: Result<Template> = {success: true, data: prismadata}
-        return result
+        return prismadata
       } catch (error) {
-        const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to create template"}}
-        return result
+        throw new Error("error")
       }
     }
 
