@@ -1,6 +1,7 @@
 import { WeekdayEnum } from '@/helpers/schema';
 import { Weekday } from '@/types/Types';
 import { useState, ChangeEvent } from 'react';
+import { Occasion } from '../types';
 
 type FieldState = {
   value: any;
@@ -31,7 +32,8 @@ type EventFields = {
 const validateField = (
   key: keyof EventFields,
   value: string | boolean | number | Date | undefined,
-  fields: Record<keyof EventFields, FieldState> // Legg til `fields` som argument
+  fields: Record<keyof EventFields, FieldState>, // Legg til `fields` som argument
+  events: Pick<Occasion, 'template' | 'date' | 'name'>[]
 ) => {
   switch (key) {
     case 'name':
@@ -66,44 +68,72 @@ const validateField = (
       } else {
         return { isValid: false, error: 'Slug må være en ikke-tom streng' };
       }
-      case 'date':
-        let dateValue: Date | null = null;
-        if (typeof value === 'string' && value.trim()) {
-          dateValue = new Date(value);
-        } else if (value instanceof Date && !isNaN(value.getTime())) {
-          dateValue = value;
+    case 'date':
+      let dateValue: Date | null = null;
+      if (typeof value === 'string' && value.trim()) {
+        dateValue = new Date(value);
+      } else if (value instanceof Date && !isNaN(value.getTime())) {
+        dateValue = value;
+      }
+
+      // Sjekk om datoen er gyldig
+      if (dateValue && !isNaN(dateValue.getTime())) {
+        // Sjekker om det finnes et event med samme mal og dato
+        console.log("Existing events:", events);
+
+        const conflictingEvent = events.find(
+          (event) => {
+            console.log(
+              `Checking event: ${event.template} with date: ${event.date.getFullYear()}-${event.date.getMonth() + 1}-${event.date.getDate()}`, 
+              `Against: ${fields.template.value} with date: ${dateValue.getFullYear()}-${dateValue.getMonth() + 1}-${dateValue.getDate()}`
+            );
+            return event.template === fields.template.value && 
+           event.date.getFullYear() === dateValue.getFullYear() && 
+           event.date.getMonth() === dateValue.getMonth() && 
+           event.date.getDate() === dateValue.getDate();
+          }
+        );
+
+        if (conflictingEvent) {
+          return { 
+            isValid: false, 
+            error: 'Det finnes allerede et event med denne datoen og malen.' 
+          };
         }
 
-        // Sjekker ukedagen og om den faller utenfor fixedWeekdays
-        if (dateValue && !isNaN(dateValue.getTime())) {
-          const days: Weekday[] = WeekdayEnum.options; //["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-          const selectedDay = days[dateValue.getDay()];
-        
-          console.log("selected: ", selectedDay);
-        
-          // Sjekker om selectedDay er i fixedDays
-          if (fields.fixedWeekdays && fields.fixedWeekdays.value.length > 0) {
-            if (!fields.fixedWeekdays.value.includes(selectedDay)) {
-              return { isValid: false, error: `Datoen kan ikke falle på en ${selectedDay}` };
-            }
+        // Sjekker så om ukedagen og om den faller utenfor fixedWeekdays
+        const days: Weekday[] = WeekdayEnum.options; //["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const selectedDay = days[dateValue.getDay()];
+      
+        console.log("selected: ", selectedDay);
+      
+        // Sjekker om selectedDay er i fixedDays
+        if (fields.fixedWeekdays && fields.fixedWeekdays.value.length > 0) {
+          if (!fields.fixedWeekdays.value.includes(selectedDay)) {
+            return { isValid: false, error: `Datoen kan ikke falle på en ${selectedDay}` };
           }
-          return { isValid: true, error: undefined }; 
         }
+        // Alt er godkjent 
+        return { isValid: true, error: undefined }
+    
+      } else {
+        return { isValid: false, error: 'Dato er ugyldig' };
+      };
         
-      case 'category':
-        if (typeof value === 'string' && value.trim().length > 0) {
-          return { isValid: true, error: undefined };
-        } else {
-          return { isValid: false, error: 'Velg en gyldig kategori' };
-        }
-      case 'description':
-        if (typeof value === 'string' && value.trim().length > 10) {
-          return { isValid: true, error: undefined };
-        } else if (typeof value === 'string' && value.trim().length > 0) {
-          return { isValid: false, error: 'Beskrivelsen må være minst 10 tegn lang' };
-        } else {
-          return { isValid: false, error: 'Beskrivelse må være spesifisert' };
-        }
+    case 'category':
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return { isValid: true, error: undefined };
+      } else {
+        return { isValid: false, error: 'Velg en gyldig kategori' };
+      }
+    case 'description':
+      if (typeof value === 'string' && value.trim().length > 10) {
+        return { isValid: true, error: undefined };
+      } else if (typeof value === 'string' && value.trim().length > 0) {
+        return { isValid: false, error: 'Beskrivelsen må være minst 10 tegn lang' };
+      } else {
+        return { isValid: false, error: 'Beskrivelse må være spesifisert' };
+      }
     case 'template':
     case 'isPrivate':
     case 'fixedPrice':
@@ -120,7 +150,7 @@ const validateField = (
   }
 };
 
-export function useEventForm(initialValues: EventFields) {
+export function useEventForm(initialValues: EventFields, events: Pick<Occasion, 'template' | 'date' | 'name'>[]) {
   const [fields, setFields] = useState<Record<keyof EventFields, FieldState>>(
     Object.fromEntries(
       Object.keys(initialValues).map((key) => [
@@ -170,7 +200,7 @@ export function useEventForm(initialValues: EventFields) {
       };
   
       // Valider feltet
-      const validation = validateField(key, newValue, newFields);
+      const validation = validateField(key, newValue, newFields, events);
       newFields[key].error = validation.error || undefined;
       newFields[key].isValid = validation.isValid;
   
@@ -190,7 +220,7 @@ export function useEventForm(initialValues: EventFields) {
         disabled: disabled, // Setter disabled til ønsket verdi
       };
 
-      const validation = validateField(key, value, newFields);
+      const validation = validateField(key, value, newFields, events);
       newFields[key].error = validation.error || undefined;
       newFields[key].isValid = validation.isValid;
 

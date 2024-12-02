@@ -22,9 +22,25 @@ export default function CreateEventPage() {
     description: '',
   };
 
+  const events = [ 
+    {
+      name: "Football Tournament",
+      date: new Date("2024-12-10T14:00:00"),
+      template: "sports-event-template",
+    }, 
+    {
+      name: "Tech Meet-Up",
+      date: new Date("2024-12-15T18:00:00"),
+      template: "d08e3d69-4695-41e4-a3b6-9c245ab3d5c8",
+    }
+  ];
 
-  const { fields, handleInputChange, handleSubmit, setFieldValue } = useEventForm(initialValues);
 
+  const { fields, handleInputChange, handleSubmit, setFieldValue } = useEventForm(initialValues, events);
+
+  
+  
+  
 
   const templates = [
     {
@@ -58,7 +74,7 @@ export default function CreateEventPage() {
       maxParticipants: undefined,
       isPrivate: false,
       fixedPrice: true,
-      allowSameDayEvent: true,
+      allowSameDayEvent: false,
       waitList: false,
       limitedParticipants: false,
       fixedWeekdays: [],
@@ -110,6 +126,7 @@ export default function CreateEventPage() {
   
     if (selectedTemplate) {
       // Oppdater spesifikke felter basert på valgt mal.
+      setFieldValue('template', selectedTemplate.id);
       setFieldValue('price', selectedTemplate.price ?? 0, selectedTemplate.fixedPrice);
       setFieldValue('maxParticipants', selectedTemplate.maxParticipants ?? 0, selectedTemplate.limitedParticipants);
       setFieldValue('isPrivate', selectedTemplate.isPrivate);
