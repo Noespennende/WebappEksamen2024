@@ -30,9 +30,7 @@ export const createOccationRepository = () => {
         return prismadata;
       } catch (error) {
         
-        console.error("retrieving occasions Failed :", error);
-        const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to fetch occasions" } };
-        return result;
+        throw new Error("Error ")
       }
     },
   
@@ -53,8 +51,7 @@ export const createOccationRepository = () => {
         return prismdata
       } catch (error) {
         console.error(`retrieving occasion with slug: ${occationSlug} Failed :`, error);
-        const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: `failed to fetch occasionwith slug: ${occationSlug}` } };
-        return result;
+        throw new Error("Error ")
       }},
 
       async createOccasion(data: {
@@ -86,10 +83,7 @@ export const createOccationRepository = () => {
       
         } catch (error) {
           console.error("Error creating occasion:", error);
-
-      
-          const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to create Occasion" } };
-        return result;
+          throw new Error("Error ")
         }
 
       },
@@ -104,9 +98,7 @@ export const createOccationRepository = () => {
         return prismData
       }catch(error){
         console.log("error updating Occasion")
-        const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to update Occasion"}}
-        
-        return result
+        throw new Error("Error ")
       }
       },
 
@@ -119,9 +111,7 @@ export const createOccationRepository = () => {
           return prismData
         } catch (error) {
           console.log("error deleting Occasion")
-          const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}
-          
-          return result
+          throw new Error("Error ")
         }
       },
       
@@ -171,9 +161,9 @@ export const createOccationRepository = () => {
       },
   });
 
-  const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}
+  //const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}
           
-  return result
+  return "result"
   
 }
 }
