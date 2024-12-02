@@ -1,0 +1,320 @@
+@import '../helpers/root.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+
+#eventPage {
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+
+    div{
+        article {
+            display: flex;
+            flex-direction: column;
+
+            #eventHeaderCategoryAndDate {
+                display: inline-flex;
+                flex-direction: column;
+                width: fit-content;
+                
+                h1 {
+                    display: inline;
+                    font-size: 3rem;
+                    margin: 1.5rem 0 0 0;
+                    font-weight: var(--extraBold);
+                    font-style: italic;
+                    width: fit-content;
+                }
+
+                #eventPageCategoryAndDate {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: 0.5rem;
+
+
+                    #eventPageCategory{
+                        font-size: 1.3rem;
+                        color: var(--lightGreen);
+                        background-color: var(--darkGray);
+                        font-weight: var(--bold);
+                        margin: 0;
+                        text-align: center;
+                        padding: .1rem .5rem;
+                        border-radius: 5px;
+                    }
+
+                    #eventPageDate{
+                        font-size: 1.6rem;
+                        text-align: right;
+                        font-weight: var(--bold);
+                        margin: 0
+
+                    }
+                }
+            }
+
+            #eventPageBody {
+                display: flex;
+                flex-direction: column;
+
+                .eventPageBodyParagraph{
+                    margin: 2rem 0;
+                    padding: 0;
+                    max-width: 100%; 
+                    word-wrap: break-word; 
+                    overflow-wrap: break-word; 
+
+                }
+            }
+
+            #eventPriceAdressAndParticipants {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: start;
+                
+                #eventPagePrice {
+                    font-weight: var(--bold);
+                    font-size: 1.5rem;
+                    margin: 0;
+                }
+                #eventPageAdress{
+                    font-weight: var(--bold);
+                    font-size: 1.2rem;
+                    margin: 0;
+                }
+
+                #eventPageParticipants {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: end;
+
+                    #eventPageParticipantsText {
+                        font-weight: var(--bold);
+                        font-size: 1.2rem;
+                        margin: 0;
+                    }
+
+                    #eventPageParticipantsCount {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: end;
+                        
+                        p{
+                            font-weight: var(--bold);
+                            font-size: 1.2rem;
+                            margin: .5rem 0;
+                        }
+                    }
+
+                    
+
+                }
+            }
+
+            #signUpButton {
+                width: 50%; 
+                margin: 0 auto;
+                align-self: center; 
+                justify-self: center; 
+                text-align: center;
+            }
+
+            #eventRegisterParticipants{
+                display: flex;
+                flex-direction: column;
+
+                .eventRegisterParticipantForm{
+                    display:flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                    background-color: var(--darkGray);
+                    border-radius: 50px;
+                    margin-top: 3rem;
+                    height: 100%;
+                    transform: translateY(20px);
+                    animation: moveFadeIn 0.5s ease forwards;
+                    
+
+                    .eventRegisterParticipantFormParticipantAndNumber{
+                        display: flex;
+                        flex-direction: column;
+                        align-items: end;
+                        margin: .5rem 1.5rem;
+
+                        .eventRegisterParticipantFormParticipantText{
+                            margin: 0;
+                            font-weight: var(--bold);
+                            color: var(--lightGreen);
+                        }
+
+                        .eventRegisterParticipantFormParticipantNumber{
+                            font-size: 2rem;
+                            margin: 0;
+                            font-weight: var(--bold);
+                            color: var(--lightGreen);
+                        }
+                    }
+
+                    form {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: end;
+                        align-items: end;
+                        margin: 0 1rem;
+
+                        .participationFormName {
+                            display:flex;
+                            flex-direction: row;
+                            align-items: end;
+                            align-content: end;
+                            width: 99%;
+                            
+                        }
+                        .participationFormEmail {
+                            display:flex;
+                            flex-direction: row;
+                            align-items: end;
+                            width: 100%;
+                        }
+
+                        label {
+                            color: var(--white);
+                            margin: 0 .5rem;
+                            align-self: center;
+                            justify-self: end;
+                        }
+
+                        input {
+                            border-style: none;
+                            margin: .3rem 0;
+                            border-radius: 3px;
+                            padding: .3rem .4rem;
+                            flex-grow: 1;
+                            justify-self: end;
+                        }
+
+                    }
+
+                    #eventRegisterParticipantFormButton {
+                        color: var(--darkGray);
+                        background-color: var(--red);
+                        height: 100%;
+                        min-height: 5rem;
+                        flex-grow: 1;
+                        border-radius: 5px 50px 50px 5px;
+
+                        &:hover{
+                            background-color: var(--lightRed);
+                        }
+                    }
+                }
+
+                #combinedPrice{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: end;
+                    align-items: center;
+                    margin-top: 1rem;
+
+                    #combinedPriceText{
+                        margin: 0 1rem;
+                        font-size: 1.2rem;
+                    }
+
+                    #combinedPriceAmount {
+                        font-size: 2rem;
+                        font-weight: var(--bold);
+                        margin: 0;
+                    }
+                }
+
+                #addParticipantAndSendRegistrationButtons {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: end;
+                    align-items: center;
+
+                    button{
+                        margin: 1rem;
+                    }
+                }
+            }
+        }
+
+        #eventPageAdminPanel {
+            display: flex;
+            flex-direction: column;
+
+            #eventPageAdminPanelHeader {
+                font-size: 1.5rem;
+
+            }
+
+            #editDeleteDownloadEventButtons {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-between;
+                align-items: center; 
+            }
+
+            #eventPageAdminPanelProfit {
+                display: flex;
+                flex-direction: row;
+                margin-top: 2rem;
+                align-items: center;
+
+                #eventPageAdminPanelProfitText{
+                    font-size: 1.2rem;
+                    margin: 0 1rem;
+                }
+
+                #eventPageAdminPanelProfitProfits{
+                    font-size: 2rem;
+                    font-weight: var(--bold);
+                    margin: 0;
+                }
+                
+            }
+
+            #eventPageAdminPanelParticipants {
+                display: flex;
+                flex-direction: column;
+
+                h3 {
+                    font-size: 1.2rem;
+                }
+            }
+
+            .RegisteredParticipantCard{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                background-color: var(--darkGray);
+                border-radius: 10px;
+                margin-bottom: 2rem;
+                transform: translateY(20px);
+                animation: moveFadeIn 0.5s ease forwards;
+
+                .RegisteredParticipantCardName {
+                    color: var(--white);
+                    font-size: 1.5rem;
+                    margin: 1rem;
+                }
+
+                .RegisteredParticipantCardEmail {
+                    color: var(--white);
+                    font-size: 1.5rem;
+                    font-weight: var(--thin);
+                    margin: 1rem;
+                }
+            }
+        }
+    }
+}

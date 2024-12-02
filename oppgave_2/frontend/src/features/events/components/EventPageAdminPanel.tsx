@@ -17,7 +17,7 @@ type EventPageAdminPanelProps = {
 export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps){
 
     //const {update, status, remove} = useEvents()
-    const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen"}])
+    const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}])
     const [isAddParticipant, setIsAddParticipant] = useState<boolean>(false)
     const [message, setmessage] = useState("")
     const [error, setErrror] = useState(false)
@@ -48,6 +48,9 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                 ) {
                     const participantToAdd = updatedParticipants.shift();
                     if (participantToAdd) {
+                        if(participantToAdd.aprovalStatus === "Godkjent"){
+                            participantToAdd.aprovalDate = new Date()
+                        }
                         occasion.participants.push(participantToAdd); 
                     }
                 }
@@ -61,6 +64,9 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                 while(adminAssignedParticipants.length > 0){
                     const participantToAdd = adminAssignedParticipants.shift()
                     if (participantToAdd){
+                        if(participantToAdd.aprovalStatus === "Godkjent"){
+                            participantToAdd.aprovalDate = new Date()
+                        }
                         occasion.waitinglistParticipants.push(participantToAdd)
                     }  
                 }
@@ -71,6 +77,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     const participantToAdd = adminAssignedParticipants.shift()
                     if (participantToAdd){
                         participantToAdd.aprovalStatus = "Avslått"
+                        participantToAdd.aprovalDate = null
                         occasion.recejectedParticipants.push(participantToAdd)
                     }  
                 }
@@ -83,7 +90,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     const handleAddParticipant = () => {
         if (isAddParticipant){
-            setAdminAssignedParticipants([...adminAssignedParticipants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen"}] ) 
+            setAdminAssignedParticipants([...adminAssignedParticipants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}] ) 
         } else {
             setIsAddParticipant(true)
         } 
@@ -94,16 +101,21 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
         //Participant
         if(previousStatus === "Deltager"){
             if(option == "Slett"){
+                participant.aprovalDate = null
                 occasion.participants = occasion.participants.filter(p => p !== participant);
             } else if (option == "Avslå"){
+                participant.aprovalDate = null
                 occasion.participants = occasion.participants.filter(p => p !== participant);
                 occasion.recejectedParticipants.push(participant)
+            } else if (option == "Godkjenn"){
+                participant.aprovalDate = new Date()
             }
 
             //Rejected
         } else if(previousStatus === "Avslått") {
             if(option == "Godkjenn"){
                 occasion.recejectedParticipants = occasion.recejectedParticipants.filter(p => p !== participant)
+                participant.aprovalDate = new Date()
                 if(occasion.maxParticipants && occasion.participants.length < occasion.maxParticipants){
                     occasion.participants.push(participant)
                 } else if (occasion.waitinglist) {
@@ -118,14 +130,17 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
             //Waiting list
         } else if (previousStatus === "Venteliste"){
             if (option === "Godkjenn") {
+                participant.aprovalDate = new Date()
                 if (occasion.maxParticipants && occasion.maxParticipants < occasion.participants.length){
                     occasion.waitinglistParticipants = occasion.waitinglistParticipants.filter(p => p !== participant)
                     occasion.participants.push(participant)
                 }
             }
             else if (option == "Slett") {
+                participant.aprovalDate = null
                 occasion.waitinglistParticipants = occasion.waitinglistParticipants.filter(p => p !== participant)
             } else if (option == "Avslå"){
+                participant.aprovalDate = null
                 occasion.waitinglistParticipants = occasion.waitinglistParticipants.filter(p => p !== participant)
                 occasion.recejectedParticipants.push(participant)
             }
@@ -147,9 +162,13 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                 <Link href={`/arrangement/${occasion.id}/lastned`} className="button">Last ned statistikk</Link>
                 <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
             </div>
-            <p is="eventPageAdminPanelProfit">Samlet forventet intekt {`${occasion.price * (occasion.participants.length)}`} kr</p>
+            <div id="eventPageAdminPanelProfit">
+                <p id="eventPageAdminPanelProfitProfits">{`${occasion.price * (occasion.participants.length)}`} kr </p>
+                <p id="eventPageAdminPanelProfitText">samlet forventet intekt</p>
+            </div>
+            
             <section id="eventPageAdminPanelParticipants">
-                <h3>Påmeldte deltagere</h3>
+                <h3>Påmeldte deltagere:</h3>
                 {occasion.participants.map((participant, index) => (
                     <RegisteredParticipantCard
                         key={`participants${index}`}

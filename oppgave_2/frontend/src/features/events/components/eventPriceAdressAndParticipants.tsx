@@ -13,7 +13,7 @@ export default function EventPriceAdressAndParticipants ({price, adress, partici
 
     return(
         <section id="eventPriceAdressAndParticipants">
-            <p id="eventPagePrice">{price}</p>
+            <p id="eventPagePrice">{price},-</p>
             <p id="eventPageAdress">{adress}</p>
             <div id="eventPageParticipants">
                 <p id="eventPageParticipantsText">Deltagere</p>

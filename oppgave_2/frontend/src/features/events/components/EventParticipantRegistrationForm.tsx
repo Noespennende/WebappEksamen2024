@@ -28,12 +28,16 @@ export default function EventRegisterParticipantForm({index, participant, onDele
                 <p className="eventRegisterParticipantFormParticipantNumber">{participantNumber}</p> 
             </div>
             <form>
-                <label htmlFor="participationFormName">Navn</label>
-                <input type="text" id="participationFormName" value={participant.name} onChange={handleNameChange} name="participationFormName" placeholder="Navn Navnessen..."/>
-                <label htmlFor="participationFormEmail">Epost</label>
-                <input type="email" id="participationFormEmail"  onChange={(e) => onEmailInput(index, e.target.value)} name="participationFormEmail" placeholder="Navn@epost.no..."/>
+                <div className="participationFormName">
+                    <label htmlFor="participationFormName">Navn</label>
+                    <input type="text" id="participationFormName" value={participant.name} onChange={handleNameChange} name="participationFormName" placeholder="Navn Navnessen..."/>
+                </div>
+                <div className="participationFormEmail">
+                    <label htmlFor="participationFormEmail">Epost</label>
+                    <input type="email" id="participationFormEmail"  onChange={(e) => onEmailInput(index, e.target.value)} name="participationFormEmail" placeholder="Navn@epost.no..."/>
+                </div>
             </form>
-            <button className="button" onClick={() => onDelete(index)}>Slett</button>
+            <button className="button" id="eventRegisterParticipantFormButton" onClick={() => onDelete(index)}>Slett</button>
         </div>
     )
 }

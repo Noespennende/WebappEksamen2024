@@ -31,6 +31,19 @@
     --gray:  #595959;
     --lightGray: #9a9a9a;
     --white: #ffffff;
-    --red: #f1532e;
+    --red: #df361f;
+    --lightRed: #ff5c47;
     --errorColor: #dd1e10;
+  }
+
+  /*Animations*/
+  @keyframes moveFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px); 
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); 
+    }
   }

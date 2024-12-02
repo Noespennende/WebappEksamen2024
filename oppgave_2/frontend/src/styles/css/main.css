@@ -4,43 +4,19 @@
 @import './components/navbar.css';
 @import './components/homepage.css';
 @import './components/dropdownmenu.css';
+@import './components/eventpage.css';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 
-:root{
-  /*Fonts*/
-    font-family: "Roboto", "Arial", "Helvetica";
-  --font: 'Roboto', sans-serif;
-
-  /* font weights */
-  --thin: 100;
-  --regular: 400;
-  --medium: 500;
-  --bold: 700;
-
-  /*constraints*/
-  --rootsize: 20px;
-  --maxsize: 1200px;
-  --pagewith: 700px;
-  --projectCardHeight: 350px;
-  --projectCardWith: 300px;
-  --ProjectCardMargin: 40px;
-
-  /*colors*/
-  --lightGreen: #d8fa00;
-  --green: #b4cc1e;
-  --darkGray: #191919;
-}
 
 
-  /* Fixed text sizes */
-  p { font-size: 1rem; font-weight: var(--regular); }
-  h2 { font-size: 2.5rem; font-weight: 700; }
-  h3 { font-size: 1.5rem; font-weight: 600; }
-  a {font-size: 1rem; font-weight: var(--medium); color: var(--orange); text-decoration: none; }
-  .bold {font-weight: var(--bold);}
-  ul {list-style: none;}
-
+/* Fixed text sizes */
+p { font-size: 1rem; font-weight: var(--regular); }
+h2 { font-size: 2.5rem; font-weight: 700; }
+h3 { font-size: 1.5rem; font-weight: 600; }
+a {font-size: 1rem; font-weight: var(--medium); color: var(--orange); text-decoration: none; }
+.bold {font-weight: var(--bold);}
+ul {list-style: none;}
 
 html {
 }
@@ -56,9 +32,10 @@ body {
 }
 
 .button{
-  color: var(--white);
+  color: var(--lightGreen);
   font-weight: var(--bold);
   background-color: var(--darkGray);
+  font-size: 1rem;
   padding: .8rem 2rem;
   border-radius: 50px;
   margin: 0rem 0 0 0;
@@ -66,11 +43,37 @@ body {
   align-items: center; 
   justify-content: center;
   transition: background-color 0.2s ease, color 0.2s ease;
-  max-width: 10rem;
+  max-width: 15rem;
+  border-style: none;
 
   &:hover {
-      background-color: var(--green);
-      color: var(--darkGray)
+    cursor: pointer;
+    background-color: var(--green);
+    color: var(--darkGray)
   }
 }
+
+.delete {
+  color: var(--darkGray);
+  background-color: var(--red);
+
+  &:hover {
+    background-color: var(--lightRed);
+  }
+}
+
+.errorMessage{
+  display: inline-block;
+  color: var(--white);
+  background-color: var(--errorColor);
+  font-weight: var(--bold);
+  text-align: center;
+  padding: .5rem 1rem;
+  align-self: center;
+  justify-self: center;
+  border-radius: 10px;
+  transform: translateY(20px);
+  animation: moveFadeIn 0.5s ease forwards;
+}
+
 

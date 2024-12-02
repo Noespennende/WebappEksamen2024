@@ -36,10 +36,3 @@ export default function HomePageSort({onMonthSort, onYearSort, onCategorySort}: 
     )
 }
 
-/*
-
-<Dropdown defaultText="Måned" options={Object.values(MonthEnum)} onCategorySelect={handleMonthDropdownClick}/>
-            <YearSortInput onInput={handleYearInput}/>
-            <Dropdown defaultText="Kategori" options={Object.values(EventCategoryEnum)} onCategorySelect={handleCategorySelect}/>
-
-            */

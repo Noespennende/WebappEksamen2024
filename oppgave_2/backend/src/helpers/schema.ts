@@ -28,7 +28,9 @@ export const ParticipantApprovalStatusEnum = z.enum(
 export const ParticipantBaseSchema = z.object({
     id: z.string().uuid(),
     name: z.string().min(2),
-    email: z.string().email()
+    email: z.string().email(),
+    registerDate: z.date(),
+    aprovalDate: z.date().nullable(),
 });
 
 

@@ -23,8 +23,8 @@ export default function Event(){
         body: ["qie9hg+09ehqg0hqaeg0åqehg0qehgqeghqea0opighqe0gihq0hgoieghqå3hqg0qhgqighq0hgq0ighq0hg0qhgqgqgqwgqwgqg3qgeag3q"],
         waitinglist: false,
         category: "Sport",
-        participants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com", aprovalStatus: "Godkjent"},{id: crypto.randomUUID(), name: "per", email: "email@email.com", aprovalStatus: "Avslått"},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com", aprovalStatus:"Ingen"}],
-        waitinglistParticipants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com", aprovalStatus:"Ingen"},{id: crypto.randomUUID(), name: "per", email: "email@email.com", aprovalStatus:"Ingen"},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com", aprovalStatus:"Ingen"}],
+        participants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com", aprovalStatus: "Godkjent", aprovalDate: null, registerDate: new Date()},{id: crypto.randomUUID(), name: "per", email: "email@email.com", aprovalStatus: "Avslått", aprovalDate: null, registerDate: new Date()},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com", aprovalStatus:"Ingen", aprovalDate: null, registerDate: new Date() }],
+        waitinglistParticipants: [{id: crypto.randomUUID(), name: "Nils", email: "email@email.com", aprovalStatus:"Ingen", aprovalDate: null, registerDate: new Date()},{id: crypto.randomUUID(), name: "per", email: "email@email.com", aprovalStatus:"Ingen", aprovalDate: null, registerDate: new Date()},{id: crypto.randomUUID(), name: "Ole", email: "email@email.com", aprovalStatus:"Ingen", aprovalDate: null, registerDate: new Date()}],
         maxParticipants: 20,
         recejectedParticipants: []
     },]
@@ -61,7 +61,7 @@ export default function Event(){
                             <EventHeaderCategoryAndDate header={data[0].name} category={data[0].category} date={data[0].date}/>
                             <EventBody body={data[0].body}/>
                             <EventPriceAdressAndParticipants price={data[0].price} adress={data[0].address} participants={data[0].participants.length} maxParticipants={data[0].maxParticipants}/>
-                            <button id="signUpButton" onClick={handleSignUpClick}>Meld deg på</button>
+                            <button id="signUpButton" className="button" onClick={handleSignUpClick}>Meld deg på</button>
                             {signUp ? <EventRegisterParticipants occationID={data[0].id} price={data[0].price} onNoParticipants={handleNoParticipants}/> : ""}
                         </article>
                         {isAdmin ? (

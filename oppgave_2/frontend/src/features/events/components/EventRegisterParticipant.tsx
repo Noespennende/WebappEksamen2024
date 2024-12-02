@@ -14,17 +14,18 @@ export default function EventRegisterParticipants({occationID, price, onNoPartic
 
     //const {status, add, error} = useEvents()
     const [participants, setParticipants] = useState<Participant[]>([
-        {id: crypto.randomUUID(), name: "", email: "",  aprovalStatus: "Ingen"}
+        {id: crypto.randomUUID(), name: "", email: "",  aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}
     ])
     const combinedPrice = price * participants.length
     const [errorMessage, setErrorMessage] = useState("")
 
     const handleAddParticipantClick = () => {
-        setParticipants([...participants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen"}] ) 
-
+        setParticipants([...participants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}] ) 
+        setErrorMessage("")
     }
 
     const handleDeleteParticipantClick = (index: number) => {
+        setErrorMessage("")
         setParticipants(previousParticipants => 
             previousParticipants.filter((_, i) => i !== index)
         );
@@ -47,6 +48,7 @@ export default function EventRegisterParticipants({occationID, price, onNoPartic
         } else if (participants.length <= 0) {
             setErrorMessage("Du må ha minst en deltager å melde på")
         } else {
+            setErrorMessage("")
             //add(occationID, participants)
         }
     }
@@ -72,10 +74,10 @@ export default function EventRegisterParticipants({occationID, price, onNoPartic
                 <p id="combinedPriceText">Samplet pris:</p>
                 <p id="combinedPriceAmount">{`${combinedPrice},-`}</p>
             </div>
-            <p className="errorMessage">{errorMessage}</p>
+            {errorMessage.length > 0 ?  <p className="errorMessage">{errorMessage}</p> : ""}
             <div id="addParticipantAndSendRegistrationButtons">
                 <button className="button" onClick={handleAddParticipantClick}>Legg til deltager</button>
-                <button className="button delete" onClick={handleSubmitt}>Send påmelding</button>
+                <button className="button" onClick={handleSubmitt}>Send påmelding</button>
             </div>
         </section>
     )
