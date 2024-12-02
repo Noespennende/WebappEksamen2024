@@ -327,92 +327,96 @@ app.delete('/v1/courses/:slug', async (c) => {
 
 
 app.put('/v1/courses/:slug', async (c) => {
-  const { slug } = c.req.param(); // Hent slug fra URL-en
+  const { slug } = c.req.param();
   const { data }: { data: Partial<Course> } = await c.req.json();
 
   try {
-    // Finner kurset
     const existingCourse = await prisma.course.findUnique({
       where: { slug },
-      include: { lessons: true }, // Inkluder eksisterende leksjoner i kurset
+      include: { lessons: true },
     });
 
     if (!existingCourse) {
-      return c.json({
-        success: false,
-        error: {
-          code: "404",
-          message: "Course not found",
+      return c.json(
+        {
+          success: false,
+          error: { code: "404", message: "Course not found" },
         },
-      }, 404);
+        404
+      );
     }
 
-    // Validering og oppdatering av leksjoner
     const lessonsToUpdate = data?.lessons || [];
 
-    const lessonUpdateData = lessonsToUpdate.reduce(
-      (acc, lesson) => {
-        if (lesson.id) {
-          // Oppdater eksisterende leksjon
-          acc.update.push({
-            where: { id: lesson.id },
-            data: {
-              title: lesson.title,
-              slug: lesson.slug,
-              preAmble: lesson.preAmble,
-            },
-          });
-        } else {
-          // Opprett ny leksjon hvis den ikke har et id
-          acc.create.push({
-            data: {
-              title: lesson.title,
-              slug: lesson.slug,
-              preAmble: lesson.preAmble,
-              course: { connect: { id: existingCourse.id } },
-            },
-          });
-        }
-        return acc;
-      },
-      { update: [], create: [] } as { update: any[]; create: any[] }
-    );
+    // Sorter leksjoner
+    const existingLessons = lessonsToUpdate.filter((lesson) => lesson.id);
+    const newLessons = lessonsToUpdate.filter((lesson) => !lesson.id);
 
-    //const category = existingCourse.categoryId;
-    // Oppdater kurset med lessons-relasjonen og category-relasjonen
+    // Verifiser sorteringen
+    // gjør verifisering her
+    console.log("Existing lessons:", existingLessons);
+    console.log("New lessons:", newLessons);
+
+    // Oppdaterer eksisterende leksjoner
+    for (const lesson of existingLessons) {
+      await prisma.lesson.update({
+        where: { id: lesson.id },
+        data: {
+          title: lesson.title,
+          slug: lesson.slug,
+          preAmble: lesson.preAmble,
+        },
+      });
+    }
+
+    // Opprett nye leksjoner
+    for (const lesson of newLessons) {
+      await prisma.lesson.create({
+        data: {
+          title: lesson.title,
+          slug: lesson.slug,
+          preAmble: lesson.preAmble,
+          course: { connect: { id: existingCourse.id } },
+        },
+      });
+    }
+
+    
+    // Oppdater kurset
     const updatedCourse = await prisma.course.update({
       where: { id: existingCourse.id },
       data: {
-        ...data, // Spre innholdet fra data (som kan inneholde oppdaterte felter)
-        category: data?.category ? { connect: { id: data.category.id } } : { connect: { id: "c830c3a0-27c6-4b60-89ff-91291b2fcfe5"} },
-        lessons: {
-          update: lessonUpdateData.update,
-          create: lessonUpdateData.create,
-        },
+        title: data.title,
+        slug: data.slug,
+        description: data.description,
+        category: data?.category?.id
+          ? { connect: { id: data.category.id } }
+          : { connect: { id: "c830c3a0-27c6-4b60-89ff-91291b2fcfe5" } },
       },
-      include: {
-        lessons: true, // Inkluder alle leksjoner i oppdaterte kursdata
-      }
+      include: { lessons: true },
     });
 
-    // Hvis alt går bra, returner suksess
-    return c.json({
-      success: true,
-      message: `Course with slug ${slug} was updated successfully.`,
-      data: updatedCourse,
-    }, 200);
-
+    return c.json(
+      {
+        success: true,
+        message: `Course with slug ${slug} was updated successfully.`,
+        data: updatedCourse,
+      },
+      200
+    );
   } catch (error) {
     console.error("Error updating course:", error);
-    return c.json({
-      success: false,
-      error: {
-        code: "500",
-        message: "Failed to update course",
+    return c.json(
+      {
+        success: false,
+        error: { code: "500", message: "Failed to update course" },
       },
-    }, 500);
+      500
+    );
   }
 });
+
+
 
 
 
