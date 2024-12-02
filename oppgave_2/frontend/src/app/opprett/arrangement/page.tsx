@@ -1,10 +1,9 @@
+import CreateEventPage from '@/features/template/pages/createEvent';
 import React from 'react';
 
 const CreateOccasion = () => {
     return (
-        <div>
-            <h1>Opprett Arrangement</h1>
-        </div>
+        <CreateEventPage/>
     );
 };
 
