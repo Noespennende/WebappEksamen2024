@@ -85,7 +85,10 @@ export default function CreateEventPage() {
 
 
 
-  const templateOptions = templates.map(template => template.name);
+  const templateOptions = templates.map(template => ({
+    id: template.id,
+    name: template.name
+  }));
   const categoryOptions = categories;
 
   const onSubmit = (data: React.FormEvent) => {
@@ -110,19 +113,21 @@ export default function CreateEventPage() {
 
   // Håndter endringen av malen direkte i onChange
   const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedTemplateName = e.target.value;
+    const selectedTemplateId = e.target.value;
   
     handleInputChange(e, 'template'); 
   
-    if (selectedTemplateName === "") {
+    console.log(selectedTemplateId)
+    if (selectedTemplateId === "") {
       // Nullstiller
       (Object.keys(fields) as Array<keyof typeof fields>).forEach((key) => {
         setFieldValue(key, initialValues[key], false);
       });
+      setFieldValue('template', "");  // Ensure template is also reset
       return;
     }
   
-    const selectedTemplate = templates.find(template => template.name === selectedTemplateName);
+    const selectedTemplate = templates.find(template => template.id === selectedTemplateId);
   
     if (selectedTemplate) {
       // Oppdater spesifikke felter basert på valgt mal.
@@ -150,12 +155,12 @@ export default function CreateEventPage() {
             <label htmlFor="template">Velg mal</label>
             <select
               id="template"
-              value={fields.template.value}
+              value={fields.template.value || ""}
               onChange={handleTemplateChange}
             >
               <option value="">Ingen</option>
               {templateOptions.map((template, index) => (
-                <option key={index} value={template}>{template}</option>
+                <option key={index} value={template.id}>{template.name}</option>
               ))}
             </select>
           </div>
