@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from 'react';
 import { validateCreateTemplate } from '../types';
+import { Weekday } from '@/types/Types';
 
 type FieldState = {
   value: any
@@ -18,6 +19,7 @@ type TemplateFields = {
   price: number;
   limitedParticipants: boolean;
   maxParticipants: number;
+  fixedWeekdays: Weekday[];
 };
 
 const validateField = (key: keyof TemplateFields, value: any): { isValid: boolean, error: string | undefined } => {
@@ -123,6 +125,32 @@ export function useTemplateForm(initialValues: TemplateFields) {
     });
   };
 
+  const handleWeekdayChange = (day: Weekday) => {
+    setFields((prevFields) => {
+      const newFields = { ...prevFields };
+  
+      // Oppdater 'fixedWeekdays' - legge til eller fjerne
+      const updatedWeekdays = prevFields.fixedWeekdays.value.includes(day)
+        ? prevFields.fixedWeekdays.value.filter((weekday: Weekday) => weekday !== day) // Fjern
+        : [...prevFields.fixedWeekdays.value, day]; // Legg til
+  
+      // Oppdaterer
+      newFields.fixedWeekdays = {
+        ...newFields.fixedWeekdays,
+        value: updatedWeekdays,
+        isDirty: true,
+        isTouched: true,
+      };
+  
+      // fixedWeekdays er "valid" uansett hva som velges. den kan være tom, og den kan være full
+      newFields.fixedWeekdays.isValid = true;
+      newFields.fixedWeekdays.error = undefined;
+  
+      return newFields;
+    });
+  };
+  
+
   // Skal renames til noe mer riktig
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,6 +203,7 @@ export function useTemplateForm(initialValues: TemplateFields) {
   return {
     fields,
     handleInputChange,
+    handleWeekdayChange,
     handleSubmit,
   };
 }

@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useTemplate } from '../hooks/useTemplate';
 import { useTemplateForm } from '../hooks/useTemplateForm';
 import { CreateTemplate } from '../types';
+import { Weekday } from '@/types/Types';
+import { WeekdayEnum } from '@/helpers/schema';
 
 export default function CreateTemplatePage() {
   const initialValues = {
@@ -15,9 +17,10 @@ export default function CreateTemplatePage() {
     price: 0,
     limitedParticipants: false,
     maxParticipants: 0,
+    fixedWeekdays: [], 
   };
 
-  const { fields, handleInputChange, handleSubmit } = useTemplateForm(initialValues);
+  const { fields, handleInputChange, handleWeekdayChange, handleSubmit } = useTemplateForm(initialValues);
   
   const { status, data, error, add } = useTemplate()
 
@@ -138,6 +141,24 @@ export default function CreateTemplatePage() {
               {fields.maxParticipants.error && <span style={{ color: 'red' }}>{fields.maxParticipants.error}</span>}
             </div>
           </div>
+
+          <div>
+        
+        <div>
+          <label>Lås mal til bestemte ukedager</label>
+          {WeekdayEnum.options.map((day) => (
+            <div key={day}>
+              <input
+                type="checkbox"
+                id={day}
+                checked={fields.fixedWeekdays.value.includes(day as Weekday)}
+                onChange={() => handleWeekdayChange(day as Weekday)}  
+              />
+              <label htmlFor={day}>{day}</label>
+            </div>
+          ))}
+        </div>
+      </div>
           
           <button type="submit">Opprett mal</button>
         </form>
