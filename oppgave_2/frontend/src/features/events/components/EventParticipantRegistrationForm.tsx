@@ -14,11 +14,18 @@ export default function EventRegisterParticipantForm({index, participant, onDele
     const participantNumber = (index+1 >= 10) ? `${index+1}` : `0${index+1}`
 
     const [name, setName] = useState(participant.name)
+    const [email, setEmail] = useState(participant.name)
     
     const handleNameChange = (e) => {
         e.preventDefault()
         setName(e.target.value)
         onNameInput(index, e.target.value)
+    }
+
+    const handleEmailChange = (e) => {
+        e.preventDefault()
+        setName(e.target.value)
+        onEmailInput(index, e.target.value)
     }
 
     return(
@@ -34,7 +41,7 @@ export default function EventRegisterParticipantForm({index, participant, onDele
                 </div>
                 <div className="participationFormEmail">
                     <label htmlFor="participationFormEmail">Epost</label>
-                    <input type="email" id="participationFormEmail"  onChange={(e) => onEmailInput(index, e.target.value)} name="participationFormEmail" placeholder="Navn@epost.no..."/>
+                    <input type="email" id="participationFormEmail" value={participant.email}  onChange={handleEmailChange} name="participationFormEmail" placeholder="Navn@epost.no..."/>
                 </div>
             </form>
             <button className="button" id="eventRegisterParticipantFormButton" onClick={() => onDelete(index)}>Slett</button>

@@ -17,13 +17,13 @@ export default function EventRegisterParticipants({occasion, price, onNoParticip
     const {status, update, error} = useOccasion()
 
     const [participants, setParticipants] = useState<Participant[]>([
-        {id: crypto.randomUUID(), name: "", email: "",  aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}
+        {id: crypto.randomUUID(), name: "", email: "",  approvalStatus: "Ingen", approvalDate: null, registerDate: new Date()}
     ])
     const combinedPrice = price * participants.length
     const [errorMessage, setErrorMessage] = useState("")
 
     const handleAddParticipantClick = () => {
-        setParticipants([...participants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}] ) 
+        setParticipants([...participants, {id: crypto.randomUUID(), name: "", email: "", approvalStatus: "Ingen", approvalDate: null, registerDate: new Date()}] ) 
         setErrorMessage("")
     }
 

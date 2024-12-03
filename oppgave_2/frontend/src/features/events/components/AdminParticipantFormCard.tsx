@@ -56,7 +56,7 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
             <form className="adminParticipantFormCardForm">
                 <div className="adminParticipantFormCardNameSection">
                     <label htmlFor="adminParticipantFormCardName">Navn</label>
-                    <input type="text" id="adminParticipantFormCarName" value={participant.name} onChange={(e) => handleNameChange} name="adminParticipantFormCarName" placeholder="Navn Navnessen..."/>
+                    <input type="text" id="adminParticipantFormCarName" value={participant.name} onChange={handleNameChange} name="adminParticipantFormCarName" placeholder="Navn Navnessen..."/>
                 </div>
                 <div className="adminParticipantFormCardEmailSection">
                     <label htmlFor="adminParticipantFormCardEmail">Epost</label>
