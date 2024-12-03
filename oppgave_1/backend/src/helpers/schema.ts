@@ -46,42 +46,36 @@ const commentBaseSchema = z.object({
 });
 
 
-// Må se på om lesson skal inneholde hele course-objektet, eller kun slug kanskje?
 export const lessonSchema = lessonBaseSchema.extend({
   course: courseBaseSchema.optional(),
   text: z.array(lessonTextBaseSchema).optional(),
   comments: z.array(commentBaseSchema).optional(),
 });
 
-// Utvidet Course-skjema med kategori og leksjoner inkludert
 export const courseSchema = courseBaseSchema.extend({
   category: categoryBaseSchema,
   lessons: z.array(lessonSchema).optional(),
 });
 
-// Som over: se om lessontext skal inneholde hele lesson-objektet det tilhører, eller bare slug-en?
 export const lessonTextSchema = lessonTextBaseSchema.extend({
   lesson: lessonBaseSchema.optional(),
 });
 
-// Som over: se på om comment skal inneholde hele lesson-objektet den tilhører, eller bare slug-en? 
 export const commentSchema = commentBaseSchema.extend({
   lesson: lessonBaseSchema,
   createdBy: userBaseSchema,
 });
 
-// Hele course-objekter eller bare slug-er?
 export const categorySchema = categoryBaseSchema.extend({
   courses: z.array(courseBaseSchema).optional(),
 });
 
-// Utvidet User-skjema med relasjoner til Comment, siden prisma-schema har: Comment[] i User
 export const userSchema = userBaseSchema.extend({
   comments: z.array(commentBaseSchema).optional(),
 });
 
 export const createLessonSchema = lessonBaseSchema.omit({
-  id: true, // Bruker Omit for å fjerne ID-felt - mindre linjer kode med Omit enn Pick/Partial
+  id: true,
 }).extend({
   text: z.array(
     lessonTextBaseSchema.omit({
@@ -98,7 +92,7 @@ export const createLessonSchema = lessonBaseSchema.omit({
 
 
 export const createCourseSchema = courseBaseSchema.omit({
-  id: true, // Bruker Omit for å fjerne ID-felt - mindre linjer kode med Omit enn Pick/Partial
+  id: true,
 }).extend({
   categoryId: z.string().uuid(),
   lessons: z.array(createLessonSchema).optional(),
@@ -126,6 +120,10 @@ export const validateCourse = (data: unknown) => {
 
 export const validateCreateCourse = (data: unknown) => {
     return createCourseSchema.safeParse(data)
+}
+
+export const validateLesson = (data: unknown) => {
+  return lessonSchema.safeParse(data)
 }
 
 export const validateCreateLesson = (data: unknown) => {

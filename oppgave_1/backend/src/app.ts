@@ -29,9 +29,6 @@ app.get("/v1/courses", async (c) => {
       include: { 
         category: true 
       },
-      // Returnerer 'category'-objektet i tillegg, med alle felter
-        // Kan bruke { category { select : name: true } }, for å hente spesifikke felter (her name-feltet)
-      // uten include returnereres 'categoryId', som er relasjon-referansen satt i schema (dette tilfellet category sin id)
     });
 
     // Strukturerer data-returen som Success<Course[]>
@@ -73,7 +70,6 @@ app.post("/v1/courses", async (c) => {
       );
     }
 
-    // Sjekker om kategorien finnes - refaktorere ut i metodekall?
     const categoryExists = await prisma.category.findUnique({
       where: {
         id: validationResult.data.categoryId,
@@ -82,7 +78,6 @@ app.post("/v1/courses", async (c) => {
 
     if (!categoryExists) {
 
-      console.log("jajajaj ")
       return c.json(
         {
           success: false,
@@ -128,32 +123,6 @@ app.post("/v1/courses", async (c) => {
       comments: { create: [] }, 
     })) ?? [];
 
-    /*
-    // Sjekker om Lesson-slug er unik innad kurset () (siden /kurs/:kursid:/lesson/:lessonid:)
-    const courseSlug = validationResult.data.slug;
-    for (const lesson of lessonsData) {
-      const existingLesson = await prisma.lesson.findFirst({
-        where: {
-          course: { 
-            slug: courseSlug, 
-          }, 
-          slug: lesson.slug, 
-            // Sjekker om Lesson-slug finnes i samme Course-slug
-        },
-      });
-
-      if (existingLesson) {
-        return c.json(
-          {
-            success: false,
-            error: `Lesson slug "${lesson.slug}" already exists for course "${courseSlug}".`,
-          },
-          400
-        );
-      }
-    }
-
-    */
 
      // Sjekker om Lessons-slug er unik innad i det nye kurset
      const newLessonSlugs = Array.isArray(lessonsData) ? lessonsData.map(lesson => lesson.slug) : [];
@@ -174,8 +143,6 @@ app.post("/v1/courses", async (c) => {
       );
      }
      
-    
-
     // Opprettelse data er validert -> opprett Course og Lesson 
     const createCourseData = {
       title: validationResult.data.title,
@@ -192,11 +159,10 @@ app.post("/v1/courses", async (c) => {
     const createdCourse = await prisma.course.create({
       data: createCourseData,
       include: {
-        lessons: true, // Include the related lessons data
+        lessons: true,
       },
     });
 
-    // Returnerer hele kurs-objektet, da med også lessons-data
     return c.json(
       {
         success: true,
@@ -217,14 +183,14 @@ app.post("/v1/courses", async (c) => {
 
 
 app.get('/v1/courses/:slug', async (c) => {
-  const { slug } = c.req.param(); // Hent kurs-slug fra URL-en
+  const { slug } = c.req.param();
 
   try {
     const course = await prisma.course.findUnique({
       where: { slug: slug },
       include: {
-        category: true,  // Tar med hele kategori (id og name)
-        lessons: {       // Tar med leksjoner, men ikke innholdet i leksjonene (text[])
+        category: true,  
+        lessons: {     
           select: {
             id: true,
             title: true,
@@ -247,7 +213,7 @@ app.get('/v1/courses/:slug', async (c) => {
       return c.json(response, 404);
     }
 
-    // Validerer kursdata - sjekker at det vi hentet passer med det vi ønsker å returnere
+    
     const result = validateCourse(course)
 
     if (!result.success) {
@@ -283,12 +249,10 @@ app.get('/v1/courses/:slug', async (c) => {
 });
 
 
-// TODO: Refaktorere - ut i funksjoner
 app.delete('/v1/courses/:id', async (c) => {
   const { id } = c.req.param();
 
   try {
-    // Finner kurset basert på slug
     const course = await prisma.course.findUnique({
       where: { id },
     });
@@ -304,7 +268,6 @@ app.delete('/v1/courses/:id', async (c) => {
     }
 
     // Sletter kurset (og tilhørende elementer via ref)
-    // (Har onDelete: cascade i Prisma, så tilhørende Lesson[], Lesson sine LessonText[] og Comment[] slettes automatisk)
     await prisma.course.delete({
       where: { id },
     });
@@ -352,11 +315,6 @@ app.put('/v1/courses/:slug', async (c) => {
     // Sorter leksjoner
     const existingLessons = lessonsToUpdate.filter((lesson) => lesson.id);
     const newLessons = lessonsToUpdate.filter((lesson) => !lesson.id);
-
-    // Verifiser sorteringen
-    // gjør verifisering her
-    console.log("Existing lessons:", existingLessons);
-    console.log("New lessons:", newLessons);
 
     // Oppdaterer eksisterende leksjoner
     for (const lesson of existingLessons) {
@@ -419,24 +377,18 @@ app.put('/v1/courses/:slug', async (c) => {
 
 
 
-
-
-
-
-
 app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
-  const { courseslug, lessonslug } = c.req.param(); // Hent slug-parametrene fra URL-en
+  const { courseslug, lessonslug } = c.req.param();
 
   // Finn leksjonen basert på både courseSlug og lessonSlug
   const lesson = await prisma.lesson.findFirst({
     where: {
       course: {
-        slug: courseslug, // Kursets slug
+        slug: courseslug,
       },
-      slug: lessonslug, // Leksjonens slug
+      slug: lessonslug,
     },
     include: {
-      //course: true, // -> Trenger vi all course data eller kanskje bare categoryid?
       course: {
         select: {
           title: true,
@@ -454,7 +406,7 @@ app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
             }
           }
         }
-      }, // Inkluder comments-relasjonen for leksjonen
+      },
     },
   });
 
@@ -462,7 +414,6 @@ app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
     return c.json({ success: false, error: 'Lesson or course not found' }, 404);
   }
 
-  // Returner leksjonsdata sammen med kursinformasjon
   return c.json({
     success: true,
     data: lesson,
@@ -472,26 +423,19 @@ app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
 
 app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
   try {
-    console.log("Request params:", c.req.param()); // Logg alle parametrene fra URL-en
-    
+
     const courseslug = c.req.param('courseslug'); // Hent 'courseslug' fra URL-en
     const lessonslug = c.req.param('lessonslug'); // Hent 'lessonslug' fra URL-en
     
     const comment = await c.req.json();  // Hent kommentar-objektet fra forespørselen
 
-    console.log("Received request body: ", comment);
 
-    // Logg hele kommentarobjektet
-    console.error("comment object: ", comment);
-    console.error("Received comment:", comment.comment, "CreatedById:", comment.createdById);
-
-    // Finn leksjonen basert på både courseSlug og lessonSlug
     const lesson = await prisma.lesson.findFirst({
       where: {
         course: {
-          slug: courseslug, // Kursets slug
+          slug: courseslug,
         },
-        slug: lessonslug, // Leksjonens slug
+        slug: lessonslug,
       },
     });
 
@@ -504,20 +448,20 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
 
     // Sjekk om brukeren eksisterer i databasen
     const user = await prisma.user.findUnique({
-      where: { id: comment.createdById }, // Bruk createdById her
+      where: { id: comment.createdById }, 
     });
 
     if (!user) {
       console.error("User not found");
-      return c.json({ success: false, error: 'User not found' }, 404); // Brukeren eksisterer ikke
+      return c.json({ success: false, error: 'User not found' }, 404);
     }
 
     // Opprett en ny kommentar og knytt den til leksjonen og brukeren
     const newComment = await prisma.comment.create({
       data: {
-        comment: comment.comment, // Bruk den faktiske kommentaren
+        comment: comment.comment,
         createdById: comment.createdById,
-        lessonId: lesson.id, // Knytt kommentaren til leksjonen
+        lessonId: lesson.id,
       },
     });
 
@@ -530,10 +474,10 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
         course: {
           select: {
             title: true,
-            category: true, // Henter hele category som er knyttet til kurset
+            category: true,
           },
         },
-        text: true, // Inkluder text-relasjonen for leksjonen
+        text: true,
         comments: {
           select: {
             comment: true,
@@ -544,7 +488,7 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
               },
             },
           },
-        }, // Inkluder comments-relasjonen for leksjonen
+        },
       },
     });
 
@@ -557,7 +501,6 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
     return c.json({ success: false, error: 'Internal server error' }, 500);
   }
 });
-
 
 
 
