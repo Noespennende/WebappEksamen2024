@@ -179,7 +179,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
             {status.loading  ? <div className="loader"></div> : (<>
                 <h2 id="eventPageAdminPanelHeader">Admin panel</h2>
                 <div id="editDeleteDownloadEventButtons">
-                    <Link href={`/opprett/arrangement/${occasion?.id}`} className="button">Rediger innhold</Link>
+                    <Link href={`/opprett/arrangement/${occasion?.slug}`} className="button">Rediger innhold</Link>
                     <button className="button" onClick={handleDownloadStatistics}>Last ned statistikk</button>
                     <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
                 </div>
