@@ -75,8 +75,6 @@ export default function Create(props: { courseSlug?: string }) {
       if (course?.lessons) {
         setLessons(course.lessons);
       }
-
-      console.log("tester: dsdsd ", course?.id)
     }, [course]);
 
     useEffect(() => {
@@ -84,11 +82,10 @@ export default function Create(props: { courseSlug?: string }) {
         const validatedLessons = course.lessons.map((lesson) => {
           const parseResult = validateLesson(lesson);
           if (parseResult.success) {
-            return parseResult.data; // Validerte data
+            return parseResult.data;
           } else {
-            // Håndter feil hvis nødvendig
             console.error("Invalid lesson data", parseResult.error);
-            return null; // Eller en fallback-verdi
+            return null;
           }
         }).filter((lesson) => lesson !== null);
     
@@ -96,9 +93,11 @@ export default function Create(props: { courseSlug?: string }) {
       }
     }, [course]);
 
+
     useEffect(() => {
       if (course) {
         const lessonArray: Lesson[] = course.lessons ? course.lessons : [];
+        console.log("LessonArray ", lessonArray);
     
         setCourseFields((prevCourseFields) => ({
           ...prevCourseFields,
@@ -107,20 +106,23 @@ export default function Create(props: { courseSlug?: string }) {
           slug: course.slug,
           description: course.description,
           categoryId: course.category.id,
-          lessons: lessonArray.map((l : Lesson) => ({
-            id: l.id,
-            title: l.title,
-            slug: l.slug,
-            preAmble: l.preAmble,
-            comments: l.comments ?? [], 
-            text: l.text?.map((t: LessonText) => ({
-              text: t.text,
-              orderPosition: 0,
-            })) ?? [], 
-          })),
+          lessons: lessonArray.map((l: Lesson) => {
+            return {
+              id: l.id,
+              title: l.title,
+              slug: l.slug,
+              preAmble: l.preAmble,
+              comments: l.comments ?? [],
+              text: l.text?.map((t: LessonText) => ({
+                text: t.text,
+                orderPosition: 0,
+              })) ?? [],
+            };
+          }),
         }));
       }
     }, [course]);
+    
     
     const step = courseCreateSteps[current]?.name;
   

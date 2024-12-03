@@ -54,11 +54,10 @@ export default function CreateLessonFields({
 
       {/* Leksjonens tekstbokser */}
       {lesson.text && lesson.text.map((field, index) => {
-        console.log("Hallo ", field.text); // Legg til loggen her utenfor JSX-en
         return (
           <TipTapTextBox
-            key={`${field.orderPosition}-${field.text}`}  // Unik key for hver tekstboks
-            text={field.text} // Sørger for at riktig tekst blir sendt til editoren
+            key={`${field.orderPosition}`} 
+            text={field.text}
             orderPosition={field.orderPosition}
             onChange={(updatedText) => handleTipTapChange(updatedText, lessonIndex, index)}
             onRemove={() => removeTextBox(index)}

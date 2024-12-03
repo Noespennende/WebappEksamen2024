@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -15,26 +15,59 @@ export const TipTapTextBox = ({
   onChange,
   onRemove,
 }: TipTapTextBoxProps) => {
+  // Bruk useRef for å holde på editor-instansen
+  const editorRef = useRef<any>(null);
+
+  // Initialiser editoren bare én gang
   const editor = useEditor({
     extensions: [StarterKit],
-    content: text, // Initialiser editoren med tekstinnholdet
+    content: text,
     onUpdate: ({ editor }) => {
       const updatedText = editor.getHTML();
-      onChange(updatedText); // Send oppdatert tekst tilbake til parent-komponent
+      onChange(updatedText); // Send oppdatert tekst til parent-komponent
+    },
+    editorProps: {
+      handleDOMEvents: {
+        focus: () => {
+          if (editorRef.current) {
+            editorRef.current.focus();
+          }
+        },
+      },
     },
   });
 
-  // Bruk useEffect for å oppdatere editoren når `text`-prop endres
-  useEffect(() => {
-    if (editor && text !== editor.getHTML()) {
-      editor.commands.setContent(text);
-    }
-  }, [text, editor]); // Kjør kun når `text` eller `editor` endres
+  // Funksjonen for stylingknappene
+  const toggleBold = () => {
+    editor?.chain().focus().toggleBold().run();
+  };
+
+  const toggleItalic = () => {
+    editor?.chain().focus().toggleItalic().run();
+  };
 
   return (
     <div className="tiptap-textbox">
-      {/* Editor */}
-      <EditorContent editor={editor} />
+      {/* Stylingknapper */}
+      <div className="tiptap-toolbar mb-2">
+        <button
+          type="button"
+          onClick={toggleBold}
+          className="font-bold text-lg px-2 py-1"
+        >
+          B
+        </button>
+        <button
+          type="button"
+          onClick={toggleItalic}
+          className="italic text-lg px-2 py-1"
+        >
+          I
+        </button>
+      </div>
+
+      {/* Editor - tekstfeltet */}
+      <EditorContent editor={editor} className="rounded border-2 border-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#6b7280] p-2" />
 
       {/* Fjern knapp */}
       <button

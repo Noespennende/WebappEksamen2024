@@ -230,6 +230,7 @@ app.get('/v1/courses/:slug', async (c) => {
             title: true,
             slug: true,
             preAmble: true,
+            text: true,
           },
         },
       },

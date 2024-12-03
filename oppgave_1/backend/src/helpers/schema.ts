@@ -46,18 +46,17 @@ const commentBaseSchema = z.object({
 });
 
 
-
-// Utvidet Course-skjema med kategori og leksjoner inkludert
-export const courseSchema = courseBaseSchema.extend({
-  category: categoryBaseSchema,
-  lessons: z.array(lessonBaseSchema).optional(),
-});
-
 // Må se på om lesson skal inneholde hele course-objektet, eller kun slug kanskje?
 export const lessonSchema = lessonBaseSchema.extend({
   course: courseBaseSchema.optional(),
   text: z.array(lessonTextBaseSchema).optional(),
   comments: z.array(commentBaseSchema).optional(),
+});
+
+// Utvidet Course-skjema med kategori og leksjoner inkludert
+export const courseSchema = courseBaseSchema.extend({
+  category: categoryBaseSchema,
+  lessons: z.array(lessonSchema).optional(),
 });
 
 // Som over: se om lessontext skal inneholde hele lesson-objektet det tilhører, eller bare slug-en?

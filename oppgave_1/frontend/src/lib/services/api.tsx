@@ -49,6 +49,7 @@ export const getCourse = async (courseSlug: string) => {
   
         const responseJson = await response.json();
      
+          console.log("Data :", responseJson)
         
         if (!responseJson || !responseJson.data) {
             throw new Error("Feil ved henting av kursdata.");
