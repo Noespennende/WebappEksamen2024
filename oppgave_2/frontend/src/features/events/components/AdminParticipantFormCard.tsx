@@ -14,7 +14,7 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
 
     const [name, setName] = useState(participant.name)
     const [email, setEmail] = useState(participant.email)
-    const [buttonText, setButtonText] = useState((participant.aprovalStatus === "Ingen") ? "Velg handling" : participant.aprovalStatus)
+    const [buttonText, setButtonText] = useState((participant.approvalStatus === "Ingen") ? "Velg handling" : participant.approvalStatus)
 
     
 
@@ -34,13 +34,13 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
         e.preventDefault()
 
         if(option === "Velg handling"){
-            participant.aprovalStatus = "Ingen"
+            participant.approvalStatus = "Ingen"
             setButtonText("Velg handling")
         } else if (option === "Godkjenn"){
-            participant.aprovalStatus = "Godkjent"
+            participant.approvalStatus = "Godkjent"
             setButtonText("Godkjent")
         } else if (option === "Avslå") {
-            participant.aprovalStatus = "Avslått"
+            participant.approvalStatus = "Avslått"
             setButtonText("Avslått")
         }
         
@@ -63,7 +63,7 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
                     <input type="text" id="adminParticipantFormCarEmail" value={participant.email} onChange={handleEmailChange} name="adminParticipantFormCarEmail" placeholder="navn@email.no..."/>
                 </div>
             </form>
-            <button className={`adminParticipantFormCardDropdownButton ${participant.aprovalStatus}`}>{buttonText}</button>
+            <button className={`adminParticipantFormCardDropdownButton ${participant.approvalStatus}`}>{buttonText}</button>
             <ul className="dropdownOptions">
                 <li onClick={(e) => handleStatusChange(e, "Velg handling")} className="choseAction">Velg handling</li>
                 <li  onClick={(e) => handleStatusChange(e, "Godkjenn")} className="approved">Godkjenn</li>

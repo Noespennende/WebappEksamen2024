@@ -10,7 +10,7 @@ type generateExcelReportProps = {
 
 export function generateExcelReport ({occasion}: generateExcelReportProps) {
 
-    const startDate: Date = new Date(occasion?.date)
+    const startDate: Date = new Date(occasion?.createdAt)
     const startYear: number = startDate?.getFullYear()
     const currentYear: number = new Date().getFullYear()
 
@@ -26,7 +26,7 @@ export function generateExcelReport ({occasion}: generateExcelReportProps) {
 
         // Iterate over the participants to count the number of participants each month
         for (const participant of occasion?.participants) {
-            const registerDate = participant.registerDate;;
+            const registerDate = new Date(participant.registerDate);
             if (registerDate.getFullYear() === year) {
                 const monthIndex = registerDate.getMonth();
                 monthCounts[monthIndex]++;
@@ -45,7 +45,7 @@ export function generateExcelReport ({occasion}: generateExcelReportProps) {
 
     const exelSheet = XLSX.utils.aoa_to_sheet(rows)
     const exelBook =  XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(exelBook , exelSheet, 'Report');
+    XLSX.utils.book_append_sheet(exelBook , exelSheet, `${occasion.name}_rapport`);
 
     const exelBuffer = XLSX.write(exelBook, { bookType: 'xlsx', type: 'array' });
     const exelFile = new Blob([exelBuffer], {type: 'application/octet-stream'})

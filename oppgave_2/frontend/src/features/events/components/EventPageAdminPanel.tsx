@@ -21,7 +21,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     const [exelFile, setExelFile] = useState()
     const {update, status, remove} = useOccasion()
-    const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", approvalDate: null, registerDate: new Date()}])
+    const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", approvalStatus: "Ingen", approvalDate: null, registerDate: new Date()}])
     const [isAddParticipant, setIsAddParticipant] = useState<boolean>(false)
     const [message, setmessage] = useState("")
     const [error, setErrror] = useState(false)
@@ -164,7 +164,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
     }
 
     const handleDownloadStatistics = () => {
-        saveAs(exelFile, 'report.xlsx');
+        saveAs(exelFile, `${occasion.name}_rapport.xlsx`);
     }
 
     useEffect(() => {
