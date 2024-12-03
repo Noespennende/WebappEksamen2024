@@ -160,12 +160,13 @@ export default function CreateEventPage() {
 
   return (
     <>
+    <section id="createOccasionPage">
       <h1>Opprett arrangement</h1>
 
       <section className="eventForm">
         <form onSubmit={onSubmit}>
 
-          <div>
+          <div id="choseTemplate">
             <label htmlFor="template">Velg mal</label>
             <select
               id="template"
@@ -179,7 +180,7 @@ export default function CreateEventPage() {
             </select>
           </div>
 
-          <div>
+          <div id="choseDate">
             <label htmlFor="date">Velg dato</label>
             <input
               id="date"
@@ -188,10 +189,10 @@ export default function CreateEventPage() {
               onChange={(e) => handleInputChange(e, 'date')} // Håndter endring
               placeholder="Velg en dato"
             />
-            {fields.date.error && <span style={{ color: 'red' }}>{fields.date.error}</span>}
+            {fields.date.error && <span className='error'>{fields.date.error}</span>}
           </div>
 
-          <div>
+          <div id="choseCategory">
             <label htmlFor="category">Type</label>
             <select
               id="category"
@@ -206,7 +207,7 @@ export default function CreateEventPage() {
               ))}
             </select>
             {fields.category.error && (
-              <span style={{ color: 'red' }}>{fields.category.error}</span>
+              <span className="error">{fields.category.error}</span>
             )}
           </div>
 
@@ -219,8 +220,9 @@ export default function CreateEventPage() {
               onChange={(e) => handleInputChange(e, 'name')}
               placeholder="Kategori"
               disabled={fields.name.disabled}
+              maxLength={20}
             />
-            {fields.name.error && <span style={{ color: 'red' }}>{fields.name.error}</span>}
+            {fields.name.error && <span className="error">{fields.name.error}</span>}
           </div>
 
           <div>
@@ -232,7 +234,7 @@ export default function CreateEventPage() {
               onChange={(e) => handleInputChange(e, 'slug')}
               placeholder="Slug"
             />
-            {fields.slug.error && <span style={{ color: 'red' }}>{fields.slug.error}</span>}
+            {fields.slug.error && <span className="error">{fields.slug.error}</span>}
           </div>
 
           <div>
@@ -245,7 +247,7 @@ export default function CreateEventPage() {
               placeholder="Adresse.."
               disabled={fields.address.disabled}
             />
-            {fields.address.error && <span style={{ color: 'red' }}>{fields.address.error}</span>}
+            {fields.address.error && <span className="error">{fields.address.error}</span>}
           </div>
 
           <div>
@@ -258,7 +260,7 @@ export default function CreateEventPage() {
               placeholder="Maks deltakere"
               disabled={fields.maxParticipants.disabled}
             />
-            {fields.maxParticipants.error && <span style={{ color: 'red' }}>{fields.maxParticipants.error}</span>}
+            {fields.maxParticipants.error && <span className="error">{fields.maxParticipants.error}</span>}
           </div>
 
           <div>
@@ -271,21 +273,21 @@ export default function CreateEventPage() {
               placeholder="Pris"
               disabled={fields.price.disabled}
             />
-            {fields.price.error && <span style={{ color: 'red' }}>{fields.price.error}</span>}
+            {fields.price.error && <span className="error">{fields.price.error}</span>}
           </div>
           
 
-          <div>
-            <label htmlFor="waitinglist">Tillatt venteliste</label>
+          <div id="allowWaitingList">
             <input
-              id="waitinglist"
-              type="checkbox"
-              checked={fields.waitinglist.value}
-              onChange={(e) => handleInputChange(e, 'waitinglist')}
-            />
+                id="waitinglist"
+                type="checkbox"
+                checked={fields.waitinglist.value}
+                onChange={(e) => handleInputChange(e, 'waitinglist')}
+              />
+              <label htmlFor="waitinglist">Tillatt venteliste</label>
           </div>
 
-          <div>
+          <div id="occasionDescription">
             <label htmlFor="body">Arrangementsbeskrivelse</label>
             <div>
               {(fields.body.value.length === 0 ? [''] : fields.body.value).map((paragraph: string, index: number) => (
@@ -295,20 +297,21 @@ export default function CreateEventPage() {
                     onChange={(e) => handleBodyChange(index, e.target.value)}
                   />
                   {fields.body.error && (
-                    <span style={{ color: 'red' }}>
+                    <span className="error">
                       {fields.body.error.split(", ")[index]} {/* Hent feilmeldingen for paragrafen */}
                     </span>
                   )}
                 </div>
               ))}
             </div>
-            <button type="button" onClick={addParagraph}>Legg til paragraf</button>
+            <button className={"button"} type="button" onClick={addParagraph}>Legg til paragraf</button>
           </div>
 
           <div>
-            <button type="submit">Opprett</button>
+            <button className={"button"} type="submit">Opprett</button>
           </div>
         </form>
+      </section>
       </section>
     </>
   );

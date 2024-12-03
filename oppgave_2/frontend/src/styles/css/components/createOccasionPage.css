@@ -1,0 +1,183 @@
+@import '../helpers/root.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+
+#createOccasionPage {
+
+    h1 {
+       font-style: italic; 
+    }
+
+    .eventForm {
+        form {
+            display: flex;
+            flex-direction: column;
+
+            .error {
+                margin-top: 1rem;
+                font-size: 1rem;
+                background-color: transparent;
+                color: var(--errorColor)
+            }
+
+            #choseTemplate {
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 0rem;
+
+                label {
+                    font-size: 1.2rem;
+                    font-weight: var(--bold);
+                    margin-right: 2rem;
+                }
+
+                select {
+                    border-style: none;
+                    color: var(--white);
+                    background-color: var(--darkGray);
+                    text-align: center;
+                    font-weight: var(--bold);
+                    padding: .3rem .5rem;
+                    border-radius: 50px;
+                    margin: 0 0rem 1rem 0;
+
+                    -webkit-appearance: none; 
+                    -moz-appearance: none;   
+                    appearance: none;       
+                }
+                
+            }
+
+            #choseDate {
+                display: flex;
+                flex-direction: row;
+                margin-bottom: .05rem;
+                margin-bottom: 0rem;
+
+                label {
+                    font-size: 1.2rem;
+                    font-weight: var(--regular);
+                    margin: 0 1.7rem 0 0;
+                }
+
+                input {
+                    border-style: none;
+                    border-style: none;
+                    color: var(--white);
+                    background-color: var(--darkGray);
+                    text-align: center;
+                    font-weight: var(--bold);
+                    padding: .3rem .5rem;
+                    border-radius: 50px;
+                    margin: 0 0rem 1rem 0;
+                    width: 9rem;
+                }
+            }
+
+            #choseCategory {
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 1rem;
+
+
+                label {
+                    font-size: 1.2rem;
+                    font-weight: var(--regular);
+                    margin-right: 4.1rem;
+                }
+
+                select {
+                    border-style: none;
+                    color: var(--white);
+                    background-color: var(--darkGray);
+                    text-align: center;
+                    font-weight: var(--bold);
+                    padding: .3rem .5rem;
+                    border-radius: 50px;
+                    margin: 0 0rem 1rem 0;
+                    width: 10rem;
+
+                    -webkit-appearance: none; 
+                    -moz-appearance: none;   
+                    appearance: none;       
+                }
+                
+            }
+
+            div{
+                display:flex;
+                flex-direction: column;
+                margin-bottom: 1rem;
+            }
+
+            label {
+                margin-bottom: .2rem;
+            }
+
+            input {
+                font-weight: var(--bold);
+                border-radius: 5px;
+                border-style: none;
+                border: 2px solid var(--gray);
+                padding: .2rem .5rem;
+            }
+
+            #allowWaitingList {
+                display: flex;
+                flex-direction: row;
+                align-content: center;
+
+                #waitinglist {
+                        transform: scale(1.2); 
+                        appearance: none; 
+                        border: 2px solid var(--gray); 
+                        border-radius: 4px; 
+                        width: 20px; 
+                        height: 20px; 
+                        cursor: pointer; 
+                        -webkit-appearance: none; 
+                        -moz-appearance: none; 
+                 }
+
+                 #waitinglist:checked {
+                    background-color: var(--green); 
+                }
+
+                #waitinglist:checked::after {
+                    content: 'X';
+                    position: absolute;
+                    width: 10px; 
+                    height: 10px; 
+                    top: 30%; 
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: var(--darkGray)  
+                    }
+
+                    label {
+                        display: flex;
+                        align-items: center; 
+                        margin-left: 1rem;
+                        margin-left: 1rem,
+                        
+                    }
+             }
+
+             #occasionDescription {
+                textarea {
+                    font-weight: var(--bold);
+                    border-radius: 5px;
+                    border-style: none;
+                    border: 2px solid var(--gray);
+                    padding: .2rem .5rem;
+                    resize: vertical;
+                    width: 500px;
+                }
+             }
+
+
+        }
+    }
+
+ }
