@@ -43,7 +43,7 @@ async function main() {
         const newTemplate = await prisma.templateBaseSchema.create({
             data: {
                 id: uuidv4(),
-                name: "Social Event Template",
+                name: "Social",
                 price: 150,
                 maxParticipants: 300,
                 isPrivate: false,
@@ -132,7 +132,6 @@ main()
         await prisma.$disconnect();
     });
 
-*/
 /*
 async function main() {
    
@@ -176,7 +175,7 @@ async function main() {
         const newTemplate = await prisma.templateBaseSchema.create({
             data: {
                 id: uuidv4(),
-                name: "Festival Template",
+                name: "Festival",
                 price: 200,
                 maxParticipants: 500,
                 isPrivate: false,
@@ -198,11 +197,11 @@ async function main() {
         name: "Rock Festival 2025",  
         slug: "RockFest2025",      
         price: 400,
-        createdAt: new Date(2020, 11, 1),
+        createdAt: new Date(),
         date: new Date("2025-01-15T19:00:00Z"), 
         address: "Grand Rock Arena 2025",
         waitingList: true,
-        category: "Music", 
+        category: "Other", 
         participants: {
             connect: [
                 { email: "john.rock@example.com" },  
@@ -255,7 +254,7 @@ async function main() {
         console.log("Occasion not found.");
     }
 }
-
+/*
 main()
     .catch((e) => {
         console.error(e);
@@ -305,7 +304,7 @@ async function main() {
         const newTemplate = await prisma.templateBaseSchema.create({
             data: {
                 id: uuidv4(),
-                name: "Jazz Festival Template",
+                name: "Jazz Festival",
                 price: 150,
                 maxParticipants: 100,
                 isPrivate: false,
@@ -327,11 +326,11 @@ async function main() {
         name: "Jazz Festival 2024",
         slug: "JazzFestival2024",
         price: 150,
-        createdAt: new Date(2021, 10, 11),
+        createdAt: new Date(2025, 10, 11),
         date: new Date(),
         address: "Jazz Arena 44",
         waitingList: true,
-        category: "Music", 
+        category: "Other", 
         participants: {
             connect: [
                 { email: "alice.jazz@example.com" }, 
@@ -396,7 +395,7 @@ main()
 
 
 
-
+/*
 async function main() {
     const participantsData = [
         {
@@ -718,3 +717,172 @@ main()
     .finally(async () => {
         await prisma.$disconnect();
     });*/
+
+    async function main() {
+        const participantsData = [
+            {
+                name: "Anna Social",
+                email: "anna.social@example.com",
+                approvalStatus: "Godkjent",
+                registerDate: new Date("2024-09-10"),
+            },
+            {
+                name: "Jake Friendly",
+                email: "jake.friendly@example.com",
+                approvalStatus: "Ingen",
+                registerDate: new Date("2024-09-15"),
+            },
+            {
+                name: "Lucy Warm",
+                email: "lucy.warm@example.com",
+                approvalStatus: "Avslått",
+                registerDate: new Date("2024-09-12"),
+            },
+            {
+                name: "Mark Curious",
+                email: "mark.curious@example.com",
+                approvalStatus: "Godkjent",
+                registerDate: new Date("2024-10-01"),
+            },
+            {
+                name: "Sophia Learn",
+                email: "sophia.learn@example.com",
+                approvalStatus: "Ingen",
+                registerDate: new Date("2024-10-03"),
+            },
+            {
+                name: "James Explore",
+                email: "james.explore@example.com",
+                approvalStatus: "Avslått",
+                registerDate: new Date("2024-10-20"),
+            },
+        ];
+    
+        for (const participant of participantsData) {
+            await prisma.participant.upsert({
+                where: { email: participant.email },
+                update: {},
+                create: participant,
+            });
+        }
+    
+        const existingTemplate = await prisma.templateBaseSchema.findUnique({
+            where: { id: "f8fba032-0488-47df-9c23-72211dbcd501" },
+        });
+    
+        let templateId;
+        if (!existingTemplate) {
+            const newTemplate = await prisma.templateBaseSchema.create({
+                data: {
+                    id: uuidv4(),
+                    name: "General Template",
+                    price: 100,
+                    maxParticipants: 300,
+                    isPrivate: false,
+                    fixedPrice: true,
+                    allowSameDayEvent: false,
+                    waitList: true,
+                    limitedParticipants: true,
+                },
+            });
+            templateId = newTemplate.id;
+        } else {
+            templateId = existingTemplate.id;
+        }
+    
+        console.log("Template ID: ", templateId);
+    
+        const socialEventData = {
+            name: "Social Gathering 2025",
+            slug: "social-gathering-2025",
+            price: 120,
+            createdAt: new Date(),
+            date: new Date("2025-04-20T18:00:00Z"),
+            address: "Downtown Social Hub",
+            waitingList: true,
+            category: "Social",
+            participants: {
+                connect: [
+                    { email: "anna.social@example.com" },
+                ],
+            },
+            waitingListParticipants: {
+                connect: [
+                    { email: "jake.friendly@example.com" },
+                ],
+            },
+            rejectedParticipants: {
+                connect: [
+                    { email: "lucy.warm@example.com" },
+                ],
+            },
+            template: {
+                connect: { id: templateId },
+            },
+            maxParticipants: 150,
+            body: {
+                create: [
+                    { content: "Enjoy an evening of laughter, food, and community bonding!" },
+                    { content: "Meet new friends and reconnect with old ones!" },
+                ],
+            },
+        };
+    
+        const otherEventData = {
+            name: "Exploration Meetup 2025",
+            slug: "exploration-meetup-2025",
+            price: 100,
+            createdAt: new Date(),
+            date: new Date("2025-05-15T10:00:00Z"),
+            address: "Adventure Center",
+            waitingList: true,
+            category: "Other",
+            participants: {
+                connect: [
+                    { email: "mark.curious@example.com" },
+                ],
+            },
+            waitingListParticipants: {
+                connect: [
+                    { email: "sophia.learn@example.com" },
+                ],
+            },
+            rejectedParticipants: {
+                connect: [
+                    { email: "james.explore@example.com" },
+                ],
+            },
+            template: {
+                connect: { id: templateId },
+            },
+            maxParticipants: 200,
+            body: {
+                create: [
+                    { content: "Join us for a day of exploration and discovery!" },
+                    { content: "Perfect for adventurers and curious minds alike." },
+                ],
+            },
+        };
+    
+        const socialEvent = await prisma.occasionBaseSchema.create({
+            data: socialEventData,
+        });
+    
+        console.log("Created social event: ", socialEvent);
+    
+        const otherEvent = await prisma.occasionBaseSchema.create({
+            data: otherEventData,
+        });
+    
+        console.log("Created other event: ", otherEvent);
+    }
+    
+    main()
+        .catch((e) => {
+            console.error(e);
+            process.exit(1);
+        })
+        .finally(async () => {
+            await prisma.$disconnect();
+        });
+    

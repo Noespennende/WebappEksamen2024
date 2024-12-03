@@ -3,7 +3,7 @@ import { occasionRepository, OccasionRepository } from "../repository";
 import { PrismaClient, OccasionBaseSchema } from "@prisma/client";
 import { CreateOccation, Month, OccasionCategory, Occation } from "../../types";
 import { MonthEnum, OccasionCategoryEnum } from "@/helpers/schema";
-import { Result } from "@/types";
+import { Participant, Result } from "@/types";
 
 
 export const createOccasionService = (occasionRepository: OccasionRepository) => {
@@ -107,9 +107,32 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
     
       const result: Result<Occation[]> = {success: true, data: occasions}
         return result
-    }
+    },
+
+    async addParticipantToOccasion(occasionSlug: string, data: { name: string; email: string; approvalStatus: string }) {
+      try {
+    
+        const occasion = await occasionRepository.getOccasionById(occasionSlug);
+        if (!occasion) {
+          const result: Result<null> = { success: false, error: { code: "NOT_FOUND", message: "Occasion not found" } };
+          return result;
+        }
+
+    
+        const newParticipant = await occasionRepository.addParticipantToOccasion(occasionSlug, data);
+
+ 
+        const result: Result<typeof newParticipant> = { success: true, data: newParticipant };
+        return result;
+      } catch (error) {
+     
+        const result: Result<null> = { success: false, error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to add participant to occasion" } };
+        return result;
+      }
+    },
   };
-}
+  };
+
 
   
 

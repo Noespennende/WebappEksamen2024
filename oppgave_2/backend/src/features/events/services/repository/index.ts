@@ -130,20 +130,20 @@ export const createOccationRepository = () => {
         }
       },
       
-    async addParticipantToOccasion(occasionSlug: string, participantData: { name: string; email: string; approvalStatus: string }) {
-      const occasion = await prisma.occasionBaseSchema.findUnique({ where:{ slug: occasionSlug  }});
-      if (!occasion) throw new Error('Occasion not found');
-      return await prisma.participant.create({
-        data: {
-          name: participantData.name,
-          email: participantData.email,
-          approvalStatus: participantData.approvalStatus,
-          OccasionBaseSchema: {
-            connect: { slug: occasionSlug },
+      async addParticipantToOccasion(occasionSlug: string, data: { name: string; email: string; approvalStatus: string }) {
+        return await prisma.participant.create({
+          data: {
+            name: data.name,
+            email: data.email,
+            approvalStatus: data.approvalStatus,
+            OccasionBaseSchema: {
+              connect: { slug: occasionSlug },
+            },
+            registerDate: new Date(), 
           },
-        },
-      });
-    },
+        });
+      },
+    
 
   
     async addParticipantToWaitingList(occasionSlug: string, participantData: { name: string; email: string; status: string }) {
@@ -154,6 +154,7 @@ export const createOccationRepository = () => {
           name: participantData.name,
           email: participantData.email,
           approvalStatus: participantData.status,
+
           WaitingOccasionBaseSchema: {
           connect: { slug: occasionSlug },
         },
@@ -197,9 +198,8 @@ export const createOccationRepository = () => {
             if (monthIndex === -1) {
                 throw new Error(`Invalid month: ${month}`);
             }
-
-            startDate = new Date(currentYear, monthIndex, 1);
-            endDate = new Date(currentYear, monthIndex + 1, 0, 23, 59, 59, 999);
+            startDate = new Date(currentYear+1, monthIndex, 1);
+            endDate = new Date(currentYear+1, monthIndex + 1, 0, 23, 59, 59, 999);
         } else if (parsedYear !== null) {
             startDate = new Date(parsedYear, 0, 1);
             endDate = new Date(parsedYear, 11, 31, 23, 59, 59, 999);
