@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { createCourse, deleteCourse, updateCourse } from "@/lib/services/api";
 import { useLesson } from "@/hooks/useLesson";
 import { useComment } from "@/hooks/useComments";
@@ -46,6 +46,9 @@ import { validateCreateLesson, validateLesson } from "@/lib/types/schema";
   ]
 
 export default function Create(props: { courseSlug?: string }) {
+
+    const router = useRouter();
+    
     const { courseSlug } = props;
     
     const [success, setSuccess] = useState(false);
@@ -427,9 +430,11 @@ export default function Create(props: { courseSlug?: string }) {
       });
     };
 
-    const handleDeleteCourse = (id: string) => {
-      deleteCourse(id)
-    }
+    const handleDeleteCourse = async (id: string) => {
+
+      await deleteCourse(id);    // Vent på at kurset blir slettet
+      router.push('/courses');   // Naviger til /courses
+    };
   
     return (
       <>
