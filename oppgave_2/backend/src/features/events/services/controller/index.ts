@@ -110,7 +110,7 @@ export const createEventController = (occasionService: OccasionService) => {
     app.delete(`${eventDelete}`, async (context) => {
         try {
             const eventSlug= context.req.param(deleteParam)
-
+            console.log(eventSlug)
             const result = await occasionService.deleteOccasion(eventSlug) 
 
             if (!result.success){

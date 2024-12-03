@@ -32,7 +32,8 @@ export const OccassionSchema = OccassionBaseSchema.extend({
 })
 
 export const OccationCreateSchema = OccassionSchema.omit({ id: true, body:true }).extend({
-    body: z.array(z.string())
+    body: z.array(z.string()),
+    createdAt: z.date(),
 });
 
 /* Enums */

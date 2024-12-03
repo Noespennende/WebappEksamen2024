@@ -64,10 +64,11 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
 
       async deleteOccasion(occasionSlug: string){
        try {
+        console.log("service: ", occasionSlug)
         const occasionAfterDelete = await occasionRepository.deleteOccasion(occasionSlug)
         
         if(!occasionAfterDelete){
-          const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: "Failed to delete occation" } };
+          const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: `Failed to delete occation with slug: ${occasionslu}` } };
               return result
         }
 

@@ -32,11 +32,12 @@ model OccasionBaseSchema {
   price                   Int
   address                 String
   waitingList             Boolean
+  createdAt               DateTime             @default(now())
   template                TemplateBaseSchema?  @relation("OccasionTemplate", fields: [templateId], references: [id])
   templateId              String?        
   maxParticipants         Int?
   category                String
-  date                    DateTime
+  date                    DateTime             
   participants            Participant[]        @relation("Participant")
   waitingListParticipants Participant[]        @relation("WaitingParticipant")
   rejectedParticipants    Participant[]        @relation("RejectedParticipant")
@@ -46,8 +47,8 @@ model OccasionBaseSchema {
 model TemplateBaseSchema {
   id                  String               @id @default(uuid())
   name                String
-  price               Int?    
-  maxParticipants     Int?
+  price               Int
+  maxParticipants     Int
   isPrivate           Boolean
   fixedPrice          Boolean
   allowSameDayEvent   Boolean
@@ -63,7 +64,7 @@ model TemplateBaseSchema {
 model BodyEntry {
   id         String             @id @default(uuid())
   content    String
-  occasion   OccasionBaseSchema @relation("OccasionToBodyEntries", fields: [occasionId], references: [id])
+  occasion   OccasionBaseSchema @relation("OccasionToBodyEntries", fields: [occasionId], references: [id], onDelete: Cascade)
   occasionId String
 }
 

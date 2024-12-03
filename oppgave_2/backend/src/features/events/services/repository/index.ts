@@ -82,6 +82,7 @@ export const createOccationRepository = () => {
               slug: data.slug,
               price: data.price,
               address: data.address,
+              createdAt: data.createdAt,
               body: {
                 create: bodyEntries,   
             },
@@ -118,13 +119,13 @@ export const createOccationRepository = () => {
 
       async deleteOccasion(occasionSlug: string) {
         try {
-          const prismData =await prisma.occasionBaseSchema.delete({
+          const prismData = await prisma.occasionBaseSchema.delete({
             where: { slug: occasionSlug },
           });
 
           return prismData
         } catch (error) {
-          console.log("error deleting Occasion")
+          console.log("error deleting Occasion", error.message)
           throw new Error("Error ")
         }
       },
