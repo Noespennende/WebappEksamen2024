@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Link from "next/link";
 
 // TODO: Kommenter ut om du ønsker å bruke .css
 // import '../styles/scss/main.css'
@@ -43,10 +44,10 @@ export default function RootLayout({
         </h1>
         <ul className="flex gap-8" data-testid="nav">
           <li className="text-base font-semibold" data-testid="nav_courses">
-            <a href="kurs">Kurs</a>
+            <Link href={`/courses`}>Kurs</Link>
           </li>
           <li className="text-base font-semibold" data-testid="nav_new">
-            <a href="/ny">Nytt kurs</a>
+          <Link href={`/courses/create`}>Nytt kurs</Link>
           </li>
         </ul>
       </nav>

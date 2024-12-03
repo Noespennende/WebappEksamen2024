@@ -1,9 +1,15 @@
 import { CreateLesson, Lesson } from "@/lib/types";
+import { LessonField } from "./LessonField";
+import { TextBox } from "./TextBox";
 
 interface CreateLessonFieldsProps {
   lesson: CreateLesson | Lesson;
   lessonIndex: number;
-  handleLessonFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, lessonIndex: number, index?: number ) => void;
+  handleLessonFieldChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    lessonIndex: number,
+    index?: number
+  ) => void;
   addTextBox: () => void;
   removeTextBox: (index: number) => void;
 }
@@ -13,74 +19,43 @@ export default function CreateLessonFields({
   lessonIndex,
   handleLessonFieldChange,
   addTextBox,
-  removeTextBox
-} : CreateLessonFieldsProps){
-  
+  removeTextBox,
+}: CreateLessonFieldsProps) {
   return (
     <div className="w-full">
-      <label className="mb-4 flex flex-col" htmlFor="title">
-        <span className="mb-1 font-semibold">Tittel*</span>
-        <input
-          className="rounded"
-          data-testid="form_lesson_title"
-          type="text"
-          name="title"
-          id="title"
-          value={lesson.title}
-          onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
-        />
-      </label>
-      
-      <label className="mb-4 flex flex-col" htmlFor="slug">
-        <span className="mb-1 font-semibold">Slug*</span>
-        <input
-          className="rounded"
-          data-testid="form_lesson_slug"
-          type="text"
-          name="slug"
-          id="slug"
-          value={lesson.slug}
-          onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
-        />
-      </label>
-
-      <label className="mb-4 flex flex-col" htmlFor="preAmble">
-        <span className="mb-1 font-semibold">Ingress*</span>
-        <input
-          className="rounded"
-          data-testid="form_lesson_preAmble"
-          type="text"
-          name="preAmble"
-          id="preAmble"
-          value={lesson.preAmble}
-          onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
-        />
-      </label>
+      <LessonField
+        label="Tittel"
+        id="title"
+        name="title"
+        value={lesson.title}
+        onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
+      />
+      <LessonField
+        label="Slug"
+        id="slug"
+        name="slug"
+        value={lesson.slug}
+        onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
+      />
+      <LessonField
+        label="Ingress"
+        id="preAmble"
+        name="preAmble"
+        value={lesson.preAmble}
+        onChange={(e) => handleLessonFieldChange(e, lessonIndex)}
+      />
 
       {/* Leksjonens tekstbokser */}
-    {lesson.text && lesson.text.length > 0 && lesson.text.map((field, index) => (
-      <div key={field.orderPosition}>
-        <label className="mt-4 flex flex-col" htmlFor={`text-${field.orderPosition}`}>
-          <span className="text-sm font-semibold">Tekst*</span>
-          <textarea
-            data-testid="form_lesson_text"
-            name="text"
-            id={`text-${field.orderPosition}`}
-            value={field.text}
+      {lesson.text &&
+        lesson.text.map((field, index) => (
+          <TextBox
+            key={field.orderPosition}
+            text={field.text}
+            orderPosition={field.orderPosition}
             onChange={(e) => handleLessonFieldChange(e, lessonIndex, index)}
-            className="w-full rounded bg-slate-100"
-            cols={30}
+            onRemove={() => removeTextBox(index)}
           />
-        </label>
-        <button
-          className="text-sm font-semibold text-red-400"
-          type="button"
-          onClick={() => removeTextBox(index)}  
-        >
-          Fjern
-        </button>
-      </div>
-    ))}
+        ))}
 
       {/* Legg til tekstboks-knapp */}
       <button
@@ -93,5 +68,4 @@ export default function CreateLessonFields({
       </button>
     </div>
   );
-};
-
+}
