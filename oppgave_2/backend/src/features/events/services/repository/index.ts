@@ -152,15 +152,11 @@ export const createOccationRepository = () => {
     try {
       
         let startDate: Date, endDate: Date;
-        console.log("category " + category)
         if (year !== null && month !== null) {
           const monthIndex = MonthEnum.options.indexOf(month as Month);
           if (monthIndex === -1) {
               throw new Error(`Invalid month: ${month}`);
           }
-
-          console.log("month index:", monthIndex, month);
-
       
           startDate = new Date(year, monthIndex, 1); 
           endDate = new Date(year, monthIndex + 1, 0, 23, 59, 59, 999);
@@ -187,13 +183,11 @@ export const createOccationRepository = () => {
             where.category = category;
         }
 
-        console.log("Prisma parameters:", where);
 
         const occasions = await prisma.occasionBaseSchema.findMany({
             where,
         });
-
-        console.log("Occasions:", occasions);
+        
         return occasions;
     } catch (error) {
         console.error("Error in query:", error); 
