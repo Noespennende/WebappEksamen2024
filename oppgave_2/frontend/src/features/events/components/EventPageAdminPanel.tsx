@@ -18,7 +18,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     const {update, status, remove} = useOccasion()
 
-    const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}])
+    const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", approvalDate: null, registerDate: new Date()}])
     const [isAddParticipant, setIsAddParticipant] = useState<boolean>(false)
     const [message, setmessage] = useState("")
     const [error, setErrror] = useState(false)
@@ -49,7 +49,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     const participantToAdd = updatedParticipants.shift();
                     if (participantToAdd) {
                         if(participantToAdd.aprovalStatus === "Godkjent"){
-                            participantToAdd.aprovalDate = new Date()
+                            participantToAdd.approvalDate = new Date()
                         }
                         occasion.participants.push(participantToAdd); 
                     }
@@ -65,7 +65,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     const participantToAdd = adminAssignedParticipants.shift()
                     if (participantToAdd){
                         if(participantToAdd.aprovalStatus === "Godkjent"){
-                            participantToAdd.aprovalDate = new Date()
+                            participantToAdd.approvalDate = new Date()
                         }
                         occasion.waitinglistParticipants.push(participantToAdd)
                     }  
@@ -77,8 +77,8 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     const participantToAdd = adminAssignedParticipants.shift()
                     if (participantToAdd){
                         participantToAdd.aprovalStatus = "Avslått"
-                        participantToAdd.aprovalDate = null
-                        occasion.recejectedParticipants.push(participantToAdd)
+                        participantToAdd.approvalDate = null
+                        occasion.rejectedParticipants.push(participantToAdd)
                     }  
                 }
                 setmessage("Alle deltagere som har plass er blitt lagt til arrangementet. Resten er avslått.")
@@ -90,7 +90,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     const handleAddParticipant = () => {
         if (isAddParticipant){
-            setAdminAssignedParticipants([...adminAssignedParticipants, {id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}] ) 
+            setAdminAssignedParticipants([...adminAssignedParticipants, {id: crypto.randomUUID(), name: "", email: "", approvalStatus: "Ingen", approvalDate: null, registerDate: new Date()}] ) 
         } else {
             setIsAddParticipant(true)
         } 
@@ -101,48 +101,48 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
         //Participant
         if(previousStatus === "Deltager"){
             if(option == "Slett"){
-                participant.aprovalDate = null
+                participant.approvalDate = null
                 occasion.participants = occasion.participants.filter(p => p !== participant);
             } else if (option == "Avslå"){
-                participant.aprovalDate = null
+                participant.approvalDate = null
                 occasion.participants = occasion.participants.filter(p => p !== participant);
-                occasion.recejectedParticipants.push(participant)
+                occasion.rejectedParticipants.push(participant)
             } else if (option == "Godkjenn"){
-                participant.aprovalDate = new Date()
+                participant.approvalDate = new Date()
             }
 
             //Rejected
         } else if(previousStatus === "Avslått") {
             if(option == "Godkjenn"){
-                occasion.recejectedParticipants = occasion.recejectedParticipants.filter(p => p !== participant)
-                participant.aprovalDate = new Date()
+                occasion.rejectedParticipants = occasion.rejectedParticipants.filter(p => p !== participant)
+                participant.approvalDate = new Date()
                 if(occasion.maxParticipants && occasion.participants.length < occasion.maxParticipants){
                     occasion.participants.push(participant)
                 } else if (occasion.waitinglist) {
                     occasion.waitinglistParticipants.push(participant)
                 } else {
-                    occasion.recejectedParticipants.push(participant)
+                    occasion.rejectedParticipants.push(participant)
                 }
             } else if (option == "Slett") {
-                occasion.recejectedParticipants = occasion.recejectedParticipants.filter(p => p !== participant)
+                occasion.rejectedParticipants = occasion.rejectedParticipants.filter(p => p !== participant)
             }
 
             //Waiting list
         } else if (previousStatus === "Venteliste"){
             if (option === "Godkjenn") {
-                participant.aprovalDate = new Date()
+                participant.approvalDate = new Date()
                 if (occasion.maxParticipants && occasion.maxParticipants < occasion.participants.length){
                     occasion.waitinglistParticipants = occasion.waitinglistParticipants.filter(p => p !== participant)
                     occasion.participants.push(participant)
                 }
             }
             else if (option == "Slett") {
-                participant.aprovalDate = null
+                participant.approvalDate = null
                 occasion.waitinglistParticipants = occasion.waitinglistParticipants.filter(p => p !== participant)
             } else if (option == "Avslå"){
-                participant.aprovalDate = null
+                participant.approvalDate = null
                 occasion.waitinglistParticipants = occasion.waitinglistParticipants.filter(p => p !== participant)
-                occasion.recejectedParticipants.push(participant)
+                occasion.rejectedParticipants.push(participant)
             }
         }
         
@@ -165,18 +165,18 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
             {status.loading  ? <div className="loader"></div> : (<>
                 <h2 id="eventPageAdminPanelHeader">Admin panel</h2>
                 <div id="editDeleteDownloadEventButtons">
-                    <Link href={`/opprett/arrangement/${occasion.id}`} className="button">Rediger innhold</Link>
-                    <Link href={`/arrangement/${occasion.id}/lastned`} className="button">Last ned statistikk</Link>
+                    <Link href={`/opprett/arrangement/${occasion?.id}`} className="button">Rediger innhold</Link>
+                    <Link href={`/arrangement/${occasion?.id}/lastned`} className="button">Last ned statistikk</Link>
                     <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
                 </div>
                 <div id="eventPageAdminPanelProfit">
-                    <p id="eventPageAdminPanelProfitProfits">{`${occasion.price * (occasion.participants.length)}`} kr </p>
+                    <p id="eventPageAdminPanelProfitProfits">{`${occasion?.price * (occasion?.participants?.length)}`} kr </p>
                     <p id="eventPageAdminPanelProfitText">samlet forventet intekt</p>
                 </div>
                 
                 <section id="eventPageAdminPanelParticipants">
                     <h3>Påmeldte deltagere:</h3>
-                    {occasion.participants.map((participant, index) => (
+                    {occasion?.participants?.map((participant, index) => (
                         <RegisteredParticipantCard
                             key={`participants${index}`}
                             participant={participant}
@@ -185,7 +185,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                         />
                     ))}
 
-                    {occasion.waitinglistParticipants.map((participant, index) => (
+                    {occasion?.waitinglistParticipants?.map((participant, index) => (
                         <RegisteredParticipantCard
                             key={`Waiting list${index}`}
                             participant={participant}
@@ -193,7 +193,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                             onOptionComit={handleParticipantOptionComit}
                         />
                     ))}
-                    {occasion.recejectedParticipants.map((participant, index) => (
+                    {occasion?.rejectedParticipants?.map((participant, index) => (
                         <RegisteredParticipantCard
                             key={`rejected list${index}`}
                             participant={participant}

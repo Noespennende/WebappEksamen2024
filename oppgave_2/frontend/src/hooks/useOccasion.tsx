@@ -59,7 +59,7 @@ export function useOccasion () {
         const slug = `${month ?? "null"}-${year ?? "null"}-${category ?? "null"}`;
         await fetch(`${formatOccasionFetchUrl("getSorted", slug)}`)
         .then((response) => response.json())
-        .then((responseData) => setData(responseData.data))
+        .then((responseData) => (setData(responseData.data), console.log(responseData)))
         .then(() => setStatus("success"))
         .catch((error) => {setError(`Error while fetching data: ${error}`), setStatus("error")})
         .finally(() => resetToIdle())
@@ -125,12 +125,13 @@ export function useOccasion () {
     )}
 
 
+    /*
     useEffect(() => {
         //Fetch occasions from server
         const controller = new AbortController()
         getOccasions()
         return() => controller.abort()
-    },[getOccasions])
+    },[getOccasions])*/
 
 
     //Return object

@@ -5,7 +5,6 @@ import EventHeaderCategoryAndDate from "@/features/events/components/EventHeader
 import EventPageAdminPanel from "@/features/events/components/EventPageAdminPanel";
 import EventPriceAdressAndParticipants from "@/features/events/components/eventPriceAdressAndParticipants";
 import EventRegisterParticipants from "@/features/events/components/EventRegisterParticipant";
-import { Occasion } from "@/features/events/types";
 import { useOccasion } from "@/hooks/useOccasion";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,8 +14,6 @@ export default function Event(){
 
     const {data, status, getOne, update ,remove, error} = useOccasion()
     const isAdmin: boolean = true //<- sjekk om admin
-
-    console.log(data)
 
     const { id } = useParams()
     const [signUp, setSignUp] = useState(false)
@@ -31,22 +28,25 @@ export default function Event(){
 
     useEffect(() => {
         getOne(id)
-        console.log(data)
     }, [id])
+
+    useEffect(() => {
+
+    }, [data])
 
     return (
         <section id="eventPage">
                 {(!data || data.length <= 0) ? (<div className="loader" id="eventPageLoader"></div>) : (
                     <div>
                         <article>
-                            <EventHeaderCategoryAndDate header={data[0].name} category={data[0].category} date={data[0].date}/>
-                            <EventBody body={data[0].body}/>
-                            <EventPriceAdressAndParticipants price={data[0].price} adress={data[0].address} participants={data[0].participants.length} maxParticipants={data[0].maxParticipants}/>
+                            <EventHeaderCategoryAndDate header={data?.name} category={data?.category} date={data?.date}/>
+                            <EventBody body={data?.body}/>
+                            <EventPriceAdressAndParticipants price={data?.price} adress={data?.address} participants={data?.participants.length} maxParticipants={data?.maxParticipants}/>
                             <button id="signUpButton" className="button" onClick={handleSignUpClick}>Meld deg på</button>
-                            {signUp ? <EventRegisterParticipants occasion={data[0]} price={data[0].price} onNoParticipants={handleNoParticipants}/> : ""}
+                            {signUp ? <EventRegisterParticipants occasion={data} price={data?.price} onNoParticipants={handleNoParticipants}/> : ""}
                         </article>
                         {isAdmin ? (
-                            <EventPageAdminPanel occasion={data[0]}/>
+                            <EventPageAdminPanel occasion={data}/>
                         ): ("")}
                             
                             

@@ -3,6 +3,10 @@
 
 .loader {
   width: fit-content;
+  justify-self: center;
+  align-self: center;
+
+  margin: 6rem 1rem;
   font-size: 40px;
   line-height: 1.5;
   font-family: system-ui,sans-serif;

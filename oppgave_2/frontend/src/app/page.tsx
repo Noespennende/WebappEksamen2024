@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 
 export default function Home() {
 
-  const {data, status, getSorted} = useOccasion()
+  const {get ,data, status, getSorted} = useOccasion()
   const [month, setMonth] = useState<string | null>(null)
   const [year, setYear] = useState<string | null>(null)
   const [category, setCategory] = useState<string | null>(null)
@@ -62,20 +62,25 @@ export default function Home() {
   useEffect(() => {
     const params = new URLSearchParams(searchParams?.toString() || "");
 
-    const initialMonth = params.get("month") || "null";
-    const initialYear = params.get("year") || "null";
-    const initialCategory = params.get("category") || "null";
+    const initialMonth = params.get("month") || null;
+    const initialYear = params.get("year") || null;
+    const initialCategory = params.get("category") || null;
 
     setMonth(initialMonth);
     setYear(initialYear);
     setCategory(initialCategory);
 
-    console.log(month, year, category)
-
-    if (params.toString()) {
-      getSorted(month, year, category) 
+    if (!initialMonth && !initialYear && !initialCategory) {
+      get();
+    } else {
+      getSorted(initialMonth, initialYear, initialCategory); 
     }
-  }, [searchParams, data])
+
+    
+  }, [searchParams])
+
+
+
 
 
   return (

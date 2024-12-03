@@ -59,9 +59,10 @@
             #eventPageBody {
                 display: flex;
                 flex-direction: column;
+                margin: 2rem 0;
 
                 .eventPageBodyParagraph{
-                    margin: 2rem 0;
+                    margin: .5rem 0;
                     padding: 0;
                     max-width: 100%; 
                     word-wrap: break-word; 

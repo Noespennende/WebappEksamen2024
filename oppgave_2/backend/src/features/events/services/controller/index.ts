@@ -30,13 +30,13 @@ export const createEventController = (occasionService: OccasionService) => {
             const month = parameters[0] === "null" ? null : parameters[0]
             const year = parameters[1] === "null" ? null : parameters[1]
             const category = parameters[2] === "null" ? null : parameters[2]
-            //console.log(month,  year, category) 
+            
             const data = await occasionService.sortedOccasions(year, month, category)
-            return context.json(data)
-
+            
             if(!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
             }
+            return context.json(data)
         } catch (error) {
             return errorResponse(context, "INTERNAL_SERVER_ERROR", "Server failed to retrieve the data")
         }
@@ -79,9 +79,9 @@ export const createEventController = (occasionService: OccasionService) => {
     //update event
     app.patch(`${eventUpdate}`, async (context) => {
         try {
-
             const eventSlug = context.req.param(updateParam)
             const eventData = await context.req.json()
+            console.log(eventData)
             const result = await occasionService.updateOccation(eventSlug, eventData) 
 
             if (!result.success){

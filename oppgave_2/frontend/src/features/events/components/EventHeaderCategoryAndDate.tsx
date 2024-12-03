@@ -3,16 +3,16 @@ import { OccasionCategory } from "@/types/Types"
 type EventHeaderCategoryAndDateProps = {
     header: string,
     category: OccasionCategory,
-    date: Date
+    date?: Date | string
 }
 
 
 export default function EventHeaderCategoryAndDate({header,category, date}: EventHeaderCategoryAndDateProps){
-    const occasionDate = typeof date === "string" ? new Date(date) : date;
+    const occasionDate = date ? (typeof date === "string" ? new Date(date) : date) : null;
 
-    const day =  date.toLocaleString("nb-NO", { day: "2-digit" }).replace(/\./g, "")
-    const month = date.toLocaleString("nb-NO", {month: "short"}).toLocaleUpperCase()
-    const year = occasionDate.getFullYear()
+    const day = occasionDate ? occasionDate.toLocaleString("nb-NO", { day: "2-digit" }).replace(/\./g, "") : "";
+    const month = occasionDate ? occasionDate.toLocaleString("nb-NO", { month: "short" }).toLocaleUpperCase() : "";
+    const year = occasionDate ? occasionDate.getFullYear() : "";
 
 
     return(
