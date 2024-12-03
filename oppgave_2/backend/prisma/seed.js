@@ -458,7 +458,7 @@ async function main() {
         name: "NFL WatchAlong",
         slug: "NFLWA",
         price: 100,
-        createdAt: new Date(2025, 11, 11),
+        createdAt: new Date(2020, 11, 11),
         date: new Date(),
         address: "NFLKINO 66",
         waitingList: true,
@@ -493,6 +493,203 @@ async function main() {
 
     const occasion = await prisma.occasionBaseSchema.create({
         data: occasionData,
+    });
+
+    console.log("Created occasion: ", occasion);
+
+    const retrievedOccasion = await prisma.occasionBaseSchema.findUnique({
+        where: { slug: "NFLWA" },
+        include: {
+            body: true,  
+        },
+    });
+
+    if (retrievedOccasion) {
+        const bodyArray = retrievedOccasion.body.map(entry => entry.content);
+        console.log("Body entries: ", bodyArray);
+    } else {
+        console.log("Occasion not found.");
+    }
+
+
+     const participantsData = [
+        {
+            name: "Jon Donald",
+            email: "jod@example.com",
+            approvalStatus: "Godkjent",
+            registerDate: new Date("2024-03-12"),
+        },
+        {
+            name: "JaDoe",
+            email: "jadoe@example.com",
+            approvalStatus: "Ingen",
+            registerDate: new Date("2024-03-10"),
+        },
+        {
+            name: "Smith",
+            email: "smith@example.com",
+            approvalStatus: "Avslått",
+            registerDate: new Date("2023-03-10"),
+        },
+    ];
+
+    for (const participant of participantsData) {
+        await prisma.participant.upsert({
+            where: { email: participant.email },
+            update: {},  
+            create: participant,  
+        });
+    }
+
+ 
+    const existingTemplate = await prisma.templateBaseSchema.findUnique({
+        where: { id: "f8fba032-0488-47df-9c23-72211dbcd501" }, 
+    });
+
+    let templateId;
+    if (!existingTemplate) {
+        const newTemplate = await prisma.templateBaseSchema.create({
+            data: {
+                id: uuidv4(),
+                name: "Sports Template",
+                price: 100,
+                maxParticipants: 30,
+                isPrivate: false,
+                fixedPrice: true,
+                allowSameDayEvent: true,
+                waitList: true,
+                limitedParticipants: false,
+            },
+        });
+        templateId = newTemplate.id;
+    } else {
+        templateId = existingTemplate.id;
+    }
+
+    console.log("Template ID: ", templateId);
+
+    
+    const occasionData = {
+        name: "NFL WatchAlong",
+        slug: "NFLWA",
+        price: 100,
+        createdAt: new Date(2020, 11, 11),
+        date: new Date(),
+        address: "NFLKINO 66",
+        waitingList: true,
+        category: "Sport",
+        participants: {
+            connect: [
+                { email: "jod@example.com" }, 
+            ],
+        },
+        waitingListParticipants: {
+            connect: [
+                { email: "jadoe@example.com" },
+            ],
+        },
+        rejectedParticipants: {
+            connect: [
+                { email: "smith@example.com" },
+            ],
+        },
+        template: {
+            connect: { id: templateId },  
+        },
+        maxParticipants: 20,
+        body: {
+            create: [
+                { content: "NFL kamp" },
+                { content: "Vi griller utenfor lokalet. Ta med egen drikke." },
+                { content: "Endelig er dagen her, Cowboys tar imot Seahawks i Texas. Dette blir en skikkelig bra match!" },
+            ],
+        },
+    };
+
+    const occasionData2 = {
+        name: "Kaffeslabberas hos tante Tuva",
+        slug: "kaffeslabberas",
+        price: 100,
+        createdAt: new Date(2020, 11, 11),
+        date: new Date(),
+        address: "Kaffeveien 28, Oslo",
+        waitingList: true,
+        category: "Sport",
+        participants: {
+            connect: [
+                { email: "Gunnar@example.com" }, 
+            ],
+        },
+        waitingListParticipants: {
+            connect: [
+                { email: "Fredrik@example.com" },
+            ],
+        },
+        rejectedParticipants: {
+            connect: [
+                { email: "Trine@example.com" },
+            ],
+        },
+        template: {
+            connect: { id: templateId },  
+        },
+        maxParticipants: 20,
+        body: {
+            create: [
+                { content: "Kaffeslabberas hos tante Tuva. Kaffe og vafler serveres" },
+                { content: "Strikketøy må tas med selv" },
+            ],
+        },
+    };
+
+
+    const occasionData3 = {
+        name: "Hardrock konsert på Halden festning",
+        slug: "halden-festning-konsert",
+        price: 250,
+        createdAt: new Date(2021, 3, 11),
+        date: new Date(),
+        address: "Halden festning",
+        waitingList: true,
+        category: "Sport",
+        participants: {
+            connect: [
+                { email: "Theexterminator@example.com" }, 
+            ],
+        },
+        waitingListParticipants: {
+            connect: [
+                { email: "Rocker@example.com" },
+            ],
+        },
+        rejectedParticipants: {
+            connect: [
+                { email: "tilfeldigForbipasserende@example.com" },
+            ],
+        },
+        template: {
+            connect: { id: templateId },  
+        },
+        maxParticipants: 20,
+        body: {
+            create: [
+                { content: "Hardrock konsert" },
+                { content: "Hard rock hardere konsert." },
+                { content: "Bare langt hår tillat" },
+            ],
+        },
+    };
+
+    const occasion = await prisma.occasionBaseSchema.create({
+        data: occasionData,
+    });
+
+    const occasion2 = await prisma.occasionBaseSchema.create({
+        data: occasionData2,
+    });
+
+    const occasion3 = await prisma.occasionBaseSchema.create({
+        data: occasionData3,
     });
 
     console.log("Created occasion: ", occasion);
