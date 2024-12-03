@@ -52,7 +52,6 @@ app.get("/v1/courses", async (c) => {
 });
 
 
-// TODO: Refaktorering?
 app.post("/v1/courses", async (c) => {
   try {
     const newCourse = await c.req.json();
@@ -249,47 +248,6 @@ app.get('/v1/courses/:slug', async (c) => {
 });
 
 
-app.delete('/v1/courses/:id', async (c) => {
-  const { id } = c.req.param();
-
-  try {
-    const course = await prisma.course.findUnique({
-      where: { id },
-    });
-
-    if (!course) {
-      return c.json({
-        success: false,
-        error: {
-          code: "404",
-          message: "Course not found",
-        },
-      }, 404);
-    }
-
-    // Sletter kurset (og tilhørende elementer via ref)
-    await prisma.course.delete({
-      where: { id },
-    });
-
-    return c.json({
-      success: true,
-      message: `Course with id: ${id} and its related data were deleted successfully.`,
-    }, 200);
-
-  } catch (error) {
-
-    return c.json({
-      success: false,
-      error: {
-        code: "500",
-        message: "Failed to delete course",
-      },
-    }, 500);
-  }
-});
-
-
 app.put('/v1/courses/:slug', async (c) => {
   const { slug } = c.req.param();
   const { data }: { data: Partial<Course> } = await c.req.json();
@@ -358,11 +316,11 @@ app.put('/v1/courses/:slug', async (c) => {
     return c.json(
       {
         success: true,
-        message: `Course with slug ${slug} was updated successfully.`,
         data: updatedCourse,
       },
-      200
+      201
     );
+
   } catch (error) {
     console.error("Error updating course:", error);
     return c.json(
@@ -372,6 +330,46 @@ app.put('/v1/courses/:slug', async (c) => {
       },
       500
     );
+  }
+});
+
+app.delete('/v1/courses/:id', async (c) => {
+  const { id } = c.req.param();
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id },
+    });
+
+    if (!course) {
+      return c.json({
+        success: false,
+        error: {
+          code: "404",
+          message: "Course not found",
+        },
+      }, 404);
+    }
+
+    // Sletter kurset (og tilhørende elementer via ref)
+    await prisma.course.delete({
+      where: { id },
+    });
+
+    return c.json({
+      success: true,
+      message: `Course with id: ${id} and its related data were deleted successfully.`,
+    }, 200);
+
+  } catch (error) {
+
+    return c.json({
+      success: false,
+      error: {
+        code: "500",
+        message: "Failed to delete course",
+      },
+    }, 500);
   }
 });
 
@@ -411,13 +409,16 @@ app.get('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
   });
 
   if (!lesson) {
-    return c.json({ success: false, error: 'Lesson or course not found' }, 404);
+    return c.json(
+      { success: false, 
+        error: { code: 404, message: 'Lesson or course not found' }
+      }, 404);
   }
 
   return c.json({
     success: true,
     data: lesson,
-  });
+  }, 200);
 });
 
 
@@ -441,10 +442,14 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
 
     if (!lesson) {
       console.error("Lesson or course not found");
-      return c.json({ success: false, error: 'Lesson or course not found' }, 404);
+      return c.json(
+        { success: false, 
+          error: { 
+            code: "404", 
+            message: 'Lesson or course not found'
+          } 
+        }, 404);
     }
-
-    console.log("Lesson details:", courseslug, lessonslug, comment, comment.createdById);
 
     // Sjekk om brukeren eksisterer i databasen
     const user = await prisma.user.findUnique({
@@ -452,8 +457,13 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
     });
 
     if (!user) {
-      console.error("User not found");
-      return c.json({ success: false, error: 'User not found' }, 404);
+      return c.json(
+        { success: false, 
+          error: { 
+            code: "404", 
+            message: 'User not found'
+          } 
+        }, 404);
     }
 
     // Opprett en ny kommentar og knytt den til leksjonen og brukeren
@@ -495,7 +505,7 @@ app.post('/v1/courses/:courseslug/lessons/:lessonslug', async (c) => {
     return c.json({
       success: true,
       data: updatedLesson, // Returnerer hele leksjonen
-    });
+    }, 200);
   } catch (error) {
     console.error("Error processing comment:", error);
     return c.json({ success: false, error: 'Internal server error' }, 500);

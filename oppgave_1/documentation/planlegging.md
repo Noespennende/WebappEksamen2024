@@ -13,10 +13,10 @@ Successfull: {
     , 200
 }
   
- Failour: {
+ Failure: {
     success: false,
     error: {
-    code: 400 eller 404,
+    code: 400,
     message: String
     }
 }
@@ -30,13 +30,14 @@ Successfull: {
     }
     , 201
 }
- Failour: {
+ Failure: {
     success: false,
     error: {
-    code: 400,
+    code: 400/404/500,
     message: String
     }
 }
+
 
 
 ## /courses/:slug
@@ -52,7 +53,7 @@ Successfull: {
     , 200
 }
   
- Failour: {
+ Failure: {
     success: false,
     error: {
     code: 400 eller 404,
@@ -61,49 +62,30 @@ Successfull: {
 }
 
 
+> put
+#### Responses
+ Successful: {
+    {
+    success: true,
+    Data: T
+    }
+    , 201
+}
+
+ Failure: {
+    success: false,
+    error: {
+    code: 404/500,
+    message: String
+    }
+}
+
+## /courses/:id
+### Verb
+
 > delete
 #### Responses
  Successfull: {
-    {
-    success: true,
-    Data: T
-    }
-    , 201
-}
-
-Failour: {
-    success: false,
-    error: {
-    code: 400, 401, 403 eller 404,
-    message: String
-    }
-}
-
-
-> update
-#### Responses
- Successfull: {
-    {
-    success: true,
-    Data: T
-    }
-    , 201
-}
-
- Failour: {
-    success: false,
-    error: {
-    code: 400, 401, 403 eller 404,
-    message: String
-    }
-}
-
-## /course/lessions
-### Verb
-
->get
-#### Responses
-Successfull: {
     {
     success: true,
     Data: T
@@ -114,7 +96,28 @@ Successfull: {
 Failour: {
     success: false,
     error: {
-    code: 400 eller 404,
+    code: 404/500,
+    message: String
+    }
+}
+
+## /courses/:courseslug/lessons/:lessonslug
+### Verb
+
+>get
+#### Responses
+Successful: {
+    {
+    success: true,
+    Data: T
+    }
+    , 200
+}
+
+Failour: {
+    success: false,
+    error: {
+    code: 404,
     message: String
     }
 }
@@ -132,7 +135,7 @@ Successfull: {
 Failour: {
     success: false,
     error: {
-    code: 400, 401, 403 eller 404,
+    code: 404,
     message: String
     }
 }
@@ -152,7 +155,7 @@ Successfull: {
 Failour: {
     success: false,
     error: {
-        code: 400 eller 404,
+        code: 404,
         message: String
     }
 }
@@ -164,14 +167,35 @@ Successfull: {
     success: true,
     Data: T
     }
-    , 201
+    , 200
 }
 
 Failour: {
     success: false,
     error: {
-    code: 400, 401, 403 eller 404,
+    code: 404/500,
     message: String
+    }
+}
+
+
+## /categories
+### Verb
+
+>get
+#### Responses
+Successful: {
+    {
+    success: true,
+    Data: T
+    }
+    , 200}
+
+Failure: {
+    success: false,
+    error: {
+        code: 400,
+        message: String
     }
 }
 
@@ -196,11 +220,13 @@ API Kall siden gjør:
 
 /courses
 * get
+/categories
+* get
 
 ### microls.no/kurs/opprett
 komponent navn: create
 
-hva kan man gjøøre på siden:
+hva kan man gjøre på siden:
 - opprette tittel på kurset
 - opprette slug til kurset
 - opprette en beskrivelse til kurset
@@ -252,22 +278,62 @@ API Kall siden gjør:
 * edit
 * delete
 
-### microls.no/kurs/:kursslug/leksjon/:leksjonslug
-komponent navn: lession
+### microls.no/kurs/:kursslug?lesson=:leksjonslug
+komponent navn: lesson
 
 hva kan man gjøre på siden:
-- se tittel til lessionen
-- se kategori til lessionen
-- se innholdet til lessionen
-- se kommentarer knyttet til lessionen
+- se tittel til leksjonen
+- se kategori til leksjonen
+- se innholdet til leksjonen
+- se kommentarer knyttet til leksjonen
 - se navn på brukeren som kommenterte hver kommentar
-- skrive en ny kommentar til lessionen
+- skrive en ny kommentar til leksjonen
 
 API kall siden gjør:
 
-/course/:courseid/lessions/:lessionid
+/course/:courseid/lessons/:lessonslug
 * get
 * post
 
 
 
+# TextEditor Dokumentasjon
+
+I denne versjonen er det implementert en grunnleggende tekstboks editor med "TipTap".
+Denne gir økt formatering på tekstboks-innhold under leksjoner.
+
+Prosjektet har en "vanlig" tekstboks også tilgjengelig, med komponentnavn "TextBox".
+
+## Bruke TipTapTextBox
+TipTapTextBox brukes slik:
+
+        <TipTapTextBox
+            key={`${field.orderPosition}`} 
+            text={field.text}
+            orderPosition={field.orderPosition}
+            onChange={(updatedText) => handleTipTapChange(updatedText, lessonIndex, index)}
+            onRemove={() => removeTextBox(index)}
+          />
+        
+Legg merke til at onChange() bruker handleTipTapChange(), og ikke handleLessonFieldChange().
+Dette er fordi TipTap returnerer teksten i noe annet format enn vanlig textarea-felt gjør. For å derfor få det på en standard som gjeldende logikk mot backend kan håndtere, trenger vi å formere TipTap-output, så handleLessonFieldChange() kan behandle det som et text-field.
+
+
+### For å bytte tekstboks editor:
+- Under "CreateLessonFields"
+    - Under hvor det står {/* Leksjonens tekstbokser */}, bytt enkelt ut "TipTapTextBox" komponentet med et annet komponent som gir tekst-formatering, og send med de nødvendige paramterne.
+    -     
+            <TextBox
+              key={field.orderPosition}
+              text={field.text}
+              orderPosition={field.orderPosition}
+              onChange={(e) => handleLessonFieldChange(e, lessonIndex, index)}
+              onRemove={() => removeTextBox(index)}
+            />
+
+
+### Vise TipTap-formatert innhold
+Vi har også implementert en grunnleggende visning av HTML-koden i visningen for Leksjoner.
+I denne  "html-to-react". Dette er en enkel og "ut-av-boksen" løsning for å rendre ut HTML-kode i komponentet.
+- Alt som trengs er en "const parser = Parser()" og deretter bruke denne til å rendre ut (parse): "{parser.parse(text.text)}"
+    - (Se ved return() i Lesson.tsx)
