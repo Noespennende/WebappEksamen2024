@@ -70,9 +70,9 @@ export function useOccasion () {
     const getOneOccasion = async (slug: string | undefined) => {
     setStatus("fetching")
     await fetch(`${formatOccasionFetchUrl("getOne", slug)}`)
-    .then((response) => response.json())
-    .then((responseData) => setData(responseData.data))
-    .then(() => setStatus("success"))
+    .then((response) => (response.ok? response.json() : (setError(`Post request failed: ${response.status}`), setStatus("error"))))
+    .then((responseData) => (setData(responseData.data)))
+    .then(() => (error ? "" : setStatus("success")))
     .catch((error) => {setError(`Error while fetching data: ${error}`), setStatus("error")})
     .finally(() => resetToIdle())
     }

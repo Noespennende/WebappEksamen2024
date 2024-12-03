@@ -8,10 +8,11 @@ type EventHeaderCategoryAndDateProps = {
 
 
 export default function EventHeaderCategoryAndDate({header,category, date}: EventHeaderCategoryAndDateProps){
+    const occasionDate = typeof date === "string" ? new Date(date) : date;
 
     const day =  date.toLocaleString("nb-NO", { day: "2-digit" }).replace(/\./g, "")
     const month = date.toLocaleString("nb-NO", {month: "short"}).toLocaleUpperCase()
-    const year = date.getFullYear()
+    const year = occasionDate.getFullYear()
 
 
     return(

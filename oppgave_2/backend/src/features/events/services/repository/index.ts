@@ -38,7 +38,6 @@ export const createOccationRepository = () => {
 
 
     async getOccasionById(occationSlug: string) {
-
       try {
         const prismdata = await prisma.occasionBaseSchema.findUnique({
           where: { slug: occationSlug },

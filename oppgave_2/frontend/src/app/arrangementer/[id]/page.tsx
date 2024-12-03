@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 export default function Event(){
 
 
-    const {data, status, getOne, update ,remove} = useOccasion()
+    const {data, status, getOne, update ,remove, error} = useOccasion()
     const isAdmin: boolean = true //<- sjekk om admin
 
     const { id } = useParams()
@@ -29,11 +29,12 @@ export default function Event(){
 
     useEffect(() => {
         getOne(id)
+        console.log(data)
     }, [id])
 
     return (
         <section id="eventPage">
-                {status.loading ? (<div className="loader" id="eventPageLoader"></div>) : (
+                {(!data || data.length <= 0) ? (<div className="loader" id="eventPageLoader"></div>) : (
                     <div>
                         <article>
                             <EventHeaderCategoryAndDate header={data[0].name} category={data[0].category} date={data[0].date}/>
@@ -45,9 +46,10 @@ export default function Event(){
                         {isAdmin ? (
                             <EventPageAdminPanel occasion={data[0]}/>
                         ): ("")}
-                        
+                            
+                            
                     </div>
-                ) }
+                )}
         </section>
     )
 }

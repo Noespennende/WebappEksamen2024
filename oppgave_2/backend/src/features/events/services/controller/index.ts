@@ -48,8 +48,8 @@ export const createEventController = (occasionService: OccasionService) => {
         try {
             const slug = context.req.param(getOneParam)
             const data = await occasionService.getOccasionById(slug) 
+            console.log(data)
             return context.json(data)
-
             if(!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
             }
