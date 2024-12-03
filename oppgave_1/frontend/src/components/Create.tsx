@@ -35,7 +35,7 @@ import { validateCreateLesson, validateLesson } from "@/lib/types/schema";
   };
 
   const isValid = (lessons: (CreateLesson | Lesson)[]): boolean => {
-    return lessons.every(lesson => {
+    return lessons.length > 0 && lessons.every(lesson => {
       return lesson.title 
       && lesson.slug && lesson.preAmble;
     });
@@ -162,7 +162,7 @@ export default function Create(props: { courseSlug?: string }) {
           }
     
           setCurrent(2);
-          setSuccess(true);
+          //setSuccess(true);
         } catch (error: unknown) {
           console.error("Error creating course:", error);
         
