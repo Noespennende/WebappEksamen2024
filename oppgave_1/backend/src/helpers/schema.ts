@@ -95,7 +95,7 @@ export const createCourseSchema = courseBaseSchema.omit({
   id: true,
 }).extend({
   categoryId: z.string().uuid(),
-  lessons: z.array(createLessonSchema).optional(),
+  lessons: z.array(z.intersection(createLessonSchema, lessonSchema)).optional(),
 });
 
 export const createCommentSchema = commentBaseSchema.omit({
@@ -112,6 +112,7 @@ export type Lesson = z.infer<typeof lessonSchema>;
 export type LessonText = z.infer<typeof lessonTextSchema>;
 export type Comment = z.infer<typeof commentSchema>;
 export type Category = z.infer<typeof categorySchema>;
+export type CreateCourse = z.infer<typeof createCourseSchema>;
 
 
 export const validateCourse = (data: unknown) => {

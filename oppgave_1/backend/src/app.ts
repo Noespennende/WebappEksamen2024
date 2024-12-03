@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prisma } from "./prisma";
-import { ErrorCode, Failure, Result, Success } from "./types";
-import { Category, Course, Lesson, validateCourse, validateCreateCourse, validateCreateLesson } from "./helpers/schema";
+import { CourseUpdateData, ErrorCode, Failure, Result, Success } from "./types";
+import { Category, Course, CreateCourse, Lesson, validateCourse, validateCreateCourse, validateCreateLesson } from "./helpers/schema";
 
 const app = new Hono();
 
@@ -250,7 +250,7 @@ app.get('/v1/courses/:slug', async (c) => {
 
 app.put('/v1/courses/:slug', async (c) => {
   const { slug } = c.req.param();
-  const { data }: { data: Partial<Course> } = await c.req.json();
+  const { data }: { data: CreateCourse } = await c.req.json();
 
   try {
     const existingCourse = await prisma.course.findUnique({
@@ -306,9 +306,7 @@ app.put('/v1/courses/:slug', async (c) => {
         title: data.title,
         slug: data.slug,
         description: data.description,
-        category: data?.category?.id
-          ? { connect: { id: data.category.id } }
-          : { connect: { id: "c830c3a0-27c6-4b60-89ff-91291b2fcfe5" } },
+        category: { connect: { id: data.categoryId } },
       },
       include: { lessons: true },
     });
