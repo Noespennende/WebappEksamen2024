@@ -198,9 +198,8 @@ export const createOccationRepository = () => {
             if (monthIndex === -1) {
                 throw new Error(`Invalid month: ${month}`);
             }
-
-            startDate = new Date(currentYear, monthIndex, 1);
-            endDate = new Date(currentYear, monthIndex + 1, 0, 23, 59, 59, 999);
+            startDate = new Date(currentYear+1, monthIndex, 1);
+            endDate = new Date(currentYear+1, monthIndex + 1, 0, 23, 59, 59, 999);
         } else if (parsedYear !== null) {
             startDate = new Date(parsedYear, 0, 1);
             endDate = new Date(parsedYear, 11, 31, 23, 59, 59, 999);
