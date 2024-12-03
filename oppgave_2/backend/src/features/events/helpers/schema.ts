@@ -62,3 +62,5 @@ export const getMonthIndex = (month: string): number => {
     return index;
   };
 
+export { MonthEnum };
+

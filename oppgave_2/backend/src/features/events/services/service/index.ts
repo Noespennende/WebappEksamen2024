@@ -95,13 +95,14 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
     },
 
   
-    async sortedOccasions(year: number, month: Month, category: OccasionCategory) {
-
+    async sortedOccasions(year: number | null, month: Month | null, category: OccasionCategory | null) {
       const occasions = await occasionRepository.getSortedOccasions(year, month, category);
-      if (!occasions.success) {
-        throw new Error("Error fetching sorted occasions");
+      
+      if (!occasions || occasions.length === 0) {
+        throw new Error("Ingen anledninger funnet for de angitte filtrene.");
       }
-      return occasions
+    
+      return occasions;
     }
   };
 }

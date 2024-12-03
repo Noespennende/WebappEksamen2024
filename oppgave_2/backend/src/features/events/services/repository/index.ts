@@ -2,6 +2,7 @@ import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
 import {Occation} from "../../types/index"
 import { Month, OccasionCategory, Result } from "@/types";
+import { MonthEnum } from "../../../../helpers/schema";
 
 const prisma = new PrismaClient()
 
@@ -147,31 +148,62 @@ export const createOccationRepository = () => {
   },
 
   
-  async getSortedOccasions(year: number, month: Month,  category: OccasionCategory){
-    const monthIndex = Object.keys(month).indexOf(month);
-    const startDate = new Date(year, monthIndex, 1);
-    const endDate = new Date(year, monthIndex + 1, 1);
-    const occasions = await prisma.occasionBaseSchema.findMany({
-      where: {
-          category,
-          date: {
-              gte: startDate,
-              lt: endDate,
-          },
-      },
-  });
+  async getSortedOccasions(year: number | null, month: Month | null, category: OccasionCategory | null) {
+    try {
+      
+        let startDate: Date, endDate: Date;
+        console.log("category " + category)
+        if (year !== null && month !== null) {
+          const monthIndex = MonthEnum.options.indexOf(month as Month);
+          if (monthIndex === -1) {
+              throw new Error(`Invalid month: ${month}`);
+          }
 
-  //const result: Result<null> = {success: false, error: {code: "INTERNAL_SERVER_ERROR", message: "Failed to delete Occasion"}}
-          
-  return "result"
+          console.log("month index:", monthIndex, month);
+
+      
+          startDate = new Date(year, monthIndex, 1); 
+          endDate = new Date(year, monthIndex + 1, 0, 23, 59, 59, 999);
+      } else if (year !== null) {
+          startDate = new Date(year, 0, 1);
+          endDate = new Date(year, 11, 31, 23, 59, 59, 999); 
+      } else {
+      
+          startDate = new Date(0); 
+          endDate = new Date();
+      }
+      
+        const startTimestamp = startDate.getTime();
+        const endTimestamp = endDate.getTime();
+
+        const where: any = {};
+        if (year !== null) {
+            where.date = {
+                gte: new Date(startTimestamp),
+                lte: new Date(endTimestamp),
+            };
+        }
+        if (category !== null) {
+            where.category = category;
+        }
+
+        console.log("Prisma parameters:", where);
+
+        const occasions = await prisma.occasionBaseSchema.findMany({
+            where,
+        });
+
+        console.log("Occasions:", occasions);
+        return occasions;
+    } catch (error) {
+        console.error("Error in query:", error); 
+        throw new Error("Error fetching occasions");
+    }
+}
+
   
 }
 }
-
-    
-  
-}
-
 export const occasionRepository = createOccationRepository()
 export type OccasionRepository = ReturnType<typeof createOccationRepository>;
 
