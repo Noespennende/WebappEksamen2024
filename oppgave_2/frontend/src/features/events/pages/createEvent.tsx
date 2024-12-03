@@ -5,24 +5,64 @@ import { useOccasion } from '@/hooks/useOccasion';
 import { useTemplate } from '@/hooks/useTemplate';
 import { useEffect, useState } from 'react';
 
-export default function CreateEventPage() {
-  const initialValues = {
-    name: '',
-    address: '',
+export default function CreateEventPage({ courseSlug }: { courseSlug?: string }) {
+  const defaultInitialValues = {
+    name: "",
+    address: "",
     template: undefined,
     isPrivate: false,
     allowSameDayEvent: false,
     waitinglist: false,
     fixedPrice: false,
     price: 0,
-    limitedParticipants: false ,
+    limitedParticipants: false,
     maxParticipants: 0,
     fixedWeekdays: [],
-    date: '', 
-    category: '',
-    slug: '',
+    date: "",
+    category: "",
+    slug: "",
     body: [] as string[],
   };
+
+  const [initialValues, setInitialValues] = useState(defaultInitialValues);
+  
+  useEffect(() => {
+    console.log("hei", " ", courseSlug)
+    if(courseSlug){
+      async () => {
+        try {
+          const response = await fetch(`localhost:3999/events/${courseSlug}`)
+          const occasion = await response.json()
+
+          if(occasion) {
+            console.log(occasion)
+            setInitialValues({
+              name: occasion.name,
+              address: occasion.adress,
+              template: occasion.template,
+              isPrivate: occasion.isPrivate,
+              allowSameDayEvent: occasion.allowSameDayEvent,
+              waitinglist: occasion.waitinglist,
+              fixedPrice: occasion.fixedPrice,
+              price: occasion.price,
+              limitedParticipants: occasion.limitedParticipants,
+              maxParticipants: occasion.maxParticipants,
+              fixedWeekdays: occasion.fixedWeekdays,
+              date: new Date(occasion.date).toISOString().split("T")[0],
+              category: occasion.category,
+              slug: occasion.slug,
+              body: occasion.body || []
+            })
+          }
+        } catch (error) {
+          console.error("failed to fetch data")
+        }
+      }
+    }
+
+  },[courseSlug])
+
+
 
   /* TEMP */
   const events = [ 
@@ -41,7 +81,7 @@ export default function CreateEventPage() {
   const { data, create, error } = useOccasion()
 
 
-  const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(initialValues, data);
+  const { fields, handleInputChange, handleSubmit, setFieldValue, resetFields } = useEventForm(defaultInitialValues, data);
 
 
   const templates = [
@@ -217,7 +257,7 @@ export default function CreateEventPage() {
               type="text"
               value={fields.name.value}
               onChange={(e) => handleInputChange(e, 'name')}
-              placeholder="Kategori"
+              placeholder="Arrangementets navn"
               disabled={fields.name.disabled}
             />
             {fields.name.error && <span style={{ color: 'red' }}>{fields.name.error}</span>}
