@@ -29,7 +29,7 @@ export const OccassionSchema = OccassionBaseSchema.extend({
     body: z.array(bodyEntry),
 })
 
-export const OccationCreateSchema = OccassionSchema.omit({ id: true, body:true }).extend({
+export const OccationCreateSchema = OccassionSchema.omit({ id: true, body:true, createdAt: true}).extend({
     body: z.array(z.string())
 });
 
