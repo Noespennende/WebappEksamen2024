@@ -1,8 +1,15 @@
+"use client";
 import Link from "next/link";
 import logo from "../../public/images/logo.png"
+import { useEffect, useState } from "react";
 
 export function Navigation() {
 
+    const LoggedIn = localStorage.getItem("adminLoggedIn")
+
+    useEffect(() => {
+      }, [LoggedIn]);
+    
     return (
         <nav>
             <div id="logoAndHomeButton">
@@ -15,7 +22,7 @@ export function Navigation() {
             </div>
             
             <Link href="/" className="navButton">
-                    Admin login
+                   {LoggedIn ?  "Admin log ut" : "Admin login"}
             </Link>
             
         </nav>
