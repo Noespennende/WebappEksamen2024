@@ -30,7 +30,9 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
         setEmail(e.target.value)
     }
 
-    const handleStatusChange = (option: adminParticipantAction) => {
+    const handleStatusChange = (e, option: adminParticipantAction) => {
+        e.preventDefault()
+
         if(option === "Velg handling"){
             participant.aprovalStatus = "Ingen"
             setButtonText("Velg handling")
@@ -54,7 +56,7 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
             <form className="adminParticipantFormCardForm">
                 <div className="adminParticipantFormCardNameSection">
                     <label htmlFor="adminParticipantFormCardName">Navn</label>
-                    <input type="text" id="adminParticipantFormCarName" value={participant.name} onChange={handleNameChange} name="adminParticipantFormCarName" placeholder="Navn Navnessen..."/>
+                    <input type="text" id="adminParticipantFormCarName" value={participant.name} onChange={(e) => handleNameChange} name="adminParticipantFormCarName" placeholder="Navn Navnessen..."/>
                 </div>
                 <div className="adminParticipantFormCardEmailSection">
                     <label htmlFor="adminParticipantFormCardEmail">Epost</label>
@@ -63,10 +65,10 @@ export default function AdminParticipantFormCard ({participant, onDelete}: Admin
             </form>
             <button className={`adminParticipantFormCardDropdownButton ${participant.aprovalStatus}`}>{buttonText}</button>
             <ul className="dropdownOptions">
-                <li onClick={() => handleStatusChange("Velg handling")} className="choseAction">Velg handling</li>
-                <li  onClick={() => handleStatusChange("Godkjenn")} className="approved">Godkjenn</li>
-                <li  onClick={() => handleStatusChange("Avslå")} className="denied">Avslå</li>
-                <li  onClick={() => handleStatusChange("Slett")} className="delete">Slett</li>
+                <li onClick={(e) => handleStatusChange(e, "Velg handling")} className="choseAction">Velg handling</li>
+                <li  onClick={(e) => handleStatusChange(e, "Godkjenn")} className="approved">Godkjenn</li>
+                <li  onClick={(e) => handleStatusChange(e, "Avslå")} className="denied">Avslå</li>
+                <li  onClick={(e) => handleStatusChange(e, "Slett")} className="delete">Slett</li>
             </ul>
         </div>
     )

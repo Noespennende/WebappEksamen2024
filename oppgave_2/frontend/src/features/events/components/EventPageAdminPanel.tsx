@@ -25,8 +25,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
 
     const handleDeleteOccasion = () => {
-        
-        remove(occasion.id)
+        remove(occasion.slug)
     }
 
     const handleSubmittParticipants = () =>  {
@@ -72,7 +71,7 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                     }  
                 }
                 setmessage("Alle deltagere som har plass er blitt lagt til arrangementet. Resten er satt på venteliste.")
-            } else if (adminAssignedParticipants.length > 0 && occasion.maxParticipants) {
+            } else if (occasion.maxParticipants && 0 < adminAssignedParticipants.length) {
                 //If occasion does not have a waiting list reject all participants there is no room for
                 while(adminAssignedParticipants.length > 0){
                     const participantToAdd = adminAssignedParticipants.shift()
@@ -97,8 +96,8 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
         } 
     }
 
-    const handleParticipantOptionComit = (option: adminParticipantAction, participant: Participant, previousStatus: participantStatus) => {
-
+    const handleParticipantOptionComit = (e, option: adminParticipantAction, participant: Participant, previousStatus: participantStatus) => {
+        e.preventDefault()
         //Participant
         if(previousStatus === "Deltager"){
             if(option == "Slett"){
@@ -146,13 +145,19 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
                 occasion.recejectedParticipants.push(participant)
             }
         }
-
-        // updateEvent(occasion)
+        
+        update(occasion)
     }
 
     const handleAdminAddedParticipantDelete = (participantToDelete: Participant) => {
         setAdminAssignedParticipants(prevParticipants =>
-            prevParticipants.filter(participant => participant.id !== participantToDelete.id))
+            prevParticipants.filter(participant => participant.id !== participantToDelete.id)
+        )
+
+        if(adminAssignedParticipants.length <= 0){
+            setIsAddParticipant(false)
+        }
+
     }
 
     return(

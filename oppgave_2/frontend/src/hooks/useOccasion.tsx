@@ -114,12 +114,12 @@ export function useOccasion () {
         setStatus("posting")
         await fetch(`${formatOccasionFetchUrl("update", data.slug)}`,
         {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         })
-        .then((response) => {!response.ok ? (setError(`Post request failed: ${response.status}`), setStatus("error")) : (setStatus("success"), redirect(`/arrangementer/${data.slug}`))})
+        .then((response) => {!response.ok ? (setError(`Post request failed: ${response.status}`), setStatus("error")) : (setStatus("success"))})
         .catch((error => {setError(`Error while posting data: ${error}`), setStatus("error")}))
         .finally(() => resetToIdle()
     )}
