@@ -85,9 +85,9 @@ export default function CreateEventPage() {
 
   const categories = ["Sport", "Social", "Meeting", "Other"];
 
+  const { data: templatesData } = useTemplate() 
 
-
-  const templateOptions = templates.map(template => ({
+  const templateOptions = templatesData.map(template => ({
     id: template.id,
     name: template.name
   }));
