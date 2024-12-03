@@ -46,7 +46,7 @@ export const createOccationRepository = () => {
             participants: true,
             waitingListParticipants: true,
             rejectedParticipants: true,
-            templates: true,
+            template: true,
           },
         });
         return prismdata
@@ -75,8 +75,8 @@ export const createOccationRepository = () => {
               adress: data.address,
               body: data.body,
               waitingList: data.waitingList,
-              template: data.template ?? null,
               maxParticipants: data.maxParticipants,
+              template: data.template? {connect: {id: data.template}} : undefined
             },
           });
     
