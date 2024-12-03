@@ -5,6 +5,8 @@ import { useLesson } from "@/hooks/useLesson";
 import { getComments, createComment } from "@/lib/services/api";
 import { ALesson, CommentNoLesson } from "@/lib/types";
 import { useEffect, useState } from "react";
+import { Parser } from 'html-to-react';
+
 
 export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string , lessonSlug: string}) {
     const [success, setSuccess] = useState(false);
@@ -88,6 +90,11 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
       getContent();
     }, [courseSlug, lessonSlug]);*/
   
+
+    
+
+    const parser = Parser();
+
     return (
       <div>
         <div className="flex justify-between">
@@ -116,7 +123,7 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
               className="mt-4 font-normal"
               key={text.id}
             >
-              {text.text}
+               {parser.parse(text.text)}
             </p>
           ))}
         <section data-testid="comments">

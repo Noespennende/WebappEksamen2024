@@ -1,6 +1,7 @@
 import { CreateLesson, Lesson } from "@/lib/types";
 import { LessonField } from "./LessonField";
 import { TextBox } from "./TextBox";
+import { TipTapTextBox } from "./TipTapTextBox";
 
 interface CreateLessonFieldsProps {
   lesson: CreateLesson | Lesson;
@@ -10,6 +11,11 @@ interface CreateLessonFieldsProps {
     lessonIndex: number,
     index?: number
   ) => void;
+  handleTipTapChange: (
+    name: string,
+    lessonIndex: number,
+    index: number
+  ) => void;
   addTextBox: () => void;
   removeTextBox: (index: number) => void;
 }
@@ -18,6 +24,7 @@ export default function CreateLessonFields({
   lesson,
   lessonIndex,
   handleLessonFieldChange,
+  handleTipTapChange,
   addTextBox,
   removeTextBox,
 }: CreateLessonFieldsProps) {
@@ -46,16 +53,18 @@ export default function CreateLessonFields({
       />
 
       {/* Leksjonens tekstbokser */}
-      {lesson.text &&
-        lesson.text.map((field, index) => (
-          <TextBox
-            key={field.orderPosition}
-            text={field.text}
+      {lesson.text && lesson.text.map((field, index) => {
+        console.log("Hallo ", field.text); // Legg til loggen her utenfor JSX-en
+        return (
+          <TipTapTextBox
+            key={`${field.orderPosition}-${field.text}`}  // Unik key for hver tekstboks
+            text={field.text} // Sørger for at riktig tekst blir sendt til editoren
             orderPosition={field.orderPosition}
-            onChange={(e) => handleLessonFieldChange(e, lessonIndex, index)}
+            onChange={(updatedText) => handleTipTapChange(updatedText, lessonIndex, index)}
             onRemove={() => removeTextBox(index)}
           />
-        ))}
+        );
+      })}
 
       {/* Legg til tekstboks-knapp */}
       <button

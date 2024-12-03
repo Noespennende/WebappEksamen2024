@@ -308,13 +308,24 @@ export default function Create(props: { courseSlug?: string }) {
       };
 
       const handleLessonFieldChange = (
-        event: { target: { name: string; value: string } },
+        event: { name: string; value: string } | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         lessonIndex: number,
         index?: number,
       ) => {
-        const { name, value } = event.target;
+        // Sjekk om event er fra TipTap (som ikke har target) eller fra vanlige input-elementer
+        let name: string;
+        let value: string;
       
-        // Hent den nåværende leksjonen
+        if ('target' in event) {
+          // Hvis event kommer fra en input/textarea
+          name = event.target.name;
+          value = event.target.value;
+        } else {
+          // Hvis event er fra TipTap
+          name = event.name;
+          value = event.value;
+        }
+      
         const currentLesson = lessons[lessonIndex];
       
         if (!currentLesson || (currentLesson.text && index && (index < 0 || index >= currentLesson.text?.length))) {
@@ -322,7 +333,7 @@ export default function Create(props: { courseSlug?: string }) {
           return;
         }
       
-        // Hvis vi oppdaterer tittel eller slug
+        // Håndtere endringer i tittel, slug eller preAmble
         if (name === 'title' || name === 'slug' || name === 'preAmble') {
           const updatedLessons = lessons.map((lesson, i) => {
             if (i === lessonIndex) {
@@ -336,7 +347,7 @@ export default function Create(props: { courseSlug?: string }) {
       
           setLessons(updatedLessons);
         }
-        // Hvis vi oppdaterer tekstfelt
+        // Håndtere endringer i tekstfelt (både vanlige tekstfelter og TipTap)
         else if (name === 'text') {
           const updatedText = currentLesson.text?.map((textField, i) => {
             if (i === index) {
@@ -361,10 +372,15 @@ export default function Create(props: { courseSlug?: string }) {
           setLessons(updatedLessons);
         }
       };
-      
-      
-      
 
+
+      const handleTipTapChange = (updatedText: string, lessonIndex: number, index: number) => {
+        handleLessonFieldChange(
+          { target: { name: 'text', value: updatedText } } as unknown as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          lessonIndex,
+          index
+        );
+      };
   
     const changeCurrentLesson = (index: number) => {
       setCurrentLesson(index);
@@ -455,6 +471,7 @@ export default function Create(props: { courseSlug?: string }) {
                   lesson={lessons[currentLesson]}
                   lessonIndex={currentLesson}
                   handleLessonFieldChange={handleLessonFieldChange}
+                  handleTipTapChange={handleTipTapChange}
                   addTextBox={addTextBox}
                   removeTextBox={removeTextBox}
                   
