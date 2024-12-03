@@ -63,7 +63,7 @@ export const createEventController = (occasionService: OccasionService) => {
     app.post(`${eventCreate}`, async (context) => {
         try {
             const newEvent = await context.req.json()
-
+            console.log(newEvent)
             const result = await occasionService.createAnOccasion(newEvent)
 
             if (!result.success){

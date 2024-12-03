@@ -47,6 +47,11 @@ export const createOccationRepository = () => {
             waitingListParticipants: true,
             rejectedParticipants: true,
             template: true,
+            body: {
+              select: {
+                content: true
+              }
+            },
           },
         });
         return prismdata
@@ -64,22 +69,39 @@ export const createOccationRepository = () => {
         waitingList: boolean;
         template?: string | null;
         maxParticipants?: number;
+        category: string;
+        date: Date;
       }) {
         try {
-       
+          console.log("Data received for creation:", JSON.stringify(data));
+    console.log("Type of body:", typeof data.body);  // Log the type of body
+    console.log("Is body an array?", Array.isArray(data.body));
+
+          // Ensure 'body' is an array before attempting to map over it
+          if (!Array.isArray(data.body)) {
+            throw new Error("Body must be an array of strings");
+          }
+      
+          const bodyEntries = data.body.map(content => ({
+            content,  
+          }));
           const prismdata = await prisma.occasionBaseSchema.create({
-            data: {
-              name: data.name,
-              slug: data.slug,
-              price: data.price,
-              adress: data.address,
-              body: data.body,
-              waitingList: data.waitingList,
-              maxParticipants: data.maxParticipants,
-              template: data.template? {connect: {id: data.template}} : undefined
-            },
-          });
-    
+      data: {
+        name: data.name,
+        slug: data.slug,
+        price: data.price,
+        adress: data.address,
+        body: {
+          create: bodyEntries,  // Create BodyEntry records from the mapped array
+        },
+        waitingList: data.waitingList,
+        maxParticipants: data.maxParticipants,
+        template: data.template ? { connect: { id: data.template } } : undefined,  // Connect to template if provided
+        category: data.category,
+        date: data.date, // Add the date here
+      },
+    });
+          
           return prismdata
       
         } catch (error) {

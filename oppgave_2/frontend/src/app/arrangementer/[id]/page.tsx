@@ -16,6 +16,8 @@ export default function Event(){
     const {data, status, getOne, update ,remove} = useOccasion()
     const isAdmin: boolean = true //<- sjekk om admin
 
+    console.log(data)
+
     const { id } = useParams()
     const [signUp, setSignUp] = useState(false)
 
