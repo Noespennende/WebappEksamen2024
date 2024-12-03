@@ -86,7 +86,7 @@ export const createEventController = (occasionService: OccasionService) => {
         try {
             const eventSlug = context.req.param(updateParam)
             const eventData = await context.req.json()
-            console.log(eventData)
+            console.log("Hallo ", eventData)
             const result = await occasionService.updateOccation(eventSlug, eventData) 
 
             if (!result.success){

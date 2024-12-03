@@ -46,8 +46,8 @@ model OccasionBaseSchema {
 model TemplateBaseSchema {
   id                  String               @id @default(uuid())
   name                String
-  price               Int
-  maxParticipants     Int
+  price               Int?    
+  maxParticipants     Int?
   isPrivate           Boolean
   fixedPrice          Boolean
   allowSameDayEvent   Boolean

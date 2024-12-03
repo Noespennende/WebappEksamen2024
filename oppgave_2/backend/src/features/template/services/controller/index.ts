@@ -43,9 +43,11 @@ export const createTemplateController = (templateService: TemplateService) => {
         try {
             const newTemplate = await context.req.json()
 
+            console.log("template make: ", newTemplate)
             const response = await templateService.createTemplate(newTemplate) //GJØR RIKTIG KALL HER
 
-            if (!data.success){
+            console.log("response make: ", response)
+            if (!response.success){
                 return errorResponse(context, data.error.code, data.error.message)
             }
 
