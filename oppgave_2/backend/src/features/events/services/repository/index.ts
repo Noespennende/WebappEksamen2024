@@ -189,6 +189,16 @@ export const createOccationRepository = () => {
 
             startDate = new Date(parsedYear, monthIndex, 1);
             endDate = new Date(parsedYear, monthIndex + 1, 0, 23, 59, 59, 999);
+        } else if (month !== null) {
+
+            const currentYear = new Date().getFullYear();
+            const monthIndex = MonthEnum.options.indexOf(month as Month);
+            if (monthIndex === -1) {
+                throw new Error(`Invalid month: ${month}`);
+            }
+
+            startDate = new Date(currentYear, monthIndex, 1);
+            endDate = new Date(currentYear, monthIndex + 1, 0, 23, 59, 59, 999);
         } else if (parsedYear !== null) {
             startDate = new Date(parsedYear, 0, 1);
             endDate = new Date(parsedYear, 11, 31, 23, 59, 59, 999);
@@ -201,7 +211,7 @@ export const createOccationRepository = () => {
         const endTimestamp = endDate.getTime();
 
         const where: any = {};
-        if (parsedYear !== null) {
+        if (parsedYear !== null || month !== null) {
             where.date = {
                 gte: new Date(startTimestamp),
                 lte: new Date(endTimestamp),
@@ -210,18 +220,18 @@ export const createOccationRepository = () => {
         if (categoryEnum !== null) {
             where.category = categoryEnum;
         }
-
+       
         console.log("Prisma parameters:", where);
 
         const occasions = await prisma.occasionBaseSchema.findMany({
-          where,
-          include: {
-              participants: true,
-              waitingListParticipants: true, 
-              rejectedParticipants: true,
-              body: true, 
-          },
-      });
+            where,
+            include: {
+                participants: true,
+                waitingListParticipants: true, 
+                rejectedParticipants: true,
+                body: true, 
+            },
+        });
 
         console.log("Occasions:", occasions);
         return occasions;
@@ -229,6 +239,7 @@ export const createOccationRepository = () => {
         throw new Error("Error fetching occasions");
     }
 }
+
   }
 }
 export const occasionRepository = createOccationRepository()
