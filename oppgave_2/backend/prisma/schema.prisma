@@ -30,7 +30,7 @@ model OccasionBaseSchema {
   name                    String
   slug                    String               @unique
   price                   Int
-  adress                  String
+  address                 String
   waitingList             Boolean
   template                TemplateBaseSchema?  @relation("OccasionTemplate", fields: [templateId], references: [id])
   templateId              String?        

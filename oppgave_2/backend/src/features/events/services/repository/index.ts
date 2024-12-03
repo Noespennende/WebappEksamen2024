@@ -2,7 +2,7 @@ import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
 import {CreateOccation, Occation} from "../../types/index"
 import { Month, OccasionCategory, Result } from "@/types";
-import { MonthEnum } from "../../../../helpers/schema";
+import { MonthEnum, OccasionCategoryEnum } from "../../../../helpers/schema";
 
 const prisma = new PrismaClient()
 
@@ -58,6 +58,7 @@ export const createOccationRepository = () => {
         console.error(`retrieving occasion with slug: ${occationSlug} Failed :`, error);
         throw new Error("Error ")
       }},
+
 
       async createOccasion(data: CreateOccation) {
         try {
@@ -160,55 +161,75 @@ export const createOccationRepository = () => {
   },
 
   
-  async getSortedOccasions(year: number | null, month: Month | null, category: OccasionCategory | null) {
+  async getSortedOccasions(year: string | null, month: string | null, category: string | null) {
     try {
-      
+        let parsedYear: number | null = null;
+        if (year) {
+            parsedYear = parseInt(year);
+            if (isNaN(parsedYear)) {
+                throw new Error(`Invalid year: ${year}`);
+            }
+        }
         let startDate: Date, endDate: Date;
-        if (year !== null && month !== null) {
-          const monthIndex = MonthEnum.options.indexOf(month as Month);
-          if (monthIndex === -1) {
-              throw new Error(`Invalid month: ${month}`);
-          }
-      
-          startDate = new Date(year, monthIndex, 1); 
-          endDate = new Date(year, monthIndex + 1, 0, 23, 59, 59, 999);
-      } else if (year !== null) {
-          startDate = new Date(year, 0, 1);
-          endDate = new Date(year, 11, 31, 23, 59, 59, 999); 
-      } else {
-      
-          startDate = new Date(0); 
-          endDate = new Date();
-      }
-      
+
+        let categoryEnum: OccasionCategory | null = null;
+        if (category) {
+            if (OccasionCategoryEnum.options.includes(category as OccasionCategory)) {
+                categoryEnum = category as OccasionCategory;
+            } else {
+                throw new Error(`Invalid category: ${category}`);
+            }
+        }
+
+        if (parsedYear !== null && month !== null) {
+            const monthIndex = MonthEnum.options.indexOf(month as Month);
+            if (monthIndex === -1) {
+                throw new Error(`Invalid month: ${month}`);
+            }
+
+            startDate = new Date(parsedYear, monthIndex, 1);
+            endDate = new Date(parsedYear, monthIndex + 1, 0, 23, 59, 59, 999);
+        } else if (parsedYear !== null) {
+            startDate = new Date(parsedYear, 0, 1);
+            endDate = new Date(parsedYear, 11, 31, 23, 59, 59, 999);
+        } else {
+            startDate = new Date(0);
+            endDate = new Date();
+        }
+
         const startTimestamp = startDate.getTime();
         const endTimestamp = endDate.getTime();
 
         const where: any = {};
-        if (year !== null) {
+        if (parsedYear !== null) {
             where.date = {
                 gte: new Date(startTimestamp),
                 lte: new Date(endTimestamp),
             };
         }
-        if (category !== null) {
-            where.category = category;
+        if (categoryEnum !== null) {
+            where.category = categoryEnum;
         }
 
+        console.log("Prisma parameters:", where);
 
         const occasions = await prisma.occasionBaseSchema.findMany({
-            where,
-        });
-        
+          where,
+          include: {
+              participants: true,
+              waitingListParticipants: true, 
+              rejectedParticipants: true,
+              body: true, 
+          },
+      });
+
+        console.log("Occasions:", occasions);
         return occasions;
     } catch (error) {
-        console.error("Error in query:", error); 
         throw new Error("Error fetching occasions");
     }
 }
-
-  
-}
+  }
 }
 export const occasionRepository = createOccationRepository()
 export type OccasionRepository = ReturnType<typeof createOccationRepository>;

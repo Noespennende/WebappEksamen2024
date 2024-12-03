@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
-
+/*
 async function main() {
     const participantsData = [
         {
@@ -66,7 +66,7 @@ async function main() {
         slug: "SocialFiesta2025",   
         price: 250,                 
         date: new Date("2025-01-20T19:00:00Z"),  
-        adress: "Sunset Social Club 2025",
+        address: "Sunset Social Club 2025",
         waitingList: true,
         category: "Social",         
         participants: {
@@ -131,7 +131,7 @@ main()
         await prisma.$disconnect();
     });
 
-/*
+
 async function main() {
    
     const participantsData = [
@@ -197,7 +197,7 @@ async function main() {
         slug: "RockFest2025",      
         price: 400,
         date: new Date("2025-01-15T19:00:00Z"), 
-        adress: "Grand Rock Arena 2025",
+        address: "Grand Rock Arena 2025",
         waitingList: true,
         category: "Music", 
         participants: {
@@ -261,7 +261,7 @@ main()
     .finally(async () => {
         await prisma.$disconnect();
     });
-/*
+
 async function main() {
     const participantsData = [
         {
@@ -325,7 +325,7 @@ async function main() {
         slug: "JazzFestival2024",
         price: 150,
         date: new Date(),
-        adress: "Jazz Arena 44",
+        address: "Jazz Arena 44",
         waitingList: true,
         category: "Music", 
         participants: {
@@ -390,13 +390,10 @@ main()
     });
 
 
-/*
+*/
 
-NFL WATCHALONG
-const prisma = new PrismaClient();
 
 async function main() {
-    // Step 1: Create participants
     const participantsData = [
         {
             name: "Jon Donald",
@@ -421,12 +418,12 @@ async function main() {
     for (const participant of participantsData) {
         await prisma.participant.upsert({
             where: { email: participant.email },
-            update: {},  // Do nothing if the participant already exists
-            create: participant,  // Create a new participant if not exists
+            update: {},  
+            create: participant,  
         });
     }
 
-    // Step 2: Create a template (if it doesn't exist already)
+ 
     const existingTemplate = await prisma.templateBaseSchema.findUnique({
         where: { id: "f8fba032-0488-47df-9c23-72211dbcd501" }, 
     });
@@ -453,13 +450,13 @@ async function main() {
 
     console.log("Template ID: ", templateId);
 
-    // Step 3: Create the occasion with related participants, body entries, and templates
+    
     const occasionData = {
         name: "NFL WatchAlong",
         slug: "NFLWA",
         price: 100,
         date: new Date(),
-        adress: "NFLKINO 66",
+        address: "NFLKINO 66",
         waitingList: true,
         category: "Sport",
         participants: {
@@ -518,4 +515,4 @@ main()
     })
     .finally(async () => {
         await prisma.$disconnect();
-    });*/
+    });

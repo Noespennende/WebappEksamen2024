@@ -104,7 +104,8 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
         throw new Error("Ingen anledninger funnet for de angitte filtrene.");
       }
     
-      return occasions;
+      const result: Result<Occation[]> = {success: true, data: occasions}
+        return result
     }
   };
 }

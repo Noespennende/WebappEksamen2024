@@ -14,7 +14,7 @@ CREATE TABLE "OccasionBaseSchema" (
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
-    "adress" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
     "waitingList" BOOLEAN NOT NULL,
     "templateId" TEXT,
     "maxParticipants" INTEGER,
