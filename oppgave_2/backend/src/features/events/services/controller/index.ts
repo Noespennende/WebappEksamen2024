@@ -11,6 +11,7 @@ export const createEventController = (occasionService: OccasionService) => {
     app.get(`${eventsGet}`, async (context) => {   
         try {
             const data = await occasionService.getAllOccasions() 
+
             if (!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
             }
@@ -48,10 +49,14 @@ export const createEventController = (occasionService: OccasionService) => {
         try {
             const slug = context.req.param(getOneParam)
             const data = await occasionService.getOccasionById(slug) 
-            return context.json(data)
+            
             if(!data.success){
                 return errorResponse(context, data.error.code, data.error.message)
             }
+
+            console.log(data)
+
+            return context.json(data)
         } catch (error) {
             return errorResponse(context, "INTERNAL_SERVER_ERROR", "Server failed to retrieve the data")
         }
@@ -98,6 +103,7 @@ export const createEventController = (occasionService: OccasionService) => {
     })
 
 
+    //delete
     app.delete(`${eventDelete}`, async (context) => {
         try {
             const eventSlug= context.req.param(deleteParam)
@@ -121,20 +127,3 @@ export const createEventController = (occasionService: OccasionService) => {
 
 export const eventController = createEventController(occasionService)
 
-/*
-
-const port = backendPort
-serve({
-    fetch: app.fetch,
-    port
-})*/
-
-
-/*
-#### @/features/events/services/controller/index.ts
-- CRUD operasjoner (app.post, app.get, etc.).
-- Ytterste laget mot frontend
-- Bruker service/index.ts
-- ex: https://github.com/mariuswallin/hiof-webapp-2024/blob/main/v5-next/backend/src/features/habits/controller/index.ts
-
-*/

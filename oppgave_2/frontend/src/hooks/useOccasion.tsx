@@ -124,15 +124,6 @@ export function useOccasion () {
         .finally(() => resetToIdle()
     )}
 
-
-    useEffect(() => {
-        //Fetch occasions from server
-        const controller = new AbortController()
-        getOccasions()
-        return() => controller.abort()
-    },[getOccasions])
-
-
     //Return object
     const returnResponse: OccasionHookReturn = {
         get: getOccasions,
