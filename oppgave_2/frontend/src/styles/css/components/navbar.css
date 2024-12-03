@@ -1,0 +1,48 @@
+@import '../helpers/root.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--darkGray);
+    padding: 1.8rem 2rem .8rem 2rem;
+
+    #logoAndHomeButton{
+        margin-left: 3rem;
+        display: flex;
+        align-items: center;
+        #logo{
+            display: flex;
+            img{
+                width: 3rem;
+            }
+        }
+
+        .navButton{
+            margin-left: 1.5rem;
+        }
+            
+    } 
+}
+
+.navButton{
+    color: var(--white);
+    background-color: var(--gray);
+    font-weight: var(--bold);
+    padding: .5rem 2rem;
+    border-radius: 50px;
+    margin: 0rem 0 0 0;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-style:none;
+
+    &:hover {
+        background-color: var(--green);
+        color: var(--darkGray)
+    }
+}
+
+

@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Participant {
+  id                         String               @id @default(uuid())
+  name                       String
+  email                      String               @unique
+  approvalStatus             String     
+  registerDate               DateTime             
+  approvalDate               DateTime?            
+  OccasionBaseSchema         OccasionBaseSchema[] @relation("Participant")
+  WaitingOccasionBaseSchema  OccasionBaseSchema[] @relation("WaitingParticipant")
+  RejectedOccasionBaseSchema OccasionBaseSchema[] @relation("RejectedParticipant")
+}
+
+model OccasionBaseSchema {
+  id                      String               @id @default(uuid())
+  name                    String
+  slug                    String               @unique
+  price                   Int
+  address                 String
+  waitingList             Boolean
+  createdAt               DateTime             @default(now())
+  template                TemplateBaseSchema?  @relation("OccasionTemplate", fields: [templateId], references: [id])
+  templateId              String?        
+  maxParticipants         Int?
+  category                String
+  date                    DateTime             
+  participants            Participant[]        @relation("Participant")
+  waitingListParticipants Participant[]        @relation("WaitingParticipant")
+  rejectedParticipants    Participant[]        @relation("RejectedParticipant")
+  body                    BodyEntry[]          @relation("OccasionToBodyEntries")
+}
+
+model TemplateBaseSchema {
+  id                  String               @id @default(uuid())
+  name                String
+  price               Int
+  maxParticipants     Int
+  isPrivate           Boolean
+  fixedPrice          Boolean
+  allowSameDayEvent   Boolean
+  waitList            Boolean
+  limitedParticipants Boolean
+  fixedWeekDays       weekDays[]
+  relatedTemplates    TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+  relatedTo           TemplateBaseSchema[] @relation("TemplateFixedWeekdays")
+
+  occasions OccasionBaseSchema[] @relation("OccasionTemplate")
+}
+
+model BodyEntry {
+  id         String             @id @default(uuid())
+  content    String
+  occasion   OccasionBaseSchema @relation("OccasionToBodyEntries", fields: [occasionId], references: [id], onDelete: Cascade)
+  occasionId String
+}
+
+
+
+model weekDays {
+  id       String @id @default(uuid())
+  weekdays String
+
+  TemplateBaseSchema TemplateBaseSchema[]
+}

@@ -1,0 +1,168 @@
+@import '../helpers/root.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+#createTemplatePage{
+    max-width: 700px;
+    h1 {
+        font-style: italic; 
+     }
+
+     .templateForm {
+        display: flex;
+        flex-direction: column;
+
+        error {
+            margin-top: 1rem;
+            font-size: 1rem;
+            background-color: transparent;
+            color: var(--errorColor)
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            
+            div {
+                display: flex;
+                flex-direction: row;
+                margin-bottom: .5rem;
+
+            }
+
+            #templateName{
+                display: flex;
+                flex-direction: column;
+
+                input {
+                    max-width: 500px;
+                    margin-top: .5rem;
+                    margin-bottom: 1rem;
+                }
+
+                label {
+                    margin: 0rem 0 0 0;
+                }
+            }
+        }
+
+        input {
+            font-weight: var(--bold);
+            border-radius: 5px;
+            border-style: none;
+            border: 2px solid var(--gray);
+            padding: .2rem .5rem;
+
+            
+        }
+
+        label {
+            display: flex;
+            align-items: center; 
+            margin: 0 0;
+        }
+
+        #priceLabel {
+            display: none;
+        }
+        
+        #maxParticipatsLabel{
+            display:none;
+        }
+
+        .checkbox {
+            transform: scale(1.2); 
+            appearance: none; 
+            border: 2px solid var(--gray); 
+            border-radius: 4px; 
+            width: 20px; 
+            height: 20px; 
+            cursor: pointer; 
+            -webkit-appearance: none; 
+            -moz-appearance: none; 
+        }
+
+        .checkbox:checked {
+            background-color: var(--green); 
+        }
+
+        
+        .checkbox:checked::after {
+            content: 'X';
+            position: absolute;
+            width: 10px; 
+            height: 10px; 
+            top: 30%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--darkGray)  
+            }
+
+            label {
+                display: flex;
+                align-items: center; 
+                margin-left: 1rem;
+                margin-left: 1rem,
+                
+            }
+     }
+
+     #price {
+        margin-left: 1rem
+     }
+
+     #maxParticipants {
+        margin-left: 1rem
+     }
+
+     #daysOfTheWeek {
+        display: flex;
+        flex-direction: column;
+
+        #weekdaysLabel {
+            margin-left: 0;
+            margin-bottom: 0;
+            font-weight: var(--bold);
+        }
+
+        #weekdayColumns {
+            flex-direction: row;
+            margin-top: .5rem;
+            background-color: var(--darkGray);
+            padding: 1rem .5rem;
+            border-radius: 10px;
+
+            .dayColumn {
+                flex-direction: column;
+                align-items: center;
+
+                label {
+                    color: var(--lightGreen);
+                    font-weight: var(--bold);
+                    text-align: center;
+                    margin: 0 .5rem
+                }
+
+                .checkbox {
+                    transform: scale(1.2); 
+                    appearance: none; 
+                    border: 0px none transparent; 
+                    border-radius: 4px; 
+                    width: 20px; 
+                    height: 20px; 
+                    cursor: pointer; 
+                    -webkit-appearance: none; 
+                    -moz-appearance: none;
+                    background-color: var(--white);
+                    margin-top: 0.4rem;
+                }
+
+                .checkbox:checked {
+                    background-color: var(--green); 
+                }
+        
+            }
+        }
+     }
+}
+
