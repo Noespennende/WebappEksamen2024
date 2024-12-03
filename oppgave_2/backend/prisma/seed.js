@@ -132,7 +132,8 @@ main()
         await prisma.$disconnect();
     });
 
-
+*/
+/*
 async function main() {
    
     const participantsData = [
@@ -197,7 +198,7 @@ async function main() {
         name: "Rock Festival 2025",  
         slug: "RockFest2025",      
         price: 400,
-        createdAt: new Date(),
+        createdAt: new Date(2020, 11, 1),
         date: new Date("2025-01-15T19:00:00Z"), 
         address: "Grand Rock Arena 2025",
         waitingList: true,
@@ -326,7 +327,7 @@ async function main() {
         name: "Jazz Festival 2024",
         slug: "JazzFestival2024",
         price: 150,
-        createdAt: new Date(2025, 10, 11),
+        createdAt: new Date(2021, 10, 11),
         date: new Date(),
         address: "Jazz Arena 44",
         waitingList: true,
@@ -393,7 +394,7 @@ main()
     });
 
 
-*/
+
 
 
 async function main() {
@@ -683,7 +684,7 @@ async function main() {
     const occasion = await prisma.occasionBaseSchema.create({
         data: occasionData,
     });
-
+/*
     const occasion2 = await prisma.occasionBaseSchema.create({
         data: occasionData2,
     });
@@ -716,4 +717,4 @@ main()
     })
     .finally(async () => {
         await prisma.$disconnect();
-    });
+    });*/
