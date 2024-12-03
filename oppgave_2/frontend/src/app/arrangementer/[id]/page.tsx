@@ -5,6 +5,7 @@ import EventHeaderCategoryAndDate from "@/features/events/components/EventHeader
 import EventPageAdminPanel from "@/features/events/components/EventPageAdminPanel";
 import EventPriceAdressAndParticipants from "@/features/events/components/eventPriceAdressAndParticipants";
 import EventRegisterParticipants from "@/features/events/components/EventRegisterParticipant";
+import { generateExcelReport } from "@/helpers/excelReportGeneration";
 import { useOccasion } from "@/hooks/useOccasion";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ import { useEffect, useState } from "react";
 export default function Event(){
 
 
-    const {data, status, getOne, update ,remove, error} = useOccasion()
+    const {data, status, getOne, error} = useOccasion()
     const isAdmin: boolean = true //<- sjekk om admin
 
     const { id } = useParams()
@@ -31,7 +32,6 @@ export default function Event(){
     }, [id])
 
     useEffect(() => {
-
     }, [data])
 
     return (
@@ -41,7 +41,7 @@ export default function Event(){
                         <article>
                             <EventHeaderCategoryAndDate header={data?.name} category={data?.category} date={data?.date}/>
                             <EventBody body={data?.body}/>
-                            <EventPriceAdressAndParticipants price={data?.price} adress={data?.address} participants={data?.participants.length} maxParticipants={data?.maxParticipants}/>
+                            <EventPriceAdressAndParticipants price={data?.price} adress={data?.address} participants={data?.participants?.length} maxParticipants={data?.maxParticipants}/>
                             <button id="signUpButton" className="button" onClick={handleSignUpClick}>Meld deg på</button>
                             {signUp ? <EventRegisterParticipants occasion={data} price={data?.price} onNoParticipants={handleNoParticipants}/> : ""}
                         </article>
@@ -55,17 +55,6 @@ export default function Event(){
         </section>
     )
 }
-
-
-
-
-// *Ett* event (Skisse Arrangement-side)
-
-// Tar i bruk services her, @features/events/services/...
-
-// og sender *ferdig* prosessert data videre til Componentet @/features/events/pages/event.tsx
-// blir f.eks:
-//  import HabitPage from @/features/pages/events/event
 
 
 

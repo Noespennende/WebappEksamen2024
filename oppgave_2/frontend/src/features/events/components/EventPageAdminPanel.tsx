@@ -6,6 +6,7 @@ import { Participant } from "@/types/Types";
 import {  useState } from "react";
 import AdminParticipantFormCard from "./AdminParticipantFormCard";
 import { useOccasion } from "@/hooks/useOccasion";
+import { generateExcelReport } from "@/helpers/excelReportGeneration";
 
 
 type EventPageAdminPanelProps = {
@@ -160,13 +161,17 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
 
     }
 
+    const handleDownloadStatistics = () => {
+        generateExcelReport(occasion)
+    }
+
     return(
         <section id="eventPageAdminPanel">
             {status.loading  ? <div className="loader"></div> : (<>
                 <h2 id="eventPageAdminPanelHeader">Admin panel</h2>
                 <div id="editDeleteDownloadEventButtons">
                     <Link href={`/opprett/arrangement/${occasion?.id}`} className="button">Rediger innhold</Link>
-                    <Link href={`/arrangement/${occasion?.id}/lastned`} className="button">Last ned statistikk</Link>
+                    <button className="button" onClick={handleDownloadStatistics}>Last ned statistikk</button>
                     <button className="button delete" onClick={handleDeleteOccasion}>Slett arrangement</button>
                 </div>
                 <div id="eventPageAdminPanelProfit">
