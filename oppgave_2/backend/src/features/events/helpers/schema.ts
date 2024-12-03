@@ -14,9 +14,8 @@ const OccassionBaseSchema = z.object({
     slug: z.string(),
     price: z.number(),
     date: z.date(),
-    adress: z.string(),
-    
-    waitingList: z.boolean(),
+    address: z.string(),
+    waitinglist: z.boolean(),
     template: z.string().uuid().optional(),
     maxParticipants: z.number().min(1).optional()
 });

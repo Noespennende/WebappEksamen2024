@@ -63,14 +63,15 @@ export function useTemplate () {
     }
 
     //create temlate
-    const addTemplate = async (data: Template) => {
+    const addTemplate = async (data: Template[]) => {
         setStatus("posting")
+        console.log("Test send ", data)
         await fetch(`${formatTemplateFetchUrl("post")}`,
         {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
+            body: JSON.stringify(data[0])
         })
         .then((response) => {!response.ok ? (setError(`Post request failed: ${response.status}`), setStatus("error")) : (setStatus("success"))})
         .then((responsedata) => {setData(responsedata.data),  redirect(`/arrangementer/mal/${data.id}`)})

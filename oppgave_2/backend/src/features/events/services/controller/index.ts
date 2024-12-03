@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { errorResponse } from "../../../../lib/error";
 import { occasionService, OccasionService } from "../service";
 import { deleteParam, eventCreate, eventDelete, eventsGet, eventsGetOne, eventsSort, eventUpdate, getOneParam, sortParam, updateParam } from "../../helpers/config";
+import { validateCreateOccation } from "../../helpers/schema";
 
 
 export const createEventController = (occasionService: OccasionService) => {
@@ -70,7 +71,9 @@ export const createEventController = (occasionService: OccasionService) => {
             const newEvent = await context.req.json()
             console.log("newEventData: ", newEvent)
             console.log("\nType of body:", typeof newEvent.body);
-            const result = await occasionService.createAnOccasion(newEvent)
+
+            console.log(validateCreateOccation(newEvent[0]).error?.message)
+            const result = await occasionService.createAnOccasion(newEvent[0])
 
             if (!result.success){
                 return errorResponse(context, "BAD_REQUEST", result.error.message)
@@ -88,7 +91,7 @@ export const createEventController = (occasionService: OccasionService) => {
         try {
             const eventSlug = context.req.param(updateParam)
             const eventData = await context.req.json()
-            console.log(eventData)
+            console.log("Hallo ", eventData)
             const result = await occasionService.updateOccation(eventSlug, eventData) 
 
             if (!result.success){

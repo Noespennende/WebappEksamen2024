@@ -81,11 +81,11 @@ export const createOccationRepository = () => {
               name: data.name,
               slug: data.slug,
               price: data.price,
-              adress: data.address,
+              address: data.address,
               body: {
                 create: bodyEntries,   
             },
-              waitingList: data.waitingList,
+              waitingList: data.waitinglist,
               template: data.template ? { connect: { id: data.template } } : undefined,
               maxParticipants: data.maxParticipants,
               category: data.category, 

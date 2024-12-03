@@ -44,7 +44,7 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
       },
       async createAnOccasion(data: Omit<CreateOccation, "id"| "categoryId"> ) {
         try {
-          console.log("new occasion ", data)
+          console.log("new occasion ", typeof data.name)
           
           const newOccasion = await occasionRepository.createOccasion(data);
           

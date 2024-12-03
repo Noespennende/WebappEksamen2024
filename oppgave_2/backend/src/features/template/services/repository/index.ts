@@ -55,18 +55,7 @@ export const createTemplateRepository = () => {
       }
     },
 
-    async createTemplate(data: {
-      id: string,
-      name: string,
-      isPrivate: boolean,
-      fixedPrice: boolean,
-      allowSameDayEvent: boolean,
-      waitList: boolean,
-      limitedParticipants: boolean,
-      fixedWeekDays: Weekday[],
-      price: number,
-      maxParticipants: number
-     }){
+    async createTemplate(data: CreateTemplate){
       try {
         const prismadata = await prisma.templateBaseSchema.create({
           data:{
@@ -78,7 +67,7 @@ export const createTemplateRepository = () => {
             waitList: data.waitList,
             limitedParticipants: data.limitedParticipants,
             fixedWeekDays: {
-              create: data.fixedWeekDays.map(day => ({
+              create: data.fixedWeekdays.map(day => ({
                 weekdays: day
               }))
             },
@@ -89,6 +78,7 @@ export const createTemplateRepository = () => {
         })
         return prismadata
       } catch (error) {
+        console.log("Åneeei ", error)
         throw new Error("error")
       }
     },
