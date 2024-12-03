@@ -30,7 +30,7 @@ export const createEventController = (occasionService: OccasionService) => {
             const month = parameters[0] === "null" ? null : parameters[0]
             const year = parameters[1] === "null" ? null : parameters[1]
             const category = parameters[2] === "null" ? null : parameters[2]
-            console.log(month,  year, category) 
+            //console.log(month,  year, category) 
             const data = await occasionService.sortedOccasions(year, month, category)
             return context.json(data)
 

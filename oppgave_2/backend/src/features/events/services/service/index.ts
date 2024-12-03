@@ -95,7 +95,7 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
     },
 
   
-    async sortedOccasions(year: number | null, month: Month | null, category: OccasionCategory | null) {
+    async sortedOccasions(year: string | null, month: string | null, category: string | null) {
       const occasions = await occasionRepository.getSortedOccasions(year, month, category);
       
       if (!occasions || occasions.length === 0) {
