@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { getCourse } from "@/lib/services/api";
 import { Course as CourseType } from "@/lib/types";
 import { users } from "../data/data";
+import Link from "next/link";
 
 export interface CourseProps {
   courseSlug: string;
@@ -69,13 +70,19 @@ export default function Course({ courseSlug, lessonSlug, children }: CourseProps
 
       ) : (
         <section>
+          <div className="flex items-center space-x-4">
           <h2 className="text-2xl font-bold" data-testid="course_title">
             {content?.title}
           </h2>
-          <p
-            className="mt-4 font-semibold leading-relaxed"
-            data-testid="course_description"
-          >
+          
+            <Link
+              href={`/courses/${content?.slug}/edit`}
+              className="text-sm rounded-lg border border-blue-500 px-4 py-2 bg-blue-500 text-white"
+            >
+              Rediger kurs
+            </Link>
+          </div>
+          <p className="mt-4 font-semibold leading-relaxed" data-testid="course_description">
             {content?.description}
           </p>
         </section>

@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useParams, useSearchParams } from "next/navigation"; // Import both hooks
 import Course from "@/components/Course";
-import Lesson from "@/components/Lesson";
+import LessonPage from "@/components/Lesson";
 
 export default function CoursesPage() {
   // useParams() to get the dynamic route parameters (slug from the path)
@@ -14,10 +14,6 @@ export default function CoursesPage() {
   // useSearchParams() to get the query parameters (lessonSlug from query)
   const searchParams = useSearchParams();
   const lessonSlug = searchParams?.get("lesson");
-
-  useEffect(() => {
-    console.log("Params in CoursesPage:", { slug, lessonSlug });
-  }, [slug, lessonSlug]);
 
   if (!slug) {
     return <div>Missing course slug...</div>;
@@ -30,7 +26,7 @@ export default function CoursesPage() {
       <Course courseSlug={slug} lessonSlug={lessonSlug || ""}>
         {lessonSlug && (
           <>
-            <Lesson courseSlug={slug} lessonSlug={lessonSlug} />
+            <LessonPage courseSlug={slug} lessonSlug={lessonSlug} />
           </>
         )}
       </Course>

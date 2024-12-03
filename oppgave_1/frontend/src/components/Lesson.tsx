@@ -3,15 +3,15 @@ import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
 import { useLesson } from "@/hooks/useLesson";
 import { getComments, createComment } from "@/lib/services/api";
-import { ALesson, CommentNoLesson } from "@/lib/types";
+import { Comment, CreateComment, Lesson, LessonText } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { Parser } from 'html-to-react';
 
 
-export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string , lessonSlug: string}) {
+export default function LessonPage({ courseSlug, lessonSlug }: { courseSlug: string , lessonSlug: string}) {
     const [success, setSuccess] = useState(false);
     const [formError, setFormError] = useState(false);
-    const [lessonComments, setComments] = useState<CommentNoLesson[]>([]);
+    const [lessonComments, setComments] = useState<Partial<Comment>[]>([]);
     //const [comment, setComment] = useState("");
     const [name, setName] = useState("");
     //const [lesson, setLesson] = useState(null);
@@ -19,7 +19,7 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
     
    
     const [commentBody, setCommentBody] = useState("");
-    const lesson: ALesson | undefined = useLesson(courseSlug, lessonSlug);
+    const lesson: Lesson | undefined = useLesson(courseSlug, lessonSlug);
     const { course } = useCourse(courseSlug);
     
     const lessonComment = useComment(courseSlug, lessonSlug);
@@ -77,21 +77,6 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
         setSuccess(true);
       }
     };
-  /*
-    useEffect(() => {
-      const getContent = async () => {
-        const lessonDate = await getLesson(courseSlug, lessonSlug);
-        const courseData = await getCourse(courseSlug, lessonSlug);
-        const commentsData = await getComments(lessonSlug);
-        setLesson(lessonDate);
-        setCourse(courseData);
-        setComments(commentsData);
-      };
-      getContent();
-    }, [courseSlug, lessonSlug]);*/
-  
-
-    
 
     const parser = Parser();
 
@@ -116,14 +101,14 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
         >
           {lesson?.preAmble}
         </p>
-        {lesson?.text.length > 0 &&
-          lesson?.text.map((text) => (
+        {lesson && lesson.text && lesson.text.length > 0 &&
+          lesson.text.map((text: LessonText) => (
             <p
               data-testid="lesson_text"
               className="mt-4 font-normal"
               key={text.id}
             >
-               {parser.parse(text.text)}
+              {parser.parse(text.text)}
             </p>
           ))}
         <section data-testid="comments">
@@ -180,19 +165,20 @@ export default function Lesson({ courseSlug, lessonSlug }: { courseSlug: string 
             ) : null}
           </form>
           <ul className="mt-8" data-testid="comments_list">
-            {lessonComments?.length > 0
-              ? lessonComments.map((c) => (
-                  <li
-                    className="mb-6 rounded border border-slate-200 px-4 py-6"
-                    key={c.id}
-                  >
-                    <h5 data-testid="user_comment_name" className="font-bold">
-                      {c.createdBy.name}
-                    </h5>
-                    <p data-testid="user_comment">{c.comment}</p>
-                  </li>
-                ))
-              : null}
+          {lessonComments && lessonComments.length > 0 ? (
+            lessonComments.map((comment) => (
+              <li
+                className="mb-6 rounded border border-slate-200 px-4 py-6"
+                key={comment.createdBy?.id}
+              >
+                <h5 data-testid="user_comment_name" className="font-bold">
+                  {comment.createdBy?.name}
+                </h5>
+                <p data-testid="user_comment">{comment.comment}</p>
+              </li>
+            ))
+          ) : null}
+
           </ul>
         </section>
       </div>
