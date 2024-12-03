@@ -73,27 +73,115 @@ test.describe("Oppgave 1 Create", () => {
 
   });
   test.describe("When stepping from first to second step", () => {
+    test.beforeEach(async () => {
+      // Nullstiller felt før hver test
+      await page.fill('[data-testid="form_slug"]', '');
+      await page.fill('[data-testid="form_title"]', '');
+      await page.fill('[data-testid="form_description"]', '');
+      await page.selectOption('[data-testid="form_category"]', { value: '' });
+      
+    });
+
     test.only("Should show error if any required field are missing", async () => {
 
-    //await page.fill('[data-testid="form_slug"]', 'test-kurs');
-    //await page.fill('[data-testid="form_description"]', 'Beskrivelse av testkurset');
-    //await page.selectOption('[data-testid="form_category"]', { label: 'Marketing' });
-
-    const stepButton = await page.locator('button[data-testid="step"]:text("Leksjoner")');
+    const stepButton = page.locator('button[data-testid="step"]:text("Leksjoner")');
     await stepButton.click();
 
-    // Vent på at feilmeldingen blir synlig
-    const errorMessage = await page.locator('[data-testid="form_error"]');
+    const errorMessage = page.locator('[data-testid="form_error"]');
     await errorMessage.waitFor({ state: 'visible' });
 
     await expect(errorMessage).toBeVisible();
           
     });
-    test("Should show error if title field is missing", async () => {});
-    test("Should show error if slug field is missing", async () => {});
-    test("Should show error if description field is missing", async () => {});
-    test("Should show error if category field is missing", async () => {});
-    test("Should not show error if all fields are provided", async () => {});
+
+    test.only("Should show error if title field is missing", async () => {
+      
+      // Fyller alle utenom form_title
+      await page.fill('[data-testid="form_slug"]', 'test-kurs');
+      await page.fill('[data-testid="form_description"]', 'Beskrivelse');
+      await page.selectOption('[data-testid="form_category"]', { label: 'Marketing' });
+
+      const stepButton = await page.locator('button[data-testid="step"]:text("Leksjoner")');
+      await stepButton.click();
+
+      const errorMessage = await page.locator('[data-testid="form_error"]');
+      await errorMessage.waitFor({ state: 'visible' });
+
+      await expect(errorMessage).toBeVisible();
+
+    });
+
+    test.only("Should show error if slug field is missing", async () => {
+
+      // Fyller alle utenom form_slug
+      await page.fill('[data-testid="form_title"]', 'Kurs tittel');
+      await page.fill('[data-testid="form_description"]', 'Beskrivelse');
+      await page.selectOption('[data-testid="form_category"]', { label: 'Marketing' });
+
+      const stepButton = await page.locator('button[data-testid="step"]:text("Leksjoner")');
+      await stepButton.click();
+
+      const errorMessage = await page.locator('[data-testid="form_error"]');
+      await errorMessage.waitFor({ state: 'visible' });
+
+      await expect(errorMessage).toBeVisible();
+
+
+    });
+
+    test.only("Should show error if description field is missing", async () => {
+
+      // Fyller alle utenom form_description
+      await page.fill('[data-testid="form_title"]', 'Kurs tittel');
+      await page.fill('[data-testid="form_slug"]', 'test-slug');
+      await page.selectOption('[data-testid="form_category"]', { label: 'Photoshop' });
+
+      const stepButton = await page.locator('button[data-testid="step"]:text("Leksjoner")');
+      await stepButton.click();
+
+      const errorMessage = await page.locator('[data-testid="form_error"]');
+      await errorMessage.waitFor({ state: 'visible' });
+
+      await expect(errorMessage).toBeVisible();
+
+    });
+
+    test.only("Should show error if category field is missing", async () => {
+      
+      // Fyller alle utenom form_category
+      await page.fill('[data-testid="form_title"]', 'Tittel');
+      await page.fill('[data-testid="form_slug"]', 'test-slug');
+      await page.fill('[data-testid="form_description"]', 'Beskrivelse');
+    
+      // Klikk på "Leksjoner" knappen
+      const stepButton = page.locator('button[data-testid="step"]:text("Leksjoner")');
+      await stepButton.click();
+      
+      // Vent på at feilmeldingen blir synlig
+      const errorMessage = page.locator('[data-testid="form_error"]');
+      await expect(errorMessage).toBeVisible();
+      
+      // Bekreft feilmeldingens tekst
+      await expect(errorMessage).toHaveText("Fyll ut alle felter med *");
+    });
+    
+    test.only("Should not show error if all fields are provided", async () => {
+
+      // Fyller alle
+      await page.fill('[data-testid="form_title"]', 'Tittel');
+      await page.fill('[data-testid="form_slug"]', 'test-slug');
+      await page.fill('[data-testid="form_description"]', 'Beskrivelse');
+      await page.selectOption('[data-testid="form_category"]', { label: 'Photoshop' });
+      
+      // Klikk på "Leksjoner" knappen
+      const stepButton = page.locator('button[data-testid="step"]:text("Leksjoner")');
+      await stepButton.click();
+      
+      // Vent på at feilmeldingen blir synlig
+      const errorMessage = page.locator('[data-testid="form_error"]');
+      await expect(errorMessage).not.toBeVisible();
+    });
+
   });
   test.describe("When at step two", () => {
     test("Should have disabled submit btn", async () => {});

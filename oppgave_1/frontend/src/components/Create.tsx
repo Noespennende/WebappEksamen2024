@@ -388,7 +388,7 @@ export default function Create(props: { courseSlug?: string }) {
       const selectedCategory = categories.find((cat) => cat.id === selectedCategoryId);
       console.log("selected cat " + selectedCategory?.name)
       
-      const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
+      //const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
       setCourseFields((prev) => {
         // Hvis courseFields har category, sett category, ellers sett categoryId
         if ('category' in prev) {
@@ -399,7 +399,7 @@ export default function Create(props: { courseSlug?: string }) {
         } else {
           return {
             ...prev,
-            categoryId: selectedCategory?.id || prev.categoryId, // Hvis selectedCategory finnes, sett den, ellers behold eksisterende categoryId
+            categoryId: selectedCategory ? selectedCategory.id : "", // Hvis selectedCategory finnes, sett den, ellers behold eksisterende categoryId
           };
         }
       });
