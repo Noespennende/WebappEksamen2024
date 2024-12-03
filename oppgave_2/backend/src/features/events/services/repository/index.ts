@@ -2,7 +2,7 @@ import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
 import {Occation} from "../../types/index"
 import { Month, OccasionCategory, Result } from "@/types";
-import { MonthEnum, OccasionCategoryEnum } from "../../../../helpers/schema";
+import { MonthEnum } from "../../../../helpers/schema";
 
 const prisma = new PrismaClient()
 
@@ -74,8 +74,8 @@ export const createOccationRepository = () => {
               adress: data.address,
               body: data.body,
               waitingList: data.waitingList,
+              template: data.template ?? null,
               maxParticipants: data.maxParticipants,
-              template: data.template? {connect: {id: data.template}} : undefined
             },
           });
     
@@ -147,56 +147,32 @@ export const createOccationRepository = () => {
   },
 
   
-  async getSortedOccasions(year: string | null, month: string | null, category: string | null) {
+  async getSortedOccasions(year: number | null, month: Month | null, category: OccasionCategory | null) {
     try {
-        let parsedYear: number | null = null;
-        if (year) {
-            parsedYear = parseInt(year);
-            if (isNaN(parsedYear)) {
-                throw new Error(`Invalid year: ${year}`);
-            }
-        }
+      
         let startDate: Date, endDate: Date;
-
-        //console.log("Category:", category);
-
-        let categoryEnum: OccasionCategory | null = null;
-        if (category) {
-            if (OccasionCategoryEnum.options.includes(category as OccasionCategory)) {
-                categoryEnum = category as OccasionCategory; // Valid category
-            } else {
-                throw new Error(`Invalid category: ${category}`);
-            }
-        }
-        
-    
-        if (parsedYear !== null && month !== null) {
-            const monthIndex = MonthEnum.options.indexOf(month as Month);
-            if (monthIndex === -1) {
-                throw new Error(`Invalid month: ${month}`);
-            }
-
-     
-
-         
-            startDate = new Date(parsedYear, monthIndex, 1);
-            endDate = new Date(parsedYear, monthIndex + 1, 0, 23, 59, 59, 999);
-        } else if (parsedYear !== null) {
-    
-            startDate = new Date(parsedYear, 0, 1); 
-            endDate = new Date(parsedYear, 11, 31, 23, 59, 59, 999);
-        } else {
-       
-            startDate = new Date(0);
-            endDate = new Date(); 
-        }
-
+        if (year !== null && month !== null) {
+          const monthIndex = MonthEnum.options.indexOf(month as Month);
+          if (monthIndex === -1) {
+              throw new Error(`Invalid month: ${month}`);
+          }
+      
+          startDate = new Date(year, monthIndex, 1); 
+          endDate = new Date(year, monthIndex + 1, 0, 23, 59, 59, 999);
+      } else if (year !== null) {
+          startDate = new Date(year, 0, 1);
+          endDate = new Date(year, 11, 31, 23, 59, 59, 999); 
+      } else {
+      
+          startDate = new Date(0); 
+          endDate = new Date();
+      }
+      
         const startTimestamp = startDate.getTime();
         const endTimestamp = endDate.getTime();
 
-      
         const where: any = {};
-        if (parsedYear !== null) {
+        if (year !== null) {
             where.date = {
                 gte: new Date(startTimestamp),
                 lte: new Date(endTimestamp),
@@ -206,19 +182,17 @@ export const createOccationRepository = () => {
             where.category = category;
         }
 
-        
+
         const occasions = await prisma.occasionBaseSchema.findMany({
             where,
         });
-
-        //console.log("Occasions:", occasions);
+        
         return occasions;
     } catch (error) {
-        console.error("Error in query:", error);
+        console.error("Error in query:", error); 
         throw new Error("Error fetching occasions");
     }
 }
-
 
   
 }
