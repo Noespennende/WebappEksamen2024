@@ -61,12 +61,14 @@ export const createEventController = (occasionService: OccasionService) => {
     //create event
     app.post(`${eventCreate}`, async (context) => {
         try {
+            
             const newEvent = await context.req.json()
-            console.log(newEvent)
+            console.log("newEventData: ", newEvent)
+            console.log("\nType of body:", typeof newEvent.body);
             const result = await occasionService.createAnOccasion(newEvent)
 
             if (!result.success){
-                return errorResponse(context, result.error.code, result.error.message)
+                return errorResponse(context, "BAD_REQUEST", result.error.message)
             }
 
             return context.json(result)
