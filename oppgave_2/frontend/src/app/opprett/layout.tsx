@@ -8,12 +8,12 @@ export default function CreateLayout({
 }) {
     return (
         <div>
-            <nav>
+            <nav id="createOccasionandTemplateNavigation">
                 <Link href="/opprett/arrangement">
-                    <button>Opprett Arrangement</button>
+                    <button className='button'>Opprett Arrangement</button>
                 </Link>
                 <Link href="/opprett/mal">
-                    <button>Opprett Mal</button>
+                    <button className='button'>Opprett Mal</button>
                 </Link>
             </nav>
             <main>{children}</main>

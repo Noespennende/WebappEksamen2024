@@ -56,120 +56,129 @@ export default function CreateTemplatePage() {
   }, [fields]);
 
   return (
-    <>
-      <h1>Opprett mal</h1>
+    <section id="createTemplatePage">
+        <h1>Opprett mal</h1>
 
-      <section className="templateForm">
-        <form onSubmit={onSubmit}>
-          <div>
-            <label htmlFor="name">Navn</label>
-            <input
-              id="name"
-              type="text"
-              value={fields.name.value}
-              onChange={(e) => handleInputChange(e, 'name')}
-              placeholder="Min mal"
-            />
-            {fields.name.error && <span style={{ color: 'red' }}>{fields.name.error}</span>}
-          </div>
-
-          <div>
-            <label htmlFor="isPrivate">Sett malen til privat</label>
-            <input
-              id="isPrivate"
-              type="checkbox"
-              checked={fields.isPrivate.value}
-              onChange={(e) => handleInputChange(e, 'isPrivate')}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="allowSameDay">Tillat andre arrangement på samme dag</label>
-            <input
-              id="allowSameDay"
-              type="checkbox"
-              checked={fields.allowSameDayEvent.value}
-              onChange={(e) => handleInputChange(e, 'allowSameDayEvent')}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="waitList">Tillat venteliste</label>
-            <input
-              id="waitList"
-              type="checkbox"
-              checked={fields.waitList.value}
-              onChange={(e) => handleInputChange(e, 'waitList')}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="fixedPrice">Fast pris</label>
-            <input
-              id="fixedPrice"
-              type="checkbox"
-              checked={fields.fixedPrice.value}
-              onChange={(e) => handleInputChange(e, 'fixedPrice')}
-            />
-            {fields.fixedPrice.value && fields.price.error && (
-            <span style={{ color: 'red' }}>{fields.price.error}</span>
-                )}
-            <div className={fields.fixedPrice.value ? '' : 'grayed-out'}>
-              <label htmlFor="price">Pris</label>
+        <section className="templateForm">
+          <form onSubmit={onSubmit}>
+            <div id="templateName">
+              <label htmlFor="name">Navn</label>
               <input
-                id="price"
-                type="number"
-                value={fields.price.value}
-                onChange={(e) => handleInputChange(e, 'price')}
-                placeholder="Pris"
-                disabled={!fields.fixedPrice.value}
+                id="name"
+                type="text"
+                value={fields.name.value}
+                onChange={(e) => handleInputChange(e, 'name')}
+                placeholder="Min mal"
+                maxLength={20}
               />
+              {fields.name.error && <span className="error">{fields.name.error}</span>}
             </div>
-          </div>
 
-          <div>
-            <label htmlFor="limitedParticipants">Begrens antall plasser</label>
-            <input
-              id="limitedParticipants"
-              type="checkbox"
-              checked={fields.limitedParticipants.value}
-              onChange={(e) => handleInputChange(e, 'limitedParticipants')}
-            />
-            <div className={fields.limitedParticipants.value ? '' : 'grayed-out'}>
-              <label htmlFor="maxParticipants">Max plasser</label>
+            <div>
               <input
-                id="maxParticipants"
-                type="number"
-                value={fields.maxParticipants.value}
-                onChange={(e) => handleInputChange(e, 'maxParticipants')}
-                placeholder="Max plasser"
-                disabled={!fields.limitedParticipants.value}
-              />
-              {fields.maxParticipants.error && <span style={{ color: 'red' }}>{fields.maxParticipants.error}</span>}
-            </div>
-          </div>
-
-          <div>
-        
-        <div>
-          <label>Lås mal til bestemte ukedager</label>
-          {WeekdayEnum.options.map((day) => (
-            <div key={day}>
-              <input
+                id="isPrivate"
+                className='checkbox'
                 type="checkbox"
-                id={day}
-                checked={fields.fixedWeekdays.value.includes(day as Weekday)}
-                onChange={() => handleWeekdayChange(day as Weekday)}  
+                checked={fields.isPrivate.value}
+                onChange={(e) => handleInputChange(e, 'isPrivate')}
               />
-              <label htmlFor={day}>{day}</label>
+              <label htmlFor="isPrivate">Sett malen til privat</label>
             </div>
-          ))}
-        </div>
-      </div>
+
+            <div>
+              <input
+                id="allowSameDay"
+                className='checkbox'
+                type="checkbox"
+                checked={fields.allowSameDayEvent.value}
+                onChange={(e) => handleInputChange(e, 'allowSameDayEvent')}
+              />
+              <label htmlFor="allowSameDay">Tillat andre arrangement på samme dag</label>
+            </div>
+
+            <div>
+              <input
+                id="waitList"
+                className='checkbox'
+                type="checkbox"
+                checked={fields.waitList.value}
+                onChange={(e) => handleInputChange(e, 'waitList')}
+              />
+              <label htmlFor="waitList">Tillat venteliste</label>
+            </div>
+
+            <div>
+              <input
+                id="fixedPrice"
+                className='checkbox'
+                type="checkbox"
+                checked={fields.fixedPrice.value}
+                onChange={(e) => handleInputChange(e, 'fixedPrice')}
+              />
+              {fields.fixedPrice.value && fields.price.error && (
+              <span className="error">{fields.price.error}</span>
+                  )}
+              <div className={fields.fixedPrice.value ? '' : 'grayed-out'}>
+                <label id="priceLabel" htmlFor="price">Pris</label>
+                <input
+                  id="price"
+                  type="number"
+                  value={fields.price.value}
+                  onChange={(e) => handleInputChange(e, 'price')}
+                  placeholder="Pris"
+                  disabled={!fields.fixedPrice.value}
+                />
+                <label htmlFor="fixedPrice">Fast pris</label>
+              </div>
+            </div>
+
+            <div>
+              <input
+                id="limitedParticipants"
+                className='checkbox'
+                type="checkbox"
+                checked={fields.limitedParticipants.value}
+                onChange={(e) => handleInputChange(e, 'limitedParticipants')}
+              />
+              <div className={fields.limitedParticipants.value ? '' : 'grayed-out'}>
+                <label id="maxParticipatsLabel" htmlFor="maxParticipants">Max plasser</label>
+                <input
+                  id="maxParticipants"
+                  type="number"
+                  value={fields.maxParticipants.value}
+                  onChange={(e) => handleInputChange(e, 'maxParticipants')}
+                  placeholder="Max plasser"
+                  disabled={!fields.limitedParticipants.value}
+                />
+                {fields.maxParticipants.error && <span className="error">{fields.maxParticipants.error}</span>}
+                <label htmlFor="limitedParticipants">Begrens antall plasser</label>
+              </div>
+            </div>
+
+            <div>
           
-          <button type="submit">Opprett mal</button>
-        </form>
-      </section>
-    </>
+          <div id="daysOfTheWeek">
+            <label id="weekdaysLabel">Lås mal til bestemte ukedager</label>
+            <div id="weekdayColumns">
+                {WeekdayEnum.options.map((day) => (
+                  <div className="dayColumn" key={day}>
+                    <label htmlFor={day}>{day}</label>
+                    <input
+                      type="checkbox"
+                      className='checkbox'
+                      id={day}
+                      checked={fields.fixedWeekdays.value.includes(day as Weekday)}
+                      onChange={() => handleWeekdayChange(day as Weekday)}  
+                    />
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+            
+            <button className="button" type="submit">Opprett mal</button>
+          </form>
+        </section>
+    </section>
   );
 }
