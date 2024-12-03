@@ -70,6 +70,7 @@ export interface CourseFieldsProps {
   handleFieldChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   handleCategoryChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   categories: Category[]; // Assuming categories is also an array of Category objects
+  deleteCourse: (id: string) => void;
 }
   
 

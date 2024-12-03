@@ -5,6 +5,7 @@ export default function CreateCourseFields({
   handleFieldChange,
   categories = [],
   handleCategoryChange,
+  deleteCourse
 }: CourseFieldsProps) {
 
   const categoryId = 'categoryId' in courseFields ? courseFields.categoryId : courseFields.category.id;
@@ -68,6 +69,15 @@ export default function CreateCourseFields({
           ))}
         </select>
       </label>
+      {'id' in courseFields && courseFields.id !== undefined && (
+        <button
+          type="button"
+          className="text-sm mb-4 max-w-[95%] rounded-lg border border-red-500 px-4 py-2 bg-red-500 text-white mx-auto block"
+          onClick={() => deleteCourse(courseFields.id)}
+        >
+          Slett kurs
+        </button>
+      )}
     </div>
   );
 }

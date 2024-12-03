@@ -213,4 +213,38 @@ export const updateCourse = async (slug: string, courseData: CreateCourse): Prom
       throw error;
     }
   };
+
+
+  export const deleteCourse = async (id: string): Promise<Result<void>> => {
+    try {
+      const response = await fetch(`http://localhost:3999/v1/courses/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const responseData = await response.json();
+      console.log("Response from backend:", responseData);
+  
+      if (responseData.success) {
+        return {
+          success: true,
+          data: undefined,
+        };
+      } else {
+        throw {
+          success: false,
+          error: {
+            code: responseData.error.code,
+            message: responseData.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      throw error;
+    }
+  };
+  
   

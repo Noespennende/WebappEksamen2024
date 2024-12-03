@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createCourse, updateCourse } from "@/lib/services/api";
+import { createCourse, deleteCourse, updateCourse } from "@/lib/services/api";
 import { useLesson } from "@/hooks/useLesson";
 import { useComment } from "@/hooks/useComments";
 import { useCourse } from "@/hooks/useCourse";
@@ -53,6 +53,7 @@ export default function Create(props: { courseSlug?: string }) {
     const [current, setCurrent] = useState(0);
     const [currentLesson, setCurrentLesson] = useState(0);
     const [courseFields, setCourseFields] = useState<(CreateCourse | Course)>({
+      id: undefined,
       title: "",
       slug: "",
       description: "",
@@ -74,6 +75,8 @@ export default function Create(props: { courseSlug?: string }) {
       if (course?.lessons) {
         setLessons(course.lessons);
       }
+
+      console.log("tester: dsdsd ", course?.id)
     }, [course]);
 
     useEffect(() => {
@@ -99,6 +102,7 @@ export default function Create(props: { courseSlug?: string }) {
     
         setCourseFields((prevCourseFields) => ({
           ...prevCourseFields,
+          id: course.id,
           title: course.title,
           slug: course.slug,
           description: course.description,
@@ -404,6 +408,10 @@ export default function Create(props: { courseSlug?: string }) {
         }
       });
     };
+
+    const handleDeleteCourse = (id: string) => {
+      deleteCourse(id)
+    }
   
     return (
       <>
@@ -416,8 +424,9 @@ export default function Create(props: { courseSlug?: string }) {
         onSubmit={() => handleSubmit({ preventDefault: () => {} })}
         />
         <h2 className="text-xl font-bold" data-testid="title">
-          Lag nytt kurs
+          {course ? "Rediger kurs" : "Lag nytt kurs"}
         </h2>
+       
         <form className="mt-8 max-w-4xl" data-testid="form" noValidate>
           {current === 0 ? (
             <CreateCourseFields 
@@ -425,8 +434,10 @@ export default function Create(props: { courseSlug?: string }) {
               handleFieldChange={handleCourseFieldChange}
               categories={categories}
               handleCategoryChange={handleCategoryChange}
+              deleteCourse={handleDeleteCourse}
     />
           ) : null}
+          
 
           {current === 1 ? (
             <div
@@ -449,6 +460,7 @@ export default function Create(props: { courseSlug?: string }) {
                   
                 />
               ) : null}
+              
             </div>
           ) : null}
 
@@ -464,7 +476,10 @@ export default function Create(props: { courseSlug?: string }) {
           />
           ) : null}
           <FormCheck success={success} formError={formError} />
+
+          
         </form>
+        
       </>
     );
     

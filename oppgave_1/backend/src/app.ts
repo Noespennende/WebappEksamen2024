@@ -283,13 +283,13 @@ app.get('/v1/courses/:slug', async (c) => {
 
 
 // TODO: Refaktorere - ut i funksjoner
-app.delete('/v1/courses/:slug', async (c) => {
-  const { slug } = c.req.param(); // Hent slug fra URL-en
+app.delete('/v1/courses/:id', async (c) => {
+  const { id } = c.req.param();
 
   try {
     // Finner kurset basert på slug
     const course = await prisma.course.findUnique({
-      where: { slug },
+      where: { id },
     });
 
     if (!course) {
@@ -305,12 +305,12 @@ app.delete('/v1/courses/:slug', async (c) => {
     // Sletter kurset (og tilhørende elementer via ref)
     // (Har onDelete: cascade i Prisma, så tilhørende Lesson[], Lesson sine LessonText[] og Comment[] slettes automatisk)
     await prisma.course.delete({
-      where: { slug },
+      where: { id },
     });
 
     return c.json({
       success: true,
-      message: `Course with slug ${slug} and its related data were deleted successfully.`,
+      message: `Course with id: ${id} and its related data were deleted successfully.`,
     }, 200);
 
   } catch (error) {
