@@ -42,15 +42,17 @@ export const createOccasionService = (occasionRepository: OccasionRepository) =>
               return result
         }
       },
-      async createAnOccasion(data: CreateOccation) { // denne typen kan kanskje endres?
+      async createAnOccasion(data: Omit<CreateOccation, "id"| "categoryId"> ) {
         try {
+          console.log("new occasion ", data)
+          
           const newOccasion = await occasionRepository.createOccasion(data);
-
+          
+          
           if(!newOccasion){
             const result: Result<null> = { success: false, error: { code: "BAD_REQUEST", message: "Failed to create occation" } };
               return result
           }
-
           const result: Result<Occation[]> = {success: true, data: newOccasion}
               return result
 

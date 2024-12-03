@@ -1,6 +1,6 @@
 import { OccasionBaseSchema, PrismaClient } from "@prisma/client";
 import { UUID } from "crypto";
-import {Occation} from "../../types/index"
+import {CreateOccation, Occation} from "../../types/index"
 import { Month, OccasionCategory, Result } from "@/types";
 import { MonthEnum } from "../../../../helpers/schema";
 
@@ -59,41 +59,36 @@ export const createOccationRepository = () => {
         throw new Error("Error ")
       }},
 
-      async createOccasion(data: {
-        name: string;
-        slug: string;
-        price: number;
-        address: string;
-        body: string[];
-        waitingList: boolean;
-        template?: string | null;
-        maxParticipants?: number;
-        category: string;
-        date: Date;
-      }) {
+      async createOccasion(data: CreateOccation) {
         try {
-          console.log("Data received for creation:", JSON.stringify(data));
-    console.log("Type of body:", typeof data.body);  // Log the type of body
-    console.log("Is body an array?", Array.isArray(data.body));
-
-          // Ensure 'body' is an array before attempting to map over it
-          if (!Array.isArray(data.body)) {
-            throw new Error("Body must be an array of strings");
-          }
-      
-          const bodyEntries = data.body.map(content => ({
+          console.log("repositorydata; ", data)
+          //console.log("\nData received for creation:", JSON.stringify(data));
+      // Log the type of body
+    //console.log("\nIs body an array?", Array.isArray(data.body));
+          console.log("HEYOOOOOO")
+          console.log("Body entries ")
+         
+          const bodyArray = data.body as Array<string>
+          console.log("bodyArray: ", bodyArray)
+          const bodyEntries = bodyArray.map(content => ({
             content,  
+            
           }));
+          
           const prismdata = await prisma.occasionBaseSchema.create({
             data: {
               name: data.name,
               slug: data.slug,
               price: data.price,
               adress: data.address,
-              body: data.body,
+              body: {
+                create: bodyEntries,   
+            },
               waitingList: data.waitingList,
-              template: data.template ?? null,
+              template: data.template ? { connect: { id: data.template } } : undefined,
               maxParticipants: data.maxParticipants,
+              category: data.category, 
+                date: data.date,
             },
           });
     

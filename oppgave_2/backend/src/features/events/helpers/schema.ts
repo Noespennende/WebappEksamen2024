@@ -1,5 +1,5 @@
 
-import { z } from "zod";
+import { string, z } from "zod";
 import { MonthEnum, OccasionCategoryEnum, ParticipantSchema } from "../../../helpers/schema";
 
 const bodyEntry = z.object({
@@ -15,7 +15,7 @@ const OccassionBaseSchema = z.object({
     price: z.number(),
     date: z.date(),
     address: z.string(),
-    body: z.array(bodyEntry),
+    
     waitingList: z.boolean(),
     template: z.string().uuid().optional(),
     maxParticipants: z.number().min(1).optional()
@@ -27,10 +27,13 @@ export const OccassionSchema = OccassionBaseSchema.extend({
     category: OccasionCategoryEnum,
     participants: z.array(ParticipantSchema).default([]),
     waitinglistParticipants: z.array(ParticipantSchema).default([]),
-    recejectedParticipants:  z.array(ParticipantSchema).default([])
+    recejectedParticipants:  z.array(ParticipantSchema).default([]),
+    body: z.array(bodyEntry),
 })
 
-export const OccationCreateSchema = OccassionSchema.omit({ id: true });
+export const OccationCreateSchema = OccassionSchema.omit({ id: true, body:true }).extend({
+    body: z.array(z.string())
+});
 
 /* Enums */
 
