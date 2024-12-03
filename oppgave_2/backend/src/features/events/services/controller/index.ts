@@ -80,9 +80,9 @@ export const createEventController = (occasionService: OccasionService) => {
     //update event
     app.patch(`${eventUpdate}`, async (context) => {
         try {
-            const eventSlug= context.req.param(updateParam)
-            const eventData = await context.req.json()
 
+            const eventSlug = context.req.param(updateParam)
+            const eventData = await context.req.json()
             const result = await occasionService.updateOccation(eventSlug, eventData) 
 
             if (!result.success){

@@ -3,16 +3,19 @@
 import { Participant } from "@/types/Types"
 import { useEffect, useState } from "react"
 import EventRegisterParticipantForm from "./EventParticipantRegistrationForm"
+import { useOccasion } from "@/hooks/useOccasion";
+import { Occasion } from "../types";
 
 type EventRegisterParticipantsProps = {
-    occationID: string,
+    occasion: Occasion,
     price: number,
     onNoParticipants: () => void
 }
 
-export default function EventRegisterParticipants({occationID, price, onNoParticipants}: EventRegisterParticipantsProps){
+export default function EventRegisterParticipants({occasion, price, onNoParticipants}: EventRegisterParticipantsProps){
 
-    //const {status, add, error} = useEvents()
+    const {status, update, error} = useOccasion()
+
     const [participants, setParticipants] = useState<Participant[]>([
         {id: crypto.randomUUID(), name: "", email: "",  aprovalStatus: "Ingen", aprovalDate: null, registerDate: new Date()}
     ])
@@ -42,19 +45,43 @@ export default function EventRegisterParticipants({occationID, price, onNoPartic
 
     const handleSubmitt = () => {
         const participantHasEmbtyFields = participants.find(participant => !(participant.name.length >= 2)|| !participant.email);
+        const maxParticipants = occasion.maxParticipants
 
         if(participantHasEmbtyFields){
             setErrorMessage("Alle deltagere må ha gyldig navn og epost")
         } else if (participants.length <= 0) {
             setErrorMessage("Du må ha minst en deltager å melde på")
+        } else if (
+            maxParticipants &&
+            (occasion.participants.length >= maxParticipants ||
+                (occasion.participants.length + participants.length) > maxParticipants)
+            ){
+                setErrorMessage("Det er desverre ikke nok ledige plasser til å melde på alle deltagerne.")
         } else {
+
+            let participantsToAdd = [...participants]; 
+
+            if (maxParticipants !== null && maxParticipants !== undefined) {
+                while (
+                    occasion.participants.length < maxParticipants &&
+                    participantsToAdd.length > 0
+                ) {
+                    occasion.participants.push(participantsToAdd.shift());
+                }
+
+                if (occasion.waitinglist) {
+                    occasion.waitinglistParticipants.push(...participantsToAdd);
+                }
+            } else {
+                occasion.participants.push(...participantsToAdd);
+            }
             setErrorMessage("")
-            //add(occationID, participants)
+            setParticipants([])
+            update(occasion)
         }
     }
 
     useEffect(() => {
-        console.log(participants)
         if (participants.length <= 0) {
             onNoParticipants(); 
         }
