@@ -3,6 +3,8 @@ import Link from "next/link";
 import logo from "../../public/images/logo.png"
 import { useEffect, useState } from "react";
 
+
+
 export function Navigation() {
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
@@ -21,7 +23,10 @@ export function Navigation() {
           localStorage.setItem("adminLoggedIn", "true");
           setIsAdminLoggedIn(true);
         }
+        window.location.reload();
       };
+
+      
     return (
         <nav>
             <div id="logoAndHomeButton">

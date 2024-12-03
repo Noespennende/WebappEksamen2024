@@ -10,8 +10,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Event(){
-
-
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    const storedAdminStatus = localStorage.getItem("adminLoggedIn");
     const {data, status, getOne, error} = useOccasion()
     const isAdmin: boolean = true //<- sjekk om admin
 
@@ -33,6 +33,12 @@ export default function Event(){
     useEffect(() => {
     }, [data])
     
+    useEffect(() => {
+        const storedAdminStatus = localStorage.getItem("adminLoggedIn");
+        if (storedAdminStatus === "true") {
+          setIsAdminLoggedIn(true);
+        }
+      }, []);
 
     return (
         <section id="eventPage">
@@ -45,7 +51,7 @@ export default function Event(){
                             <button id="signUpButton" className="button" onClick={handleSignUpClick}>Meld deg på</button>
                             {signUp ? <EventRegisterParticipants occasion={data} price={data?.price} onNoParticipants={handleNoParticipants}/> : ""}
                         </article>
-                        {isAdmin ? (
+                        {isAdminLoggedIn ? (
                             <EventPageAdminPanel occasion={data}/>
                         ): ("")}
                             

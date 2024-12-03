@@ -1,3 +1,4 @@
+
 import Layout from "@/components/Layout";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -24,11 +25,12 @@ export const metadata: Metadata = {
   description: "Norges ledende app for å opprette og melde seg på arrangementer",
 };
 
-export default function RootLayout({
+export default function RootLayout({  
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="nb">
       <body
@@ -42,4 +44,4 @@ export default function RootLayout({
     </html>
   );
 }
-import React from "react";
+import React, { useState } from "react";

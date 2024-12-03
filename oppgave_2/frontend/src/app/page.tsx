@@ -11,6 +11,8 @@ import React, { useEffect, useState } from "react";
 
 export default function Home() {
 
+  const storedAdminStatus = localStorage.getItem("adminLoggedIn");
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const {get ,data, status, getSorted} = useOccasion()
   const [month, setMonth] = useState<string | null>(null)
   const [year, setYear] = useState<string | null>(null)
@@ -61,7 +63,6 @@ export default function Home() {
   
   useEffect(() => {
     const params = new URLSearchParams(searchParams?.toString() || "");
-
     const initialMonth = params.get("month") || null;
     const initialYear = params.get("year") || null;
     const initialCategory = params.get("category") || null;
@@ -79,14 +80,17 @@ export default function Home() {
     
   }, [searchParams])
 
-
+  useEffect(() => {
+    const loggedIn  = localStorage.getItem("adminLoggedIn");
+    setIsAdminLoggedIn(loggedIn === "true");
+  }, [storedAdminStatus])
 
 
 
   return (
     <section id="homePage">
       <HomePageSort currentMonth={month} currentYear={year} currentCategory={category} onMonthSort={handleMonthDropdownClick} onYearSort={handleYearInput} onCategorySort={handleCategorySelect}/>
-      <Link href="/opprett/arrangement" className="button" id="createEventButton">Opprett arrangement</Link>
+      {isAdminLoggedIn ? <Link href="/opprett/arrangement" className="button" id="createEventButton">Opprett arrangement</Link> : ""}
       {status.loading ? <div className="loader"></div> : 
       <EventCards occasionList={data}/>}
     </section>

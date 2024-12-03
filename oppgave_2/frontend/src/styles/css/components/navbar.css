@@ -29,13 +29,15 @@ nav{
 .navButton{
     color: var(--white);
     background-color: var(--gray);
-    padding: .2rem 2rem;
+    font-weight: var(--bold);
+    padding: .5rem 2rem;
     border-radius: 50px;
     margin: 0rem 0 0 0;
     display: flex; 
     align-items: center; 
     justify-content: center;
     transition: background-color 0.2s ease, color 0.2s ease;
+    border-style:none;
 
     &:hover {
         background-color: var(--green);
