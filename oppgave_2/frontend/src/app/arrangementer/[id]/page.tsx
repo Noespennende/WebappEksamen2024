@@ -5,7 +5,7 @@ import EventHeaderCategoryAndDate from "@/features/events/components/EventHeader
 import EventPageAdminPanel from "@/features/events/components/EventPageAdminPanel";
 import EventPriceAdressAndParticipants from "@/features/events/components/eventPriceAdressAndParticipants";
 import EventRegisterParticipants from "@/features/events/components/EventRegisterParticipant";
-import { generateExcelReport } from "@/helpers/excelReportGeneration";
+import { Occasion } from "@/features/events/types";
 import { useOccasion } from "@/hooks/useOccasion";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -33,6 +33,7 @@ export default function Event(){
 
     useEffect(() => {
     }, [data])
+    
 
     return (
         <section id="eventPage">

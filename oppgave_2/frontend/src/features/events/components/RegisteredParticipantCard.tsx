@@ -29,11 +29,7 @@ export default function RegisteredParticipantCard ({participant, status, onOptio
         } 
         onOptionComit(e, option, participant, status)       
     }
-
-    useEffect(() => {
-        console.log(participant.approvalStatus)
-    },[])
-
+    
     return(
         <article className="RegisteredParticipantCard">
             <h4 className="RegisteredParticipantCardName">{participant.name}</h4>

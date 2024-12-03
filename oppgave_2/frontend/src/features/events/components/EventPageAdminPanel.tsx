@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
-import { adminParticipantAction, Occasion, participantApprovalStatus, participantStatus } from "../types";
+import { adminParticipantAction, Occasion, participantStatus } from "../types";
 import RegisteredParticipantCard from "./RegisteredParticipantCard";
 import { Participant } from "@/types/Types";
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import AdminParticipantFormCard from "./AdminParticipantFormCard";
 import { useOccasion } from "@/hooks/useOccasion";
-import { generateExcelReport } from "@/helpers/excelReportGeneration";
+import { generateExcelReport } from "@/helpers/generateExcelReport";
+import { blob } from "stream/consumers";
+import { saveAs } from 'file-saver';
 
 
 type EventPageAdminPanelProps = {
@@ -17,8 +19,8 @@ type EventPageAdminPanelProps = {
 
 export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps){
 
+    const [exelFile, setExelFile] = useState()
     const {update, status, remove} = useOccasion()
-
     const [adminAssignedParticipants, setAdminAssignedParticipants] = useState<Participant[]>([{id: crypto.randomUUID(), name: "", email: "", aprovalStatus: "Ingen", approvalDate: null, registerDate: new Date()}])
     const [isAddParticipant, setIsAddParticipant] = useState<boolean>(false)
     const [message, setmessage] = useState("")
@@ -162,8 +164,15 @@ export default function EventPageAdminPanel({occasion}: EventPageAdminPanelProps
     }
 
     const handleDownloadStatistics = () => {
-        generateExcelReport(occasion)
+        saveAs(exelFile, 'report.xlsx');
     }
+
+    useEffect(() => {
+        if (occasion !== null && occasion !== undefined) {
+            setExelFile(generateExcelReport({ occasion }));
+        }
+        
+    },[occasion])
 
     return(
         <section id="eventPageAdminPanel">

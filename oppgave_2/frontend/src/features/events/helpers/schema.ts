@@ -17,7 +17,8 @@ const OccassionBaseSchema = z.object({
     address: z.string(),
     waitinglist: z.boolean(),
     template: z.string().uuid().optional(),
-    maxParticipants: z.number().min(1).optional()
+    maxParticipants: z.number().min(1).optional(),
+    createdAt: z.date()
 });
 
 export const OccassionSchema = OccassionBaseSchema.extend({

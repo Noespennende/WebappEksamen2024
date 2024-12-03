@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { adminParticipantActionEnum, OcasionCreateSchema, OccasionSchema, participantStatusEnum } from "../helpers/schema";
+import { adminParticipantActionEnum, OccassionSchema, OccationCreateSchema, participantStatusEnum } from "../helpers/schema";
 import { participantAprovalStatusEnum } from "@/helpers/schema";
 
 
-export type Occasion = z.infer<typeof OccasionSchema>;
+export type Occasion = z.infer<typeof OccassionSchema>;
 
-export type CreateOccation = z.infer<typeof OcasionCreateSchema>;
+export type CreateOccation = z.infer<typeof OccationCreateSchema>;
 
 export type adminParticipantAction = z.infer<typeof adminParticipantActionEnum>
 
