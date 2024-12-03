@@ -452,14 +452,6 @@ export default function Create(props: { courseSlug?: string }) {
             </div>
           ) : null}
 
-          {formError ? (
-            <p data-testid="form_error">Fyll ut alle felter med *</p>
-          ) : null}
-          {success ? (
-            <p className="text-emerald-600" data-testid="form_success">
-              Skjema sendt
-            </p>
-          ) : null}
          {current === 2 ? (
           <CourseReview
             courseFields={{
