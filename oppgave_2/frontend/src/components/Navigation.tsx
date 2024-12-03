@@ -1,15 +1,27 @@
-"use client";
+'use client';
 import Link from "next/link";
 import logo from "../../public/images/logo.png"
 import { useEffect, useState } from "react";
 
 export function Navigation() {
-
-    const LoggedIn = localStorage.getItem("adminLoggedIn")
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
     useEffect(() => {
-      }, [LoggedIn]);
-    
+        const storedAdminStatus = localStorage.getItem("adminLoggedIn");
+        if (storedAdminStatus === "true") {
+          setIsAdminLoggedIn(true);
+        }
+      }, []);
+
+      const toggleAdminLogin = () => {
+        if (isAdminLoggedIn) {
+          localStorage.removeItem("adminLoggedIn");
+          setIsAdminLoggedIn(false);
+        } else {
+          localStorage.setItem("adminLoggedIn", "true");
+          setIsAdminLoggedIn(true);
+        }
+      };
     return (
         <nav>
             <div id="logoAndHomeButton">
@@ -21,9 +33,9 @@ export function Navigation() {
             </Link>
             </div>
             
-            <Link href="/" className="navButton">
-                   {LoggedIn ?  "Admin log ut" : "Admin login"}
-            </Link>
+            <button onClick={toggleAdminLogin} className="navButton">
+                {isAdminLoggedIn ? "Admin logout" : "Admin login"}
+            </button>
             
         </nav>
     )
